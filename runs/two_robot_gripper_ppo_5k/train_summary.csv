@@ -1,0 +1,2 @@
+algo,env,timesteps_requested,timesteps_done,elapsed_sec,model_path,best_model_path,levels,max_episode_steps,return,completed,collapsed,extracted,floor,ever_grasped,steps,target_displacement,target_height,neighbor_motion,non_target_contacts
+ppo,TwoRobotJengaGripperEnv,5000,5120,449.6621685028076,runs/two_robot_gripper_ppo_5k/model.zip,runs/two_robot_gripper_ppo_5k/best_model.zip,6,90,9.232834794681663,0.6,0.4,0.8,0.6,1.0,17.7,0.22043643593788148,0.06574536669722875,0.11017780154943466,0.0

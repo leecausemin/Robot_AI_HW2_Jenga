@@ -1,0 +1,1152 @@
+Coordinate Transformations
+& Robot Kinematics
+김현
+hyunkim@etri.re.kr
+
+What to do
+• Coordinate System
+• Coordinate Transformations
+• Linear Transformation
+• Affine Transformation (Homogeneous Coordinate System)
+• Kinematics
+• TF2 in ROS
+
+Robot System
+• 로봇 시스템은 일반적으로 여러 좌표계로 구성
+L2L3 Joint
+L3 Link
+Camera
+Reference Frame
+
+L3 Reference Frame
+L2 Link
+
+TWB
+
+TBL3
+
+TL3G
+Gripper Reference Frame
+
+L1-L2 Joint
+
+L1 Link
+
+B-L1 Joint
+World Frame
+
+Base Link
+Base
+Reference
+Frame
+
+TWO
+
+Object
+Reference
+Frame
+
+Robot Coordinate System
+• Coordinate System
+공간 내 위치(pose)를 정의하기 위한 전체 시스템
+위치를 정의하는데 사용되는 좌표계 (Coordinate Frame), 규칙 (Convention) 및 차원 (Dimension) 등을 포함
+
+- Cartesian Coordinate System
+- Polar Coordinate System
+- Cylindrical and spherical coordinate systems
+- Homogeneous coordinate system
+• Pose in Cartesian Coordinate System
+position (𝑥, 𝑦, 𝑧) + orientation (𝑟𝑥, 𝑟𝑦, 𝑟𝑧)
+• Coordinate Frame (Reference Frame)
+Coordinate System 내 관측되는 객체나 점에 대한 특정 좌표계
+
+Transformations
+• Transformations
+
+한 집합의 원소를 다른 집합의 원소로 대응시키는 함수(function) 또는 매핑 (mapping)
+(어떤 입력 공간의 구조를 다른 표현 공간으로 변환하는 함수)
+𝑓: 𝑋 → 𝑌
+
+𝑌 = 𝑓(𝑋)
+
+• Coordinate Transformations
+공간 (vector space) 상의 점을 한 좌표계에서 다른 좌표계로 대응시키는 함수
+CoordinateTransformations
+𝒑
+
+=
+
+−𝟏
+𝟐
+Input
+
+𝑳(𝐯)
+
+𝒑 =
+
+𝟓
+𝟐
+
+Output
+
+같은 점이라도 좌표계에 따라서 좌표값이 좌표값이 달라진다.
+
+Transformations
+• Transformations
+
+한 집합의 원소를 다른 집합의 원소로 대응시키는 함수(function) 또는 매핑 (mapping)
+(어떤 입력 공간의 구조를 다른 표현 공간으로 변환하는 함수)
+𝑓: 𝑋 → 𝑌
+
+𝑌 = 𝑓(𝑋)
+
+• Coordinate Transformations
+좌표가 변한다는 것은 그 좌표가 갖고 있는
+basis vector가 변하는 것이라고 생각할 수 있다
+𝒑
+
+v
+
+=
+
+−𝟏
+𝟐
+Input
+
+= −1𝚤̂ + 2𝚥̂,
+
+𝟓
+𝟐
+Output
+
+𝒑 =
+
+𝑳(𝐯)
+
+v
+
+= 5𝚤̂ + 2𝚥̂
+
+Linear Transformation Matrix
+• 입력 좌표를 출력 좌표로 변환하는 것은 다음과 같은 Matrix Multiplication으로 구할 수 있다.
+• 이러한 변환을 Linear Transformation이라고 한다.
+𝑓: 𝑋 → 𝑌
+𝑥
+𝑦
+
+𝑌 = 𝑓(𝑋)
+
+𝑥
+→ ??? → 𝑦
+Linear Transformation
+
+• v
+
+= −1𝚤̂ + 2𝚥̂, v
+
+= 5𝚤̂ + 2𝚥̂
+
+v
+
+=
+
+? ?
+v
+? ?
+
+v
+
+=
+
+1 3 𝑥
+1 3 −1
+5
+=
+=
+𝑦
+−2 0
+−2 0
+2
+2
+
+Transformation Matrix
+
+Coordinate Transformation
+• Linear Transformation
+Vector space의 vector들을 대상으로 다음과 같은 선형성(linearity) 조건을 만족하는 변환
+- Additivity (덧셈에 대한 선형성) : 𝑓 𝑥 + 𝑦 = 𝑓 𝑥 + 𝑓 𝑦
+- Homogeneity (스칼라 곱에 대한 선형성) : 𝑓 𝑐𝑥 = 𝑐𝑓(𝑥)
+
+이 두 조건을 만족하면, 𝑓(0) = 0이며, 𝒇 𝒙 = 𝑨𝒙로 표현할 수 있다.
+• Affine Transformation Linear Transformation에 translation(평행이동)을 추가한 변환
+𝑓 𝑥 = A𝑥 + b
+Homogeneous Transformation Matrix (4x4 Matrix)로 표현하여 Matrix Multiplication으로 표현할 수 있음
+• Rigid Transformation 물체의 모양과 크기를 그대로 유지하는 Affine Transformation
+(거리와 각도를 보존- scaling이나 shear와 같은 변형 없이 rotation과 translation만 포함)
+𝑓 𝑥 = 𝑄𝑥 + 𝑏, 𝑄 𝑄 = 𝐼, det(𝑄) = +1
+
+Linear Transformation Matrix
+Rotation
+
+• Scaling
+
+• Rotation
+• Shear
+
+(순서가 중요)
+
+Shear
+
+Linear Transformation Matrix
+• 다음과 같이 Linear Function으로 변환되는 것을
+Linear Transformation이라고 한다.
+𝑓 𝒑 = 𝑨𝒑
+𝑨는 1D, 2D, 3D matrix가 될 수 있다.
+
+•
+
+Identity matrix
+𝑥
+𝑦
+
+=
+
+𝑎
+𝑐
+
+0 𝑥
+1 𝑦
+
+𝑥
+
+= 𝑦
+
+=
+
+𝑎
+0
+
+0 𝑥
+𝑑 𝑦
+
+=
+
+𝑎𝑥
+𝑑𝑦
+
+=
+
+𝑥 + 𝑏𝑦
+𝑦 + 𝑐𝑥
+
+• Sheering matrix
+
+𝒑𝟐 = 𝑨𝒑𝟏
+𝑥
+𝑦
+
+1
+0
+
+• Scaling matrix
+𝑥
+𝑦
+
+• 2D인 경우,
+
+=
+
+𝑎𝑥
+𝑏 𝑥
+=
+𝑐𝑥
+𝑑 𝑦
+
+𝑏𝑦
+𝑑𝑦
+
+𝑥
+𝑦
+
+=
+
+1
+𝑐
+
+𝑏 𝑥
+1 𝑦
+
+* Rigid body에서 Scaling과 Sheering Transformation은 없음
+Rotation과 Translation만 고려
+
+Rigid Body Motion in Robotics
+• Rigid Body
+어떤 물체가 어떤 일이 있어도 dimension이 변하지 않는다면 Rigid Body라고 할 수 있다.
+실제로 모든 물체의 Dimension은 외부의 Force로 인해 변하기 때문에 Rigid Body로 볼 수는 없지만 로봇공학에서는 모
+든 물체는 Rigid Body로 가정하는 경우가 많다.
+
+Linear Transformation은 Vector space에서의 선형 변환으로서 Scaling, Rotation, Projection, Sheer 등을 포함한다.
+하지만 Robot에서의 Transformation은 Scaling이나 Sheering은 일어나지 않으며, 중요한 것은 Rotation과 Translation
+이다.
+
+Linear Transformation (Rotation) + Translation
+
+Rotation
+
+Translation
+
+Linear Transformation: Rotation
+• 2D Rotation: z축을 중심으로 한 회전
+
+Counterclockwise 90° rotation
+
+0 −1
+1 0
+2D rotation matrix
+
+Linear Transformation: Rotation
+• Rotation의 중요한 성질
+Inverse = Transpose
+
+새 좌표계에서 표현된 벡터를 원래 좌표계로 되돌릴 때
+
+Rotation x Rotation = Rotation
+
+여러 번 rotation을 시킬 때
+
+Translation
+• 2D Translation
+𝑥
+𝑦
+
+𝑠
+𝑥
+= 𝑦 + 𝑠
+
+𝑥 +𝑠
+= 𝑦 +𝑠
+
+𝑓 𝒑 = 𝒑+𝒃
+Linear transformation 형태가 아님
+
+(𝑓 𝒑 = 𝑨𝒑)
+
+• Linear Transformation만으로는 Translation을 표현할 수 없다.
+• 따라서 로봇 시스템에서는 Linear Transformation에 Translation을 결합한 Affine Transformation을 사용
+
+Affine Transformation
+• Affine Transformation은 Homogeneous Coordinate 도입함으로써 Linear Transformation과 Translation을 함께
+고려 (Scaling, Rotation, Shear & Translation의 변환을 하나의 행렬로 표현하고 계산할 수 있게 함)
+• Homogeneous Coordination이란 일반적인 2차원 또는 3차원 좌표계에 추가적인 차원을 도입하여 Translation을 포
+함한 모든 Transformation을 Linear Transformation Matrix 연산으로 처리할 수 있게 함
+
+𝒑𝟐 = 𝒑 𝟏 + 𝒔
+𝑥
+𝒑= 𝑦
+1
+
+𝑥
+𝑦
+
+𝑠
+𝑥
+= 𝑦 + 𝑠
+
+𝑥 +𝑠
+= 𝑦 +𝑠
+
+𝒑𝟐 = 𝑨𝒑𝟏
+𝑥
+1 0 𝑠
+𝑦 = 0 1 𝑠
+1
+0 0 1
+
+𝑥
+𝑥 +𝑠
+𝑦 = 𝑦 +𝑠
+1
+1
+
+Affine Transformation Matrix
+• Combine Rotation and Translation
+
+𝑓 𝒑 = 𝑹(𝜃)𝒑 + 𝒔
+Translation을 포함한 모든 Transformation을
+Linear Transformation Matrix 연산으로 처리
+
+𝑔 𝒑 = 𝑻𝒑
+
+cos(𝜃) −sin(𝜃) 𝑠
+𝑹 𝒔
+𝑻 = sin(𝜃) cos(𝜃) 𝑠 =
+𝟎 1
+0
+0
+1
+𝑻𝒑 =
+
+𝑹
+𝟎
+
+𝒔
+1
+
+𝒑
+
+Expending 3D
+• Right-hand rule
+
+• Rotating about the z-axis
+
+• Rotation Matrix in 3D
+
+3 sequential rotations
+around the primary axes
+
+Rotation Representation
+• Euler angles (각 축을 순차적으로 회전)
+Intuitive, but non-standard; due to many conventions issues with singularities
+
+Rotation matrix
+
+1
+0
+0
+cos(𝜃) 0 −sin(𝜃)
+cos(𝜃) −sin(𝜃) 0
+0
+cos
+(𝜃)
+−sin
+(𝜃)
+0
+1
+0
+𝑅 𝑥̅ , 𝜃 =
+, 𝑅 𝑦, 𝜃 =
+, 𝑅 𝑧̅, 𝜃 = sin(𝜃) cos(𝜃) 0
+1 sin(𝜃) cos(𝜃)
+−sin(𝜃) 0 cos(𝜃)
+0
+0
+1
+
+• Quaternions (회전을 하나의 실수와 3개의 허수로 표현)
+Can be useful for some operations, and are more compact.
+Less intuitive, and may result in mode operations to apply some transformations.
+𝒒 = 𝑞 𝑖 + 𝑞 𝑗 + 𝑞 𝑘 + 𝑞 = (𝑞 , 𝑞 , 𝑞 , 𝑞 ) = (𝒒 , 𝑞 )
+
+Euler Transform
+• Euler angles
+1
+0
+𝑅 𝑥̅ , 𝜃 = 0 cos(𝜃)
+1 sin(𝜃)
+
+0
+cos(𝜃)
+−sin(𝜃) , 𝑅 𝑦, 𝜃 =
+0
+cos(𝜃)
+−sin(𝜃)
+
+0 −sin(𝜃)
+cos(𝜃)
+1
+0
+, 𝑅 𝑧̅, 𝜃 = sin(𝜃)
+0 cos(𝜃)
+0
+
+−sin(𝜃) 0
+cos(𝜃) 0
+0
+1
+
+어떤 순서로 회전을 했는지에 따라 결과가 달라진다.
+
+𝑅 (−45⁰)𝑅 (60⁰)𝑅 (45⁰)
+
+𝑅 (−45⁰)𝑅 (45⁰)𝑅 (60⁰)
+
+Gimbal Lock
+
+illustrates the principle of gimbal lock. The outer blue frame represents the x axis, the middle red-colored gimbal the y axis and the green gimbal the z axis. In
+the original constellation a), all axes are perpendicular to each other. After a rotation of 90 • around the y axis (symbolized by the red arrow), the blue and the
+green frame possess the same rotation axis (shown in b)). This situation impedes the clear determination of the rotation axes when subsequently rotating
+around the x or z axis.
+Julian Zeitlhöfler, Nominal and observation-based attitude realization for precise orbit determination of the Jason satellites
+
+Complex numbers for rotation
+• Recall 2D rotation
+
+(𝑥′, 𝑦′)
+r
+r
+
+(𝑥, 𝑦)
+
+𝑥′
+cos𝜃 −sin𝜃 𝑥
+=
+𝑦′
+sin𝜃 cos𝜃 𝑦
+𝑥cos𝜃 − 𝑦sin𝜃
+=
+𝑥sin𝜃 + 𝑦cos𝜃
+
+• 공간 상의 점 𝑝(𝑥, 𝑦)는 복소수 형태의 point quaternion 𝐩 로 표현할 수 있다.
+𝒑 = 𝒙 + 𝒚𝒊 : represent 𝑝(𝑥, 𝑦) by a complex number
+• 2차원 복소수 평면에서 원점을 중심으로 𝜃만큼 회전시킬 때, 회전축에 대한 quaternion 𝐪 은 다음과 같다.
+𝒒 = cos 𝜃 + sin 𝜃 𝑖 : represent rotation 𝜃 by a complex number
+• Point quaternion 𝒑 를 rotation quaternion 𝒒 로 회전한 결과는 다음과 같은 𝒑𝒒 형태로 표현된다.
+𝒑𝒒 = x + yi cos𝜃 + sin 𝜃 𝑖 = 𝑥cos𝜃 − 𝑦sin𝜃 + (𝑥sin 𝜃 + ycos𝜃)𝑖
+실수부
+
+허수부
+
+2D Rotation through Quaternion
+• 회전축(axis of rotation)과 점(point)가 주어지면 이 점이 회전축을 기준으로 얼마나 회전했는지를
+알면 다음과 같은 계산을 통해 회전된 점의 좌표를 구할 수 있다.
+Quaternion of axis of rotation:
+
+Point quaternion:
+
+cos 30° + sin 30° 𝑖
+
+4 + 1𝑖
+
+𝑞
+
+𝑝
+
+Rotation of 𝑝 → 𝑝 𝑞
+4 + 1𝑖 cos 30° + sin 30° 𝑖
+= 4cos 30° − 1 sin 30°
+≈ 2.96 + 2.87𝑖
+
++ 1 cos 30° + 4sin(30° ) 𝑖
+
+Quaternions for 3D rotation
+• 마찬가지로 회전축(axis of rotation)과 점(point)가 주어지면, 3D rotation은 다음과 같은
+Quaternion 계산을 통해 회전된 점의 좌표를 구할 수 있다.
+
+Quaternion rotation of 𝑝 → 𝑞 𝑝 𝑞
+(𝑤 + 𝑥 𝑖 + 𝑦 𝑗 + 𝑧 𝑘)(𝑥 𝑖 + 𝑦 𝑗 + 𝑧 𝑘) (𝑤 − 𝑥 𝑖 − 𝑦 𝑗 − 𝑧 𝑘)
+𝑞 (rotation quaternion)
+
+𝑝 (point quaternion)
+
+𝑞
+
+(quaternion inverse)
+
+Quaternions for rotation
+• Point quaternion
+
+가 회전축
+에 대해
+
+의 unit quaternion
+
+° 만큼 회전했다면,
+
+Unit quaternion of axis of rotation
+𝐮 = 0.67𝑖 − 0.67𝑗 − 0.33𝑘
+cos 30° /2 + sin 30° /2
+𝒒
+Point quaternion:
+1.0𝑖 − 0.25𝑗 − 1.2𝑘
+Rotation of 𝑝 → 𝑞 𝑝 𝑞
+
+𝑝
+
+(𝑤 + 𝑥 𝑖 + 𝑦 𝑗 + 𝑧 𝑘)(𝑥 𝑖 + 𝑦 𝑗 + 𝑧 𝑘) (𝑤 − 𝑥 𝑖 − 𝑦 𝑗 − 𝑧 𝑘)
+𝑞
+
+𝑝
+
+𝑞
+
+0.67𝑖 − 0.67𝑗 − 0.33𝑘
+
+Euler Transform vs. Quaternion Transform
+
+Euler Transform
+x, y, z라는 주축을 중심으로 회전을 표현
+scipy.spatial.transform.Rotation
+
+Quaternion Transform
+임의의 unit vector u축을 중심으로 회전을 표현: Rotation of 𝑝 → 𝑞 𝑝 𝑞
+
+Coordinate Transformations
+• 지금까지 Coordinate Frame이 정해진 상태에서 점의 Transformation을 생각했다면 이제 Coordination Frame 자체의
+Transformation을 생각해보자
+
+p
+
+y0
+
+o0
+
+cos(𝜃) −sin(𝜃) 𝑠
+𝑹 𝒃
+𝑯 = sin(𝜃) cos(𝜃) 𝑠 =
+𝟎 1
+0
+0
+1
+
+x0
+ө
+
+𝑝 =
+
+𝑥
+𝑦
+
+𝑝 =
+
+𝑥
+𝑦
+
+𝑥
+𝑦
+
+cos(𝜃)
+= sin(𝜃)
+0
+
+−sin(𝜃) 𝑠
+cos(𝜃) 𝑠
+0
+1
+
+𝑥
+𝑦
+
+General Rigid Body Motion
+• 로봇의 움직임을 추적하기 위해 우리는 Homogeneous Coordinate Transformation을 이용한다.
+• Reference Frame O1에서 관찰된 𝑝 이 Global Reference Frame O0에서 바라본 위치
+
+𝑝 =𝑑 +𝑅 𝑝
+𝑝 =
+1
+𝑝 = 𝑅
+1
+0
+
+Homogeneous Transformation Matrix
+
+𝑯𝟎𝟏
+
+𝑝
+1
+
+?
+
+= 𝑅
+0
+
+𝑑
+1
+
+𝑝
+1
+
+𝑟
+𝑑 = 𝑟
+1
+0
+
+𝑟
+𝑟
+0
+
+𝑥
+𝑦
+1
+
+Composition of Homogeneous TF
+• Composition of Homogeneous Transformations are Not Commutative
+A(BC) ≠ A(CB)
+Homogeneous Matrix의 곱셈의 순서의 변화는 서로 다른 결과를 가져온다.
+(즉, Rotation 후 Translation을 하는 것과 Translation을 한 후 Rotation하는
+것은 다음 결과를 가져온다.)
+y1
+
+y0
+
+o0
+
+x0
+
+y0
+
+o1o2
+
+x1
+
+Translation and Rotation
+
+o0 o1
+
+x0
+
+Rotation and Translation
+
+Forward Kinematics
+• 로봇의 각 joint의 값을 알고 있을 때, 이를 기반으로 로봇의 end-effector(말단 장치) 또는 특정 링크의 위치 𝑥 (pose)를
+계산하는 과정
+
+Forward Kinematics
+
+Homogeneous Transform joint0 to Joint1
+(Rotation and Translation)
+
+𝑐
+𝐻 = 𝑠
+0
+
+−𝑠
+𝑐
+0
+
+0
+0
+1
+
+𝑐
+𝐻 =𝐻 𝐻 𝐻 𝐻 = 𝑠
+0
+
+1 0 𝑙
+𝐻 = 0 1 0
+0 0 1
+−𝑠
+𝑐
+0
+
+𝑙 𝑐 +𝑙 𝑐
+𝑙 𝑠 +𝑙 𝑠
+1
+
+Homogeneous Transform joint1 to Joint2
+(Rotation and Translation)
+
+𝑐
+𝐻 = 𝑠
+0
+
+−𝑠
+𝑐
+0
+
+0
+0
+1
+
+1 0 𝑙
+𝐻 = 0 1 0
+0 0 1
+
+Forward Kinematics는
+Transformation을 연쇄적으로 곱하는 구조
+
+Inverse Kinematics
+• 원하는 pose 𝑥𝑑를 만들 joint 𝑞를 찾는 문제 (목표 pose와의 오차를 최소화하는 𝑞를 찾는 최적화 문제)
+• 로봇 시스템에서 로봇의 end effector를 특정 pose에 위치시키고자 할 때 로봇의 n개의 Joint 값을 구하는 과정
+- 원하는 pose에 대해 많은 IK Solution이 있기 때문에 Forward Kinematics 보다 어려운 문제
+
+IK Solvers for python
+• MoveIt2 IK Plugin
+(KDL, IKFast, TRAC-IK 등)
+• IKPy
+• PyKDL (Orocos KDL)
+• …
+
+𝑞 = (𝑞1, 𝑞2, … , 𝑞𝑛)
+
+𝑥 = (𝑥, 𝑦, 𝑧, 𝑟 , 𝑟 , 𝑟 )
+
+Dynamics
+• Kinematics (기구학)
+Study of the mathematics of motion without considering the forces that affect the motion
+- Deals with the geometric relationships that govern the system
+- It describes the position, velocity, acceleration, and other kinematic quantities.
+• Dynamics (동역학)
+Study of motion in which these forces and torques are modeled
+- Deals with the relationship between the forces acting on a body, its mass, and its resulting motion.
+- It considers various dynamical factors such as mass, inertia, friction, gravity, and other external forces to
+explain the actual physical phenomena involved in the motion of objects.
+
+Coordinate Transformation (TF) in ROS
+• TF(Transform)는 ROS의 node 기반 프로그래밍으로 인해 분산된 좌표계들의 상관관계를 Tree 구조로 관리하고 이를
+이용하여 특정시간의 두 좌표 간에 정의된 Homogeneous Transformation Matrix을 반환해주는 공통된 API 제공
+• 오른 쪽 그림에는 2대의 mobile robot이 있다. 이 중 한 robot이 object를 발견했다. 다른 로봇이 이 object의 위치를 알 수
+있도록 하려면 어떻게 해야 할까?
+• 왼쪽 그림에는 camera 좌표계로부터 object pose를 얻었다. 이 pose를 robot에게 알려줘야 한다면 어떻게 해야 할까?
+
+camera
+
+robot_2
+robot_1
+
+robot
+
+Coordinate Transformation (TF) in ROS
+• 이 환경에는 전역 좌표계(Global Coordinate System)이 있고,
+각 객체마다 자신만의 Reference frame을 가질 수 있다.
+(각 객체는 별도의 좌표계로 모델링되며, 따라서 각 객체는 전역
+좌표계와는 다른 자신만의 좌표계를 갖는다)
+
+• 다음은 이들 좌표계간의 좌표변환(Coordinate Transformation)
+이 필요하다. Global coordinate system으로부터 robot_1의
+Reference frame이나 robot_2의 Reference frame으로의 변
+환 또는 그 반대의 변환이 필요하다.
+마찬가지로, robot_1의 Reference frame으로부터 robot_2의
+Reference frame으로의 변환 또는 그 반대의 변환이 필요하다.
+
+Coordinate Transformation (TF) in ROS
+• robot_1이 자신이 본 object 위치를 (1,2,0)로 얻었다.
+
+• 이렇게 구해진 좌표 (1,2,0)가 Global Frame에서의 좌표는 어떻게 되고, robot_2의 Frame에서 좌표는 어떻게 될까?
+
+Coordinate Transformation (TF) in ROS
+• ROS2는 tf2(Transform version 2)라는 좌표계 변환 시스템 (Coordinate transform system)을 제공한다.
+• 각 ROS2 node는 tf2 library를 이용하여 frame 간의 관계를 broadcasting하거나 특정 frame 기준으로 다른 frame의
+transform을 lookup(listen)할 수 있다.
+• 이를 통해 사용자는 여러 좌표계 간의 변환을 직접 계산하지 않고,원하는 frame 간의 상대 위치와 자세를 질의할 수 있다.
+
+𝑇
+
+𝑇
+
+𝑇
+
+Coordinate Transformation (TF) in ROS
+• Global coordinate를 중심으로 객 객체들의 Coordinate Frame 정보를 알 수 있다면
+• 그림에서 보는 것처럼 robot_1의 Reference frame에서 표현된 점의 좌표를 Global frame 기준으로 변환한 후,
+이를 다시 robot_2의 Reference frame 기준으로 변환하면 robot_2에서 보는 점의 위치를 얻을 수 있다.
+ROS2 TF2 Code 예
+transform =
+tf_buffer.lookup_transform(
+target_frame="robot_2",
+source_frame="robot_1",
+time=rclpy.time.Time()
+)
+
+robot_2
+
+robot_1
+
+p_robot_2 = tf_buffer.transform(
+object_stamped=p_robot_1,
+source_frame="robot_2",
+)
+
+Coordinate Transformation (TF) in ROS
+• Global coordinate를 중심으로 객 객체들의 Coordinate Frame 정보를 알 수 있다면
+• 마찬가지로 camera frame에서 표현된 물체의 좌표를 Global frame 기준으로 변환한 후,
+이를 다시 robot frame을 기준으로 변환하면 robot에서 바라본 물체의 위치를 얻을 수 있다.
+ROS2 TF2 Code 예
+transform =
+tf_buffer.lookup_transform(
+target_frame="robot_base",
+source_frame="camera",
+time=rclpy.time.Time()
+)
+robot_2
+
+robot_1
+
+p_base = tf_buffer.transform(
+object_stamped=p_camera,
+source_frame="robot_frame",
+)
+
+ROS2 TF2
+• ROS2에서는 Coordinate Transformations를 다루기 위해 tf2 (TransFormation version 2)라는 시스템을 제공한다.
+• ROS2 tf2은 Frame과 Transform으로 구성된 Tree형태로 Transformations를 구성하고 관리한다.
+y
+
+URDF
+
+A tree of …
+
+x
+
+TF
+
+Link
+
+A tree of …
+
+Links
+
+Joint
+
+Frames
+y
+
+connected by
+
+connected by
+
+Joints
+
+Transforms
+L1
+
+x
+
+L1
+
+• 로봇의 물리적 구조와 좌표계 관계를 정의한 URDF로부터 ROS2 tf2 시스템을 이용해 좌표계 간의 변환 관계를 관리한다.
+• 모든 node들은 tf2 라이브러리를 사용하여 transform을 수신(listen)하고, 이를 이용하여 한 Frame에서 다른 Frame으로
+좌표를 변환할 수 있다.
+• 또한 모든 node는 tf2 라이브러리를 사용하여 특정 transform을 발신(broadcast)할 수 있다.
+
+URDF
+<?xml version="1.0"?>
+<robot name="simple_example">
+<link name="world"/>
+<link name="base"/>
+<link name="arm"/>
+<link name="camera"/>
+<joint name="world_to_base" type="fixed">
+<parent link="world"/>
+<child link="base"/>
+<origin xyz="1 1 0" rpy="0 0 0"/>
+</joint>
+<joint name="base_to_arm" type="fixed">
+<parent link="base"/>
+<child link="arm"/>
+<origin xyz="0 0 0.1" rpy="0 0 0"/>
+</joint>
+<joint name="arm_to_camera" type="fixed">
+<parent link="arm"/>
+<child link="camera"/>
+<origin xyz="0 0 1" rpy="0 0 0"/>
+</joint>
+</robot>
+
+Coordinate Frame Tree 확인
+• Publish the robot state
+robot_state_publisher: URDF와 현재 joint state를 이용해 링크들 사이의 TF를 계산/broadcast하는 노드
+$ ros2 run robot_state_publisher robot_state_publisher --ros-args -p robot_description:="$(cat
+urdf/simple_example.urdf)"
+
+• TF2 Tree 확인
+tf2 tools view_frames
+현재 frame tree를 시각화하는 그래프를 문서로 만들어주는 도구
+$ ros2 run tf2_tools view_frames
+$ ls –la
+-rw-r--r--rw-r--r--
+
+1 506 Mar 7 09:42 frames_2023-02-07_09.42.36.gv
+1 14162 Mar 7 09:42 frames_2023-02-07_09.42.36.pdf
+
+Coordinate Frame Tree 확인
+• TF2 실시간 데이터 확인
+각 link의 TF frame은 parent link를 기준으로 한 상대 좌표계로 관리된다.
+또 다른 frame들과의 상대 좌표계로 변환을 실시간으로 확인하기 위해 tf2_ros tf2_echo 명령어를 사용
+$ ros2 run tf2_ros tf2_echo [source_frame] [target_frame]
+$ ros2 run tf2_ros tf2_echo base camera
+At time 0.0
+- Translation: [0.000, 0.000, 1.100]
+- Rotation: in Quaternion [0.000, 0.000, 0.000, 1.000]
+- Rotation: in RPY (radian) [0.000, -0.000, 0.000]
+- Rotation: in RPY (degree) [0.000, -0.000, 0.000]
+- Matrix:
+1.000 0.000 0.000 0.000
+0.000 1.000 0.000 0.000
+0.000 0.000 1.000 1.100
+0.000 0.000 0.000 1.000
+
+$ ros2 run tf2_ros tf2_echo camera world
+At time 0.0
+- Translation: [-1.000, -1.000, -1.100]
+- Rotation: in Quaternion [0.000, 0.000, 0.000, 1.000]
+- Rotation: in RPY (radian) [0.000, -0.000, 0.000]
+- Rotation: in RPY (degree) [0.000, -0.000, 0.000]
+- Matrix:
+1.000 0.000 0.000 -1.000
+0.000 1.000 0.000 -1.000
+0.000 0.000 1.000 -1.100
+0.000 0.000 0.000 1.000
+
+base frame을 기준으로 camera Frame 확인
+(URDF 상의 camera frame은 arm frame을 기준으로 설정됨)
+
+camera frame을 기준으로 world Frame 확인
+(URDF 상의 world frame은 원점으로 설정됨)
+
+ROS2 TF2 Libraries
+• tf2 라이브러리로 제공되는 라이브러리를 이용하여 transforms을 Broadcasting하거나 Listening 할 수 있다.
+(tf 관련 topic을 publish/subscribe하기 위한 클래스가 tf2_broadcast, tf_listener라는 이름의 라이브러리로 이미 구현됨)
+- tf2_broadcaster: coordinate frames을 publish 관련 라이브러리 및 도구
+- tf2_listener: coordinate frames를 subscribe 관련 라이브러리 및 도구
+
+TF Broadcaster
+
+TF Libraries
+
+TF Libraries
+
+publishing
+
+Subscribing
+
+/tf_static
+
+/tf_static
+
+/tf
+
+/tf
+
+TF Listener
+
+• Node가 특정 transforms을 broadcasting할 때는 static (시간이 지나도 변하지 않음) 또는 dynamic (시간이 지나면서
+변할 수 있음) 형태로 transforms을 전송한다.
+(예를 들어 world frame은 static이고 robot_arm frame은 dynamic이다)
+
+Static Transform & Dynamic Transform
+• Static transform
+- 변환 관계가 시간에 따라 변하지 않는 경우 사용된다.
+- ‘/tf_static’라는 Topic으로 publish되며, Global coordinate frame와 고정된 객체 frame간의 관계와 같이 정적으로
+변하지 않는 frame 관계를 정의한다.
+- 시간에 따른 좌표계 변경이 없기 때문에 다른 dynamic transform의 reference가 될 수 있다.
+• Dynamic transform
+- 변환 관계가 시간에 따라 변하는 경우 사용된다.
+- ‘/tf’라는 Topic으로 publish되며, 로봇의 base frame과 로봇의 끝단(end-effector) frame 간의 관계와 같이 동적으로
+변하는 frame 관계를 실시간으로 업데이트 한다.
+
+Broadcasting Static Transforms
+• Static transform은 다음과 같은 명령어를 이용하여 frames의 transforms를 broadcasting할 수 있다.
+$ ros2 run tf2_ros static_transform_publisher x y z yaw pitch roll frame_id child_frame_id
+$ ros2 run tf2_ros static_transform_publisher x y z qx qy qz qw frame_id child_frame_id
+(단위) position: meter (x, y, z), orientation: radian (yaw, roll, pitch)
+• 예를 들어, world로부터 (2,1,0) 위치에 z축으로 45°(0.785rad) 각도로 rotation이 된 robot_1을 만들어보자
+$ ros2 run tf2_ros static_transform_publisher 2 1 0 0.785 0 0 world robot_1
+[WARN] [1709720526.712826874] []: Old-style arguments are deprecated; see --help for newstyle arguments
+[INFO] [1709720526.715350172] [static_transform_publisher_kvllIyjsYMsJz7mp]: Spinning until
+stopped - publishing transform
+translation: ('2.000000', '1.000000', '0.000000')
+rotation: ('0.000000', '0.000000', '0.382499', '0.923956')
+from 'world' to 'robot_1'
+
+Broadcasting Static Transforms
+• 다음과 같이 Python 코드로 실행할 수도 있다.
+launch/transform_publisher.launch.py
+from launch import LaunchDescription
+from launch_ros.actions import Node
+def generate_launch_description():
+ld = LaunchDescription()
+t1_node = Node(
+package='tf2_ros',
+executable='static_transform_publisher',
+arguments=['2', '1', '0', '0', '0.785', '0', 'world', 'robot_1'],
+output='screen',
+)
+ld.add_action(t1_node)
+return ld
+
+RViz2에서 TF 확인
+• rviz2 실행 후 ‘Fixed frame’을 ‘world’로 바꾸고 ‘Add’ 버튼을 눌러 팝업창에서 ‘TF’를 선택
+$ rviz2
+TF의 ‘show Names’를 선택하면 world frame을 기준으로 robot_1 frame이 (2, 1, 0), (π/4, 0, 0) 위치에 나타나는 것을 확인
+
+Broadcasting Static Transforms
+• 다시 robot_1으로부터 x축으로 1 meter 떨어진 위치에 robot_2를 만들어보자
+$ ros2 run tf2_ros static_transform_publisher 1 0 0 0 0 0 robot_1 robot_2
+
+RViz2에서 TF 확인
+•
+
+RVIZ2에서 robot_1 frame을 기준으로 ‘robot_2’가 (1, 0, 0), (0, 0, 0) 위치에 나타나는 것을 확인
+
+Static Transform 변경
+• world frame을 기준으로 robot_1의 위치를 변경 (position은 그대로 두고 orientation을 π/2로 변경)
+$ ros2 run tf2_ros static_transform_publisher 2 1 0 1.57 0 0 world robot_1
+변경된 내용 및 TF에서 각 frame의 정보를 확인
+
+Dynamic Transforms
+• tf2 라이브러리를 이용하여 node 내에서 dynamic transforms을 broadcasting하거나 listening할 수 있다
+broadcaster = tf2_ros.TransformBroadcaster()
+tf = geometry_msgs.msg.TransformStamped()
+# Publish TransformStamped messages
+timer = create_timer(1.0, callback_function)
+...
+# in callback_function
+broadcaster.sendTransform(tf)
+tf_buffer = tf2_ros.buffer.Buffer()
+tf_listener = tf2_ros.TransformListener(tf_buffer, node)
+# Query transforms periodically
+timer = create_timer(1.0, callback_function)
+...
+# in callback_function
+tf_buffer.lookup_transform(target_frame, source_frame, time)
+
+Broadcasting Dynamic Transforms
+• Dynamic Transform을 broadcasting하려면 ROS2 노드에서 tf2_ros::TransformBroadcaster를 사용
+class DynamicTransformBroadcaster(Node):
+def __init__(self):
+super().__init__(‘dynamic_transform_broadcaster')
+self.tf_broadcaster = TransformBroadcaster(self)
+self.timer = self.create_timer(0.1, self.timer_callback)
+self.angle = 0.0
+def timer_callback(self):
+tf = TransformStamped()
+
+# Create a TransformBroadcaster
+# Set the callback function
+
+# Create a TransformStamped msg. type for transform data
+
+tf.header.stamp = self.get_clock().now().to_msg()
+tf.header.frame_id = ‘world'
+tf.child_frame_id = ‘robot_1'
+tf.transform.translation.x = math.cos(self.angle)
+tf.transform.translation.y = math.sin(self.angle)
+tf.transform.translation.z = 0.0
+tf.transform.rotation.x = 0.0
+tf.transform.rotation.y = 0.0
+tf.transform.rotation.z = 0.0
+tf.transform.rotation.w = 1.0
+self.broadcaster.sendTransform(tf)
+self.angle += 0.1
+
+# Publish all static transforms
+
+Listening Dynamic Transforms
+• Dynamic Transform을 listening하려면 ROS2 노드에서 tf2_ros::TransformListener를 사용
+class DynamicTransformListener(Node):
+def __init__(self, target_frame, source_frame):
+super().__init__(‘dynamic_transform_listener')
+# Create a tf2 Buffer and TransformListener
+self.tf_buffer = Buffer()
+self.tf_listener = TransformListener(self.tf_buffer, self)
+# Store target and source frames
+self.target_frame, self.source_frame = target_frame, source_frame
+# Timer to periodically query transforms
+self.timer = self.create_timer(1.0, self.query_transform)
+def query_transform(self):
+# Lookup transform from 'world' to 'robot_1'
+transform = self.tf_buffer.lookup_transform(
+target_frame=self.target_frame,
+source_frame=self.source_frame,
+time=rclpy.time.Time() # Get the latest available transform
+)
+# Log the translation and rotation
+translation = transform.transform.translation
+rotation = transform.transform.rotation
+self.get_logger().info(…)
+
+QUESTIONS
+
+ANSWERS
+
+

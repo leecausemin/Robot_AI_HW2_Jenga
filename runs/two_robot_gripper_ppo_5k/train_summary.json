@@ -1,0 +1,22 @@
+{
+  "algo": "ppo",
+  "env": "TwoRobotJengaGripperEnv",
+  "timesteps_requested": 5000,
+  "timesteps_done": 5120,
+  "elapsed_sec": 449.6621685028076,
+  "model_path": "runs/two_robot_gripper_ppo_5k/model.zip",
+  "best_model_path": "runs/two_robot_gripper_ppo_5k/best_model.zip",
+  "levels": 6,
+  "max_episode_steps": 90,
+  "return": 9.232834794681663,
+  "completed": 0.6,
+  "collapsed": 0.4,
+  "extracted": 0.8,
+  "floor": 0.6,
+  "ever_grasped": 1.0,
+  "steps": 17.7,
+  "target_displacement": 0.22043643593788148,
+  "target_height": 0.06574536669722875,
+  "neighbor_motion": 0.11017780154943466,
+  "non_target_contacts": 0.0
+}

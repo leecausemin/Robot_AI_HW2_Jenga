@@ -1,0 +1,2152 @@
+Actor-Critic Algorithms
+A2C, PPO, DDPG, SAC
+김현
+hyunkim@etri.re.kr
+
+REINFORCE Algorithm
+• Monte-Carlo Policy Gradient (REINFORCE)에서 return을 구하는 것은 한 episode가 모두
+끝나고 이로부터 얻어지는 각 state들의 return을 이용하여 policy parameter를 업데이트한다.
+• Objective to be maximized:
+
+~
+
+~
+
+• Stochastic Gradient Ascent for updating the policy parameters
+
+()
+
+()
+
+()
+
+REINFORCE with baseline
+• 학습을 위한 variance를 줄이기 위한 방법 중의 하나로 baseline
+
+𝔼
+
+𝑏 𝑠 ∇ log𝜋 𝑎 𝑠
+
+=
+
+𝜋 𝑎 |𝑠 𝑏 𝑠 ∇ log 𝜋 𝑎 |𝑠 𝑑𝜏 =
+
+since ∑ 𝑏 𝑠 ∇𝜋 𝑎 |𝑠
+
+• 일반적으로 𝑏 𝑠 를 state-value
+𝔼 𝐺 |𝑆 = 𝑠
+
+를 도입
+
+를 사용
+
+= 𝑏 𝑠 ∇ ∑ 𝜋 𝑎 |𝑠
+
+𝑏 𝑠 ∇𝜋 𝑎 |𝑠 𝑑𝜏 = 0
+
+= 𝑏 𝑠 ∇1 = 0
+
+Actor-Critic
+• Actor-Critic 알고리즘은 2개의 함수 (네트워크)로 구성된다.
+Critic (value function): action-value function의 parameters w를 학습
+
+또는
+Actor (policy): Critic의 결과를 함께 이용해 policy parameters θ를 학습
+- REINFORCE
+
+Actor
+state
+
+- Actor-Critic
+
+reward
+
+update actor network
+action
+PG
+
+Environment
+Critic
+
+Actor는 자기 policy의 gradient 방향( ∇ log𝜋 )을 만들고,
+Critic은 그 행동의 좋고 나쁨을 스칼라로 제공
+
+state
+
+Q-value
+
+AC
+
+Advantage Function
+• Advantage function은 Policy Gradient 방법의 variance를 줄여 주기 위한 도입된 함수로서,
+특정 state s에서 특정 action a가 이 state의 평균적인 action과 비교해 볼 때 어느 정도 좋은지
+나쁜지를 계산 (+는 좋은 action, -는 나쁜 action)
+
+특정 state에서의 모든 action에 따른 value (Baseline)
+특정 state에서 특정 action의 value
+
+• (예시)
+
+= 110, 𝑉
+
+𝑠 = 100,
+
+𝐴 𝑠, 𝑎 = 10
+
+= -90, 𝑉
+
+𝑠 = -100,
+
+𝐴 𝑠, 𝑎 = 10
+
+𝑉
+
+𝑄 𝑠, 𝑎 ⟻ 𝑎
+
+𝑠 ⟻𝑠
+
+Advantage Actor Critic
+• Advantage Actor-Critic 알고리즘은 기존의
+
+대신
+
+를 이용하여 πθ 를 계산
+
+Advantage = 𝑄 𝑠, 𝑎 − 𝑉 (𝑠)
+
+• Advantage 를 계산하기 위해서
+
+𝑉 (𝑠 )
+
+2개의 함수를 학습해야 하지만
+
+일반적으로는
+를 학습하고
+next state에서의 reward와
+를 추정한다.
+
+𝑄 𝑠 ,𝑎
+
+를 결합하여
+
+𝑅
+𝑉 (𝑠
+
+)
+
+=𝑅
+
++ 𝛾 𝑉 (𝑠
+
+)
+
+TD Actor Critic
+Policy
+
+• Advantage (
+
+는 TD Error로 대신할 수 있다.
+
+state
+
+action
+
+Actor
+
+Value
+Function
+state
+
+𝝅 (TD Error)
+
+Critic
+
+TD
+error
+Q-value
+
+action
+
+reward
+Environment
+
+𝜽
+
+=̇ 𝜽 + 𝛼𝛿 ∇ ln 𝜋 𝐴 𝑆 , 𝜽 )
+
+Different Policy Gradient Forms
+REINFORCE
+REINFORCE with baseline
+Q Actor-Critic
+,
+
+Advantage Actor-Critic
+TD Actor-Critic
+TD( ) Actor-Critic
+
+[참고] GAE (Generalized Advantage Estimation)
+
+TD( )
+• 한 에피소드에서 얻은 여러 step의 return 정보를 가중 평균(weighted
+average) 해서 하나의 가치 추정으로 만드는 방식
+𝐺 = 1−𝜆 𝐺
+𝐺 = 1−𝜆
+
+( )
+
++ 1 − 𝜆 𝜆𝐺
+
+𝜆
+
+𝐺
+
+( )
+
++ 1−𝜆 𝜆 𝐺
+
+( )
+
++⋯+ 𝜆
+
+𝐺
+
+( )
+
+( )
+
+모든 n-step return을 1 − 𝜆 𝜆
+가중치로 섞은 평균
+λ는 0~1 사이의 값으로, 과거 몇 step까지의 return을 반영할지를 조절
+λ값
+
+의미
+
+방법
+
+λ=0
+
+오직 1-step TD 사용
+
+TD(0)
+
+λ=1
+
+모든 step의 return 평균 (MC 방식)
+
+0<λ<1
+
+중간적인 형태
+
+Monte Carlo
+TD(λ)
+
+최근의 정보를 좀 더 고려하고 (1 − 𝜆), 먼 미래의 정보도 조금만 고려한다는 (𝜆
+
+) 의도
+
+[참고] GAE (Generalized Advantage Estimation)
+𝐴
+𝐴
+𝐴
+𝐴
+𝐴
+
+( )
+
+𝑠, 𝑎 = 𝑄 (𝑠, 𝑎) − 𝑉(𝑠 )
+
+( )
+( )
+( )
+
+( )
+
+𝑠, 𝑎 = 𝑟
+
++ 𝛾𝑉(𝑠
+
+) − 𝑉(𝑠 )
+
+𝑠, 𝑎 = 𝑟
+
++ 𝛾𝑟
+
++ 𝛾 𝑉(𝑠
+
+𝑠, 𝑎 = 𝑟
+
++ 𝛾𝑟
+
++𝛾 𝑟
+
++ 𝛾 𝑉(𝑠
+
+𝑠, 𝑎 = 𝑟
+
++ 𝛾𝑟
+
++𝛾 𝑟
+
++⋯−𝑉 𝑠
+
+• 이제 이렇게 많은 선택지 (𝐴
+
+) − 𝑉(𝑠 )
+
+( )
+
+,𝐴
+
+( )
+
+,𝐴
+
+𝑉 𝑆
+
+=𝑟
+
++ 𝛾𝑉(𝑠
+
+)
+
+𝑉 𝑆
+
+=𝑟
+
++ 𝛾𝑉(𝑠
+
+)
+
+) − 𝑉(𝑠 )
+=
+
+( )
+
+𝛾 𝑟
+
+− 𝑉(𝑠 )
+
+…} 중에 어떤 것을 advantage function으로 사용해야 할까?
+
+• GAE는 advantage를 계산할 때 여러 step의 TD error를 가중 평균하여 MC와 TD의 중간 지점을 찾자는 방식
+𝐴
+
+( )
+
++ 𝜆𝐴
+
+( )
+
++𝜆 𝐴
+
+𝜆: 𝑔𝑎𝑒_𝑙𝑎𝑚𝑏𝑑𝑎
+
+( )
+
++⋯=
+
+𝜆 ∈ [0,1]
+
+𝜆
+
+𝐴
+
+1
+=(
+)𝐴
+1−𝜆
+
+[참고] GAE (Generalized Advantage Estimation)
+𝐴
+
+( )
+
++ 𝜆𝐴
+
+( )
+
++𝜆 𝐴
+
+( )
+
++⋯=
+
+𝜆
+
+𝐴
+
+1
+=(
+)𝐴
+1−𝜆
+
+• GAE는 여러 단계의 Advantage estimate를 gae_lambda 𝜆로 가중합을 함으로써 bias와 variance
+간의 tradeoff를 조정한다.
+
+Actor Critic Network 구조
+Value 학습을 통해 배운 representation을 policy가 활용할 수 있음
+(state에 대한 features를 학습하고 이를 함께 활용)
+
+또는 𝑄 (. , s)
+Value
+(Action-Value)
+Network
+
+π(. , s)
+
+Policy
+Network
+
+VS
+
+또는 𝑄 (. , s)
+
+π(. , s)
+
+Value
+Head
+
+Policy
+Head
+
+s
+
+s
+
+Share
+Network
+
+𝐿𝑜𝑠𝑠𝑐𝑟𝑖𝑡𝑖𝑐
+
+𝐿𝑜𝑠𝑠𝑎𝑐𝑡𝑜𝑟
+
+s
+𝐿𝑜𝑠𝑠𝑡𝑜𝑡𝑎𝑙 = 𝑐1 𝐿𝑜𝑠𝑠𝑐𝑟𝑖𝑡𝑖𝑐 + 𝑐2 𝐿𝑜𝑠𝑠𝑎𝑐𝑡𝑜𝑟 + 𝑐3 𝐿𝑜𝑠𝑠𝑒𝑛𝑡𝑟𝑜𝑝𝑦
+
+Actor Critic 학습
+• 일반적으로 Actor와 Critic은 학습이 동시에 이루어짐
+- critic: policy evaluation (Actor의 policy의 가치를 평가)
+- actor: policy improvement (Critic의 가치평가에 기반하여 policy를 개선)
+
+𝟎
+
+𝟎
+
+*
+
+*
+
+Actor Critic Algorithm
+• Critic estimates the value function by minimizing the loss
+- MC target:
+
+- TD target:
+
+Actor Critic Algorithm
+• Actor estimates the policy by maximizing total rewards
+𝐽 𝜃 =𝔼𝑟 𝜏
+- MC policy gradient update:
+𝐽 𝜃 = 𝔼[∑
+
+𝛾 𝑟]
+
+∇ 𝐽 𝜃 =∑
+
+(𝐺
+
+∇ log 𝜋 (𝑎 |𝑠 ))
+
+𝜃 ←𝜃+𝛼
+
+∑
+
+(𝐺
+
+∇ log 𝜋 (𝑎 |𝑠 ))
+
+- TD policy gradient update:
+∇ 𝐽 𝜃 = 𝑄 (𝑠 , 𝑎 ) ∇ log 𝜋 (𝑎 |𝑠 )
+TD Actor Critic: ∇ 𝐽 𝜃 = (𝑟
+
++ 𝛾𝑉 𝑠
+
+− 𝑉 𝑠 ) ∇ log 𝜋 (𝑎 |𝑠 )
+
+𝜃 ←𝜃+𝛼
+
+−𝑉 𝑠
+
+∇ log 𝜋 (𝑎 |𝑠 )
+
+𝑟
+
++ 𝛾𝑉 𝑠
+
+TD Actor-Critic Algorithm
+
+A3C (Asynchronous Advantage Actor Critic)
+A global network holds the shared parameter,
+and multiple worker agents update asynchronously
+to these shared parameters
+During t max steps, each agent computes an accumulated
+gradient and updates the shared parameters
+Agent Actor
+∆𝜃 ← ∆𝜃 + 𝐺
+
+−𝑉
+
+𝑠
+
+∇ log 𝜋 (𝑎 |𝑠 )
+
+−𝑉
+
+𝑠
+
+∇ 𝑉 (𝑠 )
+
+Agent Critic
+∆𝑤 ← ∆𝑤 + 𝐺
+
+Global Network
+𝜃 ← 𝜃 + 𝛼∆𝜃, and 𝑤 ← 𝑤 + 𝛽∆𝑤
+𝐴 𝑠, 𝑎 = 𝑄 𝑠, 𝑎 − 𝑉 𝑠 𝑖𝑛𝑠𝑡𝑒𝑎𝑑 𝑜𝑓 𝑟𝑒𝑡𝑢𝑟𝑛 𝐺
+
+A2C (Synchronous version of A3C)
+• 비동기식의 주요 단점은 일부 agent가 이전 버전의
+parameters를 사용한다는 점이다.
+• 동기식 A2C는 A3C와 달리, 모든 multiple worker
+agents가 Actor Critic network의 업데이트를 모두
+완료한후 Global network의 parameter update를
+수행한다.
+• Synchronous A2C가 GPU를 보다 효율적으로
+활용할 수 있으며, A3C와 동일하거나 더 나은
+성능을 달성한다는 결과가 있다.
+
+Cart Pole, again
+
+Value-based Approach
+(DQN)
+
+s
+
+w
+value parameterization
+
+𝒘∈ℝ
+
+(s, left, w)=5
+(s, right, w)=10
+
+Polcy-based Approach
+(REINFORCE, A2C)
+
+s
+
+θ
+
+π(left | s, θ) = 20%
+
+policy parameterization
+
+π(right | s, θ) = 80%
+
+𝜽∈ℝ
+
+Cart Pole, again
+
+REINFORCE
+
+Actor-Critic
+
+∇ 𝐽 𝜃 = 𝔼 [𝐺 𝜏 ∇ ln𝜋 𝐴 𝑆 ]
+
+∇ 𝐽 𝜃 = 𝔼 [𝛿 ∇ ln 𝜋
+
+학습 중 수 집되는 각 episode 의 return 값은 특정
+시점부터 episode의 끝까지 간 reward를 모두 저장해
+둔 후, action의 return이 크면 이 action을 확률을 크게,
+작으면 확률을 작게 만들도록 학습 (High-variance)
+
+𝐴 |𝑆 , 𝜽 ]
+
+Actor-Critic에서는 현재의 policy (Actor)가 좋은지 아닌지를
+측정한 수 있는 value function (Critic)을 각각 다른 function
+approximation( 네 트 워 크 ) 으 로 학 습 시 켜 high variance
+문제를 해결
+
+A2C 실습
+• Environment
+• State space and action space (Discrete or Continuous)
+• Critic
+• Policy evaluation with function approximation (Linear or Non-linear)
+• Actor
+• Policy gradient with parameterized policy (Softmax policy or Gaussian policy)
+• Learning Process:
+•
+•
+
+: Semi-Gradient Descent
+] : Policy Gradient Ascent
+
+A2C Networks and Learning process
+Backprop
+
+𝜽
+
+←𝜽 +𝛼
+
+[𝛿 ∇ ln 𝜋
+
+𝐴 |𝑆 , 𝜽 ]
+
+Policy
+π (left)
+State
+
+Actor Network
+
+Actor loss
+Policy
+π (right)
+
+State
+
+Critic Network
+
+Backprop
+
+Value
+
+𝒘
+
+← 𝒘 −𝛼
+
+Critic loss
+
+𝛼𝛿 ∇𝑣(𝑆 , 𝒘)
+
+A2C Networks and Learning process
+Backprop
+
+class Actor(nn.Module):
+def __init__(
+self,
+state_size: int,
+action_size: int,
+net_arch: Tuple[int, ...],
+activation: nn.Module = nn.Tanh()
+):
+super(Actor, self).__init__()
+
+Policy
+π (left)
+
+State
+
+Actor Network
+
+Actor loss
+
+Policy
+π (right)
+
+dims = [state_size] + list(net_arch) + [action_size]
+self.activation = activation
+# Build network layers
+self.layers = nn.ModuleList()
+for i in range(len(dims)-1):
+self.layers.append(nn.Linear(dims[i], dims[i+1]))
+
+x
+
+State
+
+Critic Network
+
+def forward(self, x: torch.Tensor) -> torch.Tensor:
+# Apply activation function to all layers except the last one
+for layer in self.layers[:-1]:
+x = self.activation(layer(x))
+
+Value
+
+Critic loss
+
+# Last layer outputs logits, then apply softmax for probabilities
+logits = self.layers[-1](x)
+policies = torch.softmax(logits, dim=1)
+return policies
+Backprop
+
+A2C Networks and Learning process
+Backprop
+class Critic(nn.Module):
+def __init__(
+self,
+state_size: int,
+net_arch: Tuple[int, ...] = (64,),
+activation: nn.Module = nn.Tanh()
+):
+super(Critic, self).__init__()
+
+Policy
+π (left)
+
+State
+
+Actor Network
+
+Actor loss
+
+Policy
+π (right)
+
+dims = [state_size] + list(net_arch) + [1]
+self.activation = activation
+
+x
+
+# Build network layers
+self.layers = nn.ModuleList()
+for i in range(len(dims)-1):
+self.layers.append(nn.Linear(dims[i], dims[i+1]))
+
+State
+
+Critic Network
+
+def forward(self, x: torch.Tensor) -> torch.Tensor:
+# Apply activation function to all layers except the last one
+for layer in self.layers[:-1]:
+x = self.activation(layer(x))
+
+Value
+
+Critic loss
+
+# Last layer outputs value without activation
+value = self.layers[-1](x)
+
+Backprop
+return value
+
+A2C Networks and Learning process
+Backprop
+# Set loss function
+criterion = nn.MSELoss()
+
+State
+
+Policy
+# Get target Q-values for next states
+π (left)
+value = self.critic(state_tensor).squeeze(1)
+next_value
+= self.critic(next_state_tensor).squeeze(1)
+Actor
+Network
+
+Actor loss
+
+target = reward_tensor + mask_tensor * self.gamma * next_value
+
+Policy
+π (right)
+
+# Compute critic loss and update critic
+critic_loss = criterion(value, target.detach())
+self.critic_optimizer.zero_grad()
+critic_loss.backward()
+self.critic_optimizer.step()
+
+State
+
+Critic Network
+
+Value
+
+Backprop
+
+x
+
+Critic loss
+
+A2C Networks and Learning process
+Backprop
+Policy
+π (left)
+State
+
+Actor Network
+
+Actor loss
+Policy
+π (right)
+
+# Get policies from actor network
+policies = self.actor(state_tensor)
+
+State
+
+# Get advantage
+categorical = Categorical(policies)
+log_policy = categorical.log_prob(action_tensor)
+entropy = categorical.entropy()
+advantage = target - value
+
+Critic Network
+
+Value
+
+x
+
+Critic loss
+
+# Compute actor and update actor
+actor_loss = -log_policy * advantage.item() + self.ent_coef * entropy
+self.actor_optimizer.zero_grad()
+actor_loss.backward()
+self.actor_optimizer.step()
+
+Backprop
+
+A2C Networks and Learning process
+Backprop
+Policy
+π (left)
+Actor loss
+Policy
+π (right)
+State
+
+Shared Network
+
+Total loss
+𝐿 𝜃 =𝐿
+
+𝜃 + 𝑣𝑓_𝑐𝑜𝑒𝑓 𝐿
+
+Value
+
+Backprop
+
+(𝜃)
+
+Critic loss
+
+Program code Example
+import gym
+from stable_baselines3 import A2C
+# Environment: What are you trying to solve?
+# (ref: https://github.com/openai/gym/tree/master/gym/envs/)
+env = gym.make("CartPole-v1", render_mode="rgb_array")
+# Agent model (ref: https://github.com/DLR-RM/rl-baselines3-zoo/blob/master/hyperparams/)
+model = A2C("MlpPolicy", env, verbose=1)
+# Train
+model.learn(total_timesteps=10000)
+# Save
+model.save("model_cartpole_a2c")
+
+Evaluation
+# Environment
+env = gym.make("CartPole-v1")
+# Model
+model = A2C.load(“model_cartpole", env, verbose=1)
+# Run the model
+for i in range(5):
+obs. _ = env.reset()
+while True
+action, _ = model.predict(obs, deterministic=True)
+obs, reward, terminated, truncated, info = env.step(action)
+if terminated or truncated :
+break
+
+Agent Model
+A2C(
+policy,
+env,
+policy_kwargs=None,
+learning_rate=0.0007,
+gamma=0.99,
+n_steps=5,
+gae_lambda=1.0,
+vf_coef=0.5,
+ent_coef=0.0,
+use_rms_prop=True,
+rms_prop_eps=1e-05,
+use_sde=False,
+sde_sample_freq=-1,
+normalize_advantage=False
+max_grad_norm=0.5,
+…
+)
+
+# policy 모델 (MlpPolicy, CnnPolicy, MultiInputPolicy)
+# 환경 (gym 또는 custom environment)
+# policy에 추가적으로 넘길 파라메터 딕셔너리
+# 학습률 (신경망의 가눙치를 업데이트하는 step의 크기)
+# discount factor 값
+# 각 환경마다 몇 step으로 rollout을 하고 gradient update를 할지 결정하는 파라메터
+_
+# TD(λ)의 λ를 지정하기 위한 파라메터 (0이면 TD(0), default=1) 𝐴
+=∑
+𝛾𝛾𝜆 𝛿
+# value loss가 얼마나 중요한지를 결정하는 가중치 (value function 학습과 policy 학습 간의 trade-off를 결정)
+# exploration을 위한 entropy 가중치
+# optimizer로 RMSprop (default)을 사용할지 Adam을 사용할지 결정
+# RMSProp 최적화 알고리즘에서 사용되는 상수(epsilon)
+# State-Dependent Exploration(SDE)를 사용할 것인지 여부를 결정 (논문 참조)
+# SDE을 사용 시 몇 step마다 noise를 다시 샘플링할지에 대한 샘플링 빈도를 설정하는 변수
+# advantage normalization
+# gradient explosion 방지를 위한 gradient clipping 최대값
+
+Entropy for exploration
+,
+
+~
+
+Policy 𝜋 의 Entropy
+Action value
+P
+
+(Gaussian policy)
+
+(Entropy-Regularized Policy)
+
+𝐿 𝜃 =𝐿
+
+𝜃 + 𝑣𝑓_𝑐𝑜𝑒𝑓 𝐿
+
+𝜃 + 𝑒𝑛𝑡_𝑐𝑜𝑒𝑓 ℋ 𝜋
+
+실습 결과
+• 실습 과정에서 A2C (Advantage Actor Critic) 학습 과정을 보면서 학습이 불안정하거나 성능이
+급격히 떨어지는 현상이 보인 적이 있는가?
+
+Considerations
+• Callback
+callback = SaveOnBestTrainingRewardCallback(
+algo_name,
+check_freq=1000,
+log_dir=callback_log_dir
+)
+
+• Multiprocessing
+env = make_vec_env(
+env_name,
+n_envs=n_cpu,
+monitor_dir=callback_log_dir
+)
+
+• Algorithm
+
+Milestones of Deep Reinforcement Learning
+SAC (2018)
+PPO (2017)
+AlphaGo (2016)
+DDPG, TRPO (2015)
+Deep Q-Network (2013)
+LeLU, Deep Learning, Hinton (2006)
+CNN (1995), RNN, LSTM (1997)
+Multi-layer Perceptron Backpropagation, Hinton (1986)
+Perceptron, Rosenblatt (1957)
+Electronic Brain, McCulloch-Pitts (1943)
+Q-learning, Watkins (1989)
+Actor-Critic Architecture, Barto-Sutton (1983)
+Temporal Difference Learning, Klopf (1972)
+MDP and Dynamic Programming, Bellman (1957)
+The 1st concept of RL (SNARC), Minsky
+Computation Model of try-and-error learning (1951)
+Trial-and-error learning
+Law of Effect, Thorndike (1911)
+
+Thanh T. Nguyen, et/ al. “Deep Reinforcement Learning for Multi-Agent Systems: A Review of Challenges, Solutions and Applications”, IEEE Transactions on Cybernetics, 2019
+
+Model-Free RL with DL
+Policy-based
+REINFORCE
+Monte Carlo Policy Gradient
+
+(NIPS, 1999)
+
+Actor Critic
+
+Value-based
+
+A2C
+
+Q-Learning
+
+Advantage Actor
+Critic
+
+(PhD thesis, 1989)
+
+(NIPS, 1999)
+
+DQN
+Deep Q-Network
+
+TRPO
+
+DDPG
+
+Trust Region Policy
+Optimization
+
+Deep Deterministic
+Policy Gradient
+
+(ICML, 2015)
+
+(ICLR, 2015)
+
+PPO
+
+TD3
+
+Proximal Policy
+Optimization
+
+Twin Delayed
+DDPG
+
+(arXiv, 2017)
+
+(ICML, 2018)
+
+SAC
+Soft Actor Critic
+
+(NIPS, 2013)
+
+Q-Learning in Continuous Action Space
+• Q-learning에서는 다음 상태 s′에 대해 다음과 같은 TD Target을 계산
+
+•
+
+′가 continuous일 경우,
+
+( ′, ′) 를 정확하게 계산할 수 없음
+
+• DDPG는 다음과 같이 max 대신 policy로 값을 근사
+
+모든 action에 대해 max 𝑄(𝑠′,𝑎′)를 계산하는 대신, 𝜇(𝑠 )라는 Actor가 내놓은 action을
+거의 최적이라고 가정하고 그 값 𝑄(𝑠′, 𝜇(𝑠 ))를 사용하겠다는 의미
+(Q-learning을 continuous action space에서 쓸 수 있도록 max를 없애고
+Policy network를 도입해서 가장 좋은 행동을 얻도록 학습)
+
+DDPG (Deep Deterministic Actor Critic)
+
+• stochastic policy는 상태 𝑠 에서 취할 수 있는 행동 𝑎 의 확률값(평균과 표준편차)이지만 deterministic
+policy에서는 상태 𝑠 에서 하나의 행동 𝑎를 출력 (𝜇 는 평균이 아니라 deterministic policy 함수의 표기임)
+Policy Gradient Theorem: ∇ 𝐽 𝜃 = 𝔼
+
+𝑄
+
+𝑠, 𝑎
+
+Deterministic Policy Gradient Theorem: ∇ 𝐽 𝜃 = 𝔼 ∇ 𝑄 𝑠, 𝑎|𝜃
+
+𝛻 ln 𝜋 (𝑎|𝑠)
+|
+
+( )
+
+∇ 𝜇 𝑠|𝜃
+
+David Silver, et. al., “Deterministic Policy Gradient Algorithms,” JMLR, 2014
+
+DDPG (Deep Deterministic Actor Critic)
+• Action Noise
+
+Actor (Policy 𝜃 ), 𝜽= 𝜃
+Deterministic Policy Gradient Theorem
+𝐽 𝜽 = 𝔼 𝑄 𝑠, 𝑎|𝒘 |
+
+( )
+
+∇ 𝐽 𝜽 = 𝔼 ∇ 𝑄 𝑠, 𝑎|𝒘 |
+
+( )
+
+∇ 𝜇 𝑠
+
+Critic (Value function 𝜃 ), 𝜃 = 𝒘
+Q-Learning
+𝐿 𝒘 = 𝔼 𝑦 −𝑄 𝑠 ,𝑎 𝒘
+𝑦 =𝑟
+
++ 𝛾 𝑄′(𝑠
+
+, 𝜇(𝑠
+
+|𝜽 )|𝒘
+
+∇ 𝐿 𝒘 = 𝔼 (𝑦 − 𝑄 𝑠 , 𝑎 𝒘 )∇ 𝑄 𝑠 , 𝑎 𝒘
+
+DDPG (Deep Deterministic Actor Critic)
+• Off-policy learning: 기존 DQN 기법 도입
+• Ornstein-Uhlenbeck process: Continuous action 영역에서 exploration을 효과적으로 수행하기 위해
+Action에 noise를 추가하는 방법 이용
+(𝒩~𝑂𝑈 𝑝𝑟𝑜𝑐𝑒𝑠𝑠 또는 Gaussian Distribution)
+
+Action Noise
+
+• Soft target update: Main network가 빠르게 변화할 때 생길 수 있는 학습 불안정을 줄이기 위해
+Target network를 Main network보다 훨씬 느리게(𝜏 ≪ 1) 따라가도록 soft update를 사용함 (예: 𝜏 = 0.001)
+Critic: 𝜙
+
+← 1−𝜏 𝜙
+
++ 𝜏𝜙
+
+Actor: 𝜃
+
+← 1−𝜏 𝜃
+
++ 𝜏𝜃
+
+• Batch Normalization: state의 다른 구성 요소는 서로 다른 물리적 단위를 가질 수 있으며, 그 범위는
+environment마다 다를 수 있기 때문에 네트워크의 모든 layer에 Batch Normalization (𝜇 = 0, 𝜎 = 1) 수행
+
+TD3 (Twin Delayed DDPG)
+• TD3 (Twin Delayed DDPG) :
+• Clipped double Q-learning:
+학습의 안정성을 높이기 위해 2개의 Critic을 이용하여 Qvalue를 보수적으로 설정 (2개의 Q-value estimation 중
+낮는 값을 취해 overestimation을 피함)
+
+• Delayed policy updates:
+Actor(policy) 업데이트를 Critic(Q-value) 업데이트보다 더
+느리게 진행 (예: Critic 3번 업데이트할 때 Actor 1번
+업데이트: 더 안정된 Q-value 추정치를 기반으로 policy를
+업데이트)
+
+• Target policy smoothing regularization:
+TD Target 계산 시 Target policy action에 noise를
+추가함으로써 Q-function이 특정 action 한 점의 오차에 덜
+민감해지고, Actor가 Critic의 국소적인 오차를 과도하게
+따라가지 않도록 smoothing 효과 제공
+
+State Dependent Exploration
+
+환경에 대한 exploration을 촉진하기 위해 행동에 추가하는 노이즈의 분포를 state에 의존하게 만들자
+
+Agent Model
+DDPG(
+policy,
+# policy 모델 (MlpPolicy, CnnPolicy, MultiInputPolicy): DQN은 Q, Qtarget의 네트워크 모델
+env,
+# 환경 (gym 또는 custom environment)
+policy_kwargs=None,
+# policy에 추가적으로 넘길 파라메터 딕셔너리 (예) policy_kwargs={‘net_arch’=[256, 256]}
+learning_rate=1e-3,
+# 학습률 (신경망의 가중치를 업데이크하는 step의 크기)
+gamma=0.98,
+# discount factor 값
+replay_buffer_class=None,
+# 어떤 replay buffer를 쓸 것인지에 따른 replay buffer class (ReplayBuffer, HerReplayBuffer)
+replay_buffer_kwargs=None,
+# replay buffer class에 넘겨줄 파라메터 딕셔너리
+buffer_size=200_000,
+# experience replay memory 크기
+learning_starts=10_000,
+# 학습을 하기 전 random action으로 experience data를 수집할 step 수
+batch_size=256,
+# 각 학습단계에서 사용할 batch의 크기 (replay buffer로부터 한번에 가져올 mini-batch size)
+train_freq=1,
+# 몇번의 interaction 후에 training을 할지 결정하는 변수
+gradient_steps=1,
+# 한 training 당 몇번의 gradient update를 수행할 지 결정하는 gradient step 수
+optimize_memory_usage=False, # 효율적인 메모리 사용 (중복정보 줄이거나 압축 등)을 위한 선택적인 flag (실행속도는 느려질 수 있음)
+tau=1.0,
+# Polyak Averaging parameter: Q로부터 Qtarget을 Soft Update
+action_noise
+# Exploration을 효과적으로 수행하기 위해 action에 취할 action noise type
+(OrnsteinUhlenbeckActionNoise 또는 NormalActionNoise)
+)
+
+Intuition behind TRPO/PPO
+• 학습의 안정성(training stability)를 개선시켜보자 (to avoid having too large of policy update)
+Line-search
+
+Trust region
+
+first picks the steepest direction
+and then move forward by a step size
+
+first determine the maximum step size that we want to explore
+and then pick direction
+
+https://jonathan-hui.medium.com/rl-proximal-policy-optimization-ppo-explained-77f014ec3f12
+
+TRPO (Trust Region Policy Optimization)
+• Objective Function
+𝐽 𝜃 =𝔼 ~
+
+𝑅(𝜏)
+
+• Objective Function in TRPO
+𝐽 𝜃 ≈𝐽 𝜃
+
++ 𝐿(𝜃
+
+)
+
+Old policy로 모은 데이터로 θ를 update 했을 때
+성능이 얼마나 변할지(증가/감소)를 추정한 값
+이 추정은 new policy가 old policy를 크게
+벗어나지 않는 범위 (Trust Region) 내에서만 유효
+
+New policy의 성능
+
+𝜋
+
+||𝜋
+
+>𝛿
+
+(이전 성능을 조금 개선시켜 더 나은 성능을 만들자)
+
+Surrogate Term
+
+Old policy의 성능
+
+𝒟
+
+𝒟
+
+𝜋
+
+||𝜋
+
+≤𝛿
+
+𝑟 𝜃 =
+
+𝜋 (𝑎 |𝑠 )
+𝜋
+(𝑎 |𝑠 )
+
+TRPO (Trust Region Policy Optimization)
+• Surrogate Objective Function
+Old policy 데이터로 new policy를 업데이트
+했을 때 성능 증가 추정값을 최대화
+
+~
+
+~
+
+학습을 통해 얻은 new policy가 학습 전
+old policy와 비교해 크게 바뀌지 않도록 제한
+(Trust Region 안에서만 update를 허용)
+
+~
+
+• 하나의 Lagrange multiplier 값을 통해 TRPO의 monotonic improvement 특성을 얻는 것
+(constraint를 정확히 만족시키면서 optimization하는 것)은 어려움.
+
+PPO (Proximal Policy Optimization)
+• Clipped Surrogate Objective Function
+
+𝑟 𝜃 =
+
+𝜋 (𝑎 |𝑠 )
+𝜋
+(𝑎 |𝑠 )
+
+𝑟 𝜃 𝐴 =
+
+𝜋 (𝑎 |𝑠 )
+𝐴
+𝜋
+(𝑎 |𝑠 )
+
+clip(𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖)
+min(𝑟 𝜃 𝐴 , clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 )
+
+특정 시점 (𝑠 , 𝑎 )에 대해 new policy와 old policy의 확률 비율
+
+𝐽 𝜃 =𝔼 ~
+
+𝑅(𝜏) 대신 사용하는 surrogate objective
+
+𝑟 𝜃 가 1에서 너무 멀어지지 않도록
+값을 [1 − 𝜖, 1 + 𝜖] 이내로 지정
+𝑟 𝜃 𝐴 와 clip된 𝑟 𝜃 𝐴 중 더 작은 값만 objective로 사용
+old policy에서 너무 큰 policy update가 일어나지 않도록 하는
+trust region 효과를 제공
+
+Surrogate Objective 계산
+)
+
+𝑟을 증가시키는 것이 좋은 action을 선택할 확률을 강화
+𝐿
+을 한번에 너무 많이 증가시키는 것을 제한하기
+위해 (1 + 𝜖)으로 𝑟을 clipping
+
+𝑟을 감소시키는 것이 좋은 action을 선택할 확률을 강화
+𝐿
+을 한번에 너무 많이 감소시키는 것을 제한하기
+위해 (1 − 𝜖)으로 𝑟을 clipping
+
+Surrogate Objective 계산 예
+𝐿
+
+𝜽 = 𝔼 min(𝑟 𝜃 𝐴 , clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 )
+
+𝜖 = 0.2, 𝐴 = 0.5
+1. 𝑟 𝜃 = 10.0
+• 𝑟 𝜃 𝐴 = 10.0 × 0.5 = 5.0
+• clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 = clip 10, 0.8, 1.2 × 0.5 = 1.2 × 0.5 = 0.6
+• min(𝑟 𝜃 𝐴 , clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 ) = min 5.0, 0.6 = 0.6
+
+𝑟 𝜃 이 매우 큰 경우
+clipping이 적용되어 값이 줄어든다.
+5.0 →0.6
+
+2. 𝑟 𝜃 = 1.0
+• 𝑟 𝜃 𝐴 = 1.0 × 0.5 = 0.5
+• clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 = clip 1, 0.8, 1.2 × 0.5 = 1.0 × 0.5 = 0.5
+• min(𝑟 𝜃 𝐴 , clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 ) = min 0.5, 0.5 = 0.5
+
+3. 𝑟 𝜃 = 0.1
+• 𝑟 𝜃 𝐴 = 0.1 × 0.5 = 0.05
+• clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 = clip 0.1, 0.8, 1.2 × 0.5 = 0.8 × 0.5 = 0.4
+• min(𝑟 𝜃 𝐴 , clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 ) = min 0.05, 0.4 = 0.05
+
+𝑟 𝜃 이 trust region에 있는 경우
+실제값이 그대로 적용된다.
+0.5 →0.5
+𝑟 𝜃 이 매우 작은 경우
+이미 작기 때문에 (이 역시 trust region에 있기 때문에)
+값이 그대로 적용된다. 0.05 →0.05
+
+Surrogate Objective 계산 예
+𝐿
+
+𝜽 = 𝔼 min(𝑟 𝜃 𝐴 , clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 )
+
+𝜖 = 0.2, 𝐴 = −0.5
+1. 𝑟 𝜃 = 10.0
+• 𝑟 𝜃 𝐴 = 10.0 × −0.5 = −5.0
+• clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 = clip 10, 0.8, 1.2 × −0.5 = −0.6
+• min(𝑟 𝜃 𝐴 , clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 ) = min 5.0, 0.6 = −5.0
+
+𝑟 𝜃 이 매우 큰 경우, 이미 나쁜 방향
+(𝐴 < 0 인데 확률을 많이 키운 상태)이기 때문에
+clipping 없이 원래 값이 그대로 페널티로 적용
+-5.0 → -5.0
+
+2. 𝑟 𝜃 = 1.0
+• 𝑟 𝜃 𝐴 = 1.0 × −0.5 = −0.5
+• clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 = clip 1, 0.8, 1.2 × −0.5 = −0.5
+• min(𝑟 𝜃 𝐴 , clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 ) = min −0.5, −0.5 = −0.5
+
+3. 𝑟 𝜃 = 0.1
+• 𝑟 𝜃 𝐴 = 0.1 × −0.5 = −0.05
+• clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 = clip 0.1, 0.8, 1.2 × −0.5 = −0.4
+• min(𝑟 𝜃 𝐴 , clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 ) = min −0.05, −0.4 = −0.4
+
+𝑟 𝜃 이 trust region에 있는 경우
+실제값이 그대로 적용된다.
+-0.5 → -0.5
+𝑟 𝜃 이 매우 작은 경우, 나쁜 action의 확률을
+너무 과하게 줄인 것이기 때문에 clipping이
+적용되어 값이 더 작아진다.
+-0.05 → -0.4
+
+PPO Architecture
+Store trajectory 𝜏
+
+• Clipped surrogate objective
+𝐿
+
+{(𝑠 , 𝑎 , 𝑟
+
+,𝑠
+
+, 𝜋 )}
+
+𝜃 = 𝔼 min(𝑟 𝜃 𝐴 , clip 𝑟 𝜃 , 1 − 𝜖, 1 + 𝜖 𝐴 )
+
+Environment
+State
+
+Action
+
+• Value function objective
+𝐿
+
+𝑠 ,𝑎
+
+𝜙 = 𝔼 [𝑣 𝑠 − 𝑣 (𝑠 )]2
+
+Actor 𝜋
+
+• Entropy bonus for exploration
+𝑠
+
+• Total Loss in Shared Network
+𝐿
+
+𝜃 =𝔼 𝐿
+
+𝜃 −𝑐 𝐿
+
+𝜋 𝑎 |𝑠
+𝜋
+
+Rollout Buffer
+
+ℋ𝜋
+
+Update Actor
+
+𝑎 |𝑠
+
+𝑟 𝜃
+𝑟
+Critic 𝑉
+
+𝜃 + 𝑐 ℋ 𝜋 (𝑠 )
+
+𝑣
+
+𝜃
+
+𝐿
+
+𝜙
+
+𝐴
+
+𝑠 , 𝑣 (𝑠
+
+)
+
+𝑠 ,𝑠
+Update Critic
+Using Shared Network
+
+𝐿
+
+PPO Algorithm
+# 전체 학습 iteration Loop
+# N개의 Actor에 대한 Loop
+# 고정된 old policy 𝜋
+
+로 T step 만큼 rollout하여 trajectory 수집
+
+# 수집한 trajectory에 대해 Advantage Ât 계산
+# actor data 수집 완료
+# 수집된 데이터로, minibatch 크기 M으로 K epoch 동안 𝜃 업데이트
+# 방금 업데이트된 θ를 다음 iteration에서 쓸 old policy 파라미터로 설정
+# 업데이트 반복 완료
+
+Agent Model
+PPO(
+policy,
+env,
+policy_kwargs=None,
+learning_rate=0.0003,
+gamma=0.99,
+n_steps=2048,
+batch_size=64,
+n_epochs=10,
+gae_lambda=1.0,
+clip_range=0.2,
+clip_range_vf=None,
+target_kl=None,
+normalize_advantage=False
+…
+)
+
+# policy 모델 (MlpPolicy, CnnPolicy, MultiInputPolicy)
+# 환경 (gym 또는 custom environment)
+# policy에 추가적으로 넘길 파라메터 딕셔너리
+# 학습률 (신경망의 가눙치를 업데이크하는 step의 크기)
+# discount factor 값
+# 각 environment에서 몇 step만큼 rollout을 진행해 transition을 수집할지 결정하는 파라미터
+# gradient update를 하기 위한 minibatch 사이즈
+# surrogate loss를 최적화하기 위한 epoch 수
+# TD(λ)의 λ를 지정하기 위한 파라메터 (0이면 TD(0), default=0.95)
+# clipped surrogate objective의 clipping coefficient 𝜀
+# value function update 시, 이전 value와의 차이를 제한하기 위한 clipping coefficient
+(OpenAI 자체 implementation)
+# policy update 동안 old policy와 new policy 사이의 KL divergence가 이 값을 넘어가면,
+더 이상 epoch을 반복하지 않고 early stopping을 수행하는 기준값
+# Advantage normalization
+
+CartPole: Algorithm 비교
+
+Pendulum 실습
+gym.make(“Pendulum-v1”)
+
+State and Action space
+
+https://www.gymlibrary.dev/environments/classic_control/pendulum
+
+(𝑥, 𝑦, 𝜃̇ )
+
+𝜏 (motor torque)
+
+Episode Truncation
+The episode truncates at 200 time steps.
+
+Rewards
+
+A2C 실습
+• Environment
+• State space and action space (Discrete or Continuous)
+• Critic
+• Policy evaluation with function approximation (Linear or Non-linear)
+• Actor
+• Policy gradient with parameterized policy (Softmax policy or Gaussian policy)
+• Learning Process:
+•
+•
+
+: Semi-Gradient Descent
+] : Policy Gradient Ascent
+
+LunarLander
+gym.make(“LunarLander-v2”)
+https://www.gymlibrary.dev/environments/box2d/lunar_lander/
+
+Action space
+Discrete
+Fire main thruster (0)
+Fire left thruster (1)
+Fire right thruster (2)
+Do nothing (3)
+
+Continuous
+main thruster [-1, 1]
+lateral thruster [-1, 1]
+
+State space
+• Lander coordinates (x, y)
+• Lander velocity (vx, vy)
+• Lander angle (θ)
+• Lander angular velocity (w)
+• Leg contacts (bleft, bright)
+
+Reward
+
+Episode End
+• Lander crashes
+• Lander gets outside of the viewport (x > 1)
+• Lander is not awake
+(mission completion or over time-limits)
+
+-0.3
+-0.03
+-100
+-100
+-∆dist(goal)
+∆dist(goal)
++10
++100
+
+for using main thruster
+for using side thruster
+for landing too fast
+for flying too far off-screen
+for moving away from the landing pad
+for moving toward the landing pad
+for each leg touching ground
+For landing successfully
+
+Environment
+import gymnasium as gym
+env_name = "LunarLander-v2"
+env = gym.make(
+env_name,
+continuous = False,
+
+continuous = True면 continuous actions이 사용된다.
+
+gravity = -10.0,
+enable_wind = False,
+wind_power = 15.0,
+turbulence_power = 1.5,
+)
+ref: https://github.com/openai/gym/tree/master/gymnasium/envs/
+
+Program code Example
+import gymnasium as gym
+from stable_baselines3 import PPO
+# Environment (ref: https://github.com/openai/gym/tree/master/gym/envs/)
+env = gym.make("LunarLander-v2")
+# Agent model (ref: https://github.com/DLR-RM/rl-baselines3-zoo/blob/master/hyperparams/)
+model = PPO("MlpPolicy", env, verbose=1)
+# Train
+model.learn(total_timesteps=100000)
+# Save
+model.save("model_lunarlander_ppo")
+
+Program code
+env = make_vec_env("LunarLander-v2", n_envs=16)
+model = PPO(
+policy="MlpPolicy",
+env=env,
+n_steps=512,
+batch_size=64,
+n_epochs=5,
+gamma=0.999,
+gae_lambda=0.98,
+ent_coef=0.01,
+verbose=0,
+tensorboard_log=“log/"
+)
+model.learn(total_timesteps=2_000_000, tb_log_name=“PPO")
+
+Evaluation
+# Environment
+env = gym.make("LunarLander-v2", render_mode="human")
+# Model
+model = DQN.load("model_lunarlander_ppo", env, verbose=1)
+# Run the model
+obs, _ = env.reset()
+for i in range(1000):
+action, _state = model.predict(obs)
+obs, reward, terminated, truncated, info = env.step(action)
+if terminated or truncated:
+obs, _ = env.reset()
+
+SAC (Soft Actor Critic)
+TRPO & PPO
+• stochastic policies
+
+TRPO
+
+DDPG
+
+Trust Region Policy
+Optimization
+
+• surrogate objective
+(clipping or penalty)
+• on-policy learning
+
+Deep Deterministic
+Policy Gradient
+
+PPO
+
+TD3
+
+Proximal Policy
+Optimization
+
+Twin Delayed
+DDPG
+
+• low sample efficiency
+SAC
+
+• stable
+
+Soft Actor Critic
+
+SAC
+• stochastic policies
+• entropy regularization
+• off-policy learning (replay buffer)
+• stable and sample efficiency
+
+DDPG & TD3
+• deterministic policies
+• off-policy learning (replay buffer)
+• better sample efficiency
+• action noise
+• unstable
+• TD3: clipped double Q-learning,
+delayed policy update, target
+policy smoothing regularization
+
+SAC (Soft Actor Critic)
+ICML 2018
+
+Abstract
+Model-free deep reinforcement learning (RL) algorithms have been demonstrated on a range of challenging decision making and
+control tasks. However, these methods typically suffer from two major challenges: very high sample complexity and brittle
+convergence properties, which necessitate meticulous hyperparameter tuning. Both of these challenges severely limit the
+applicability of such methods to complex, real-world domains. In this paper, we propose soft actor-critic, an off-policy actor-critic
+deep RL algorithm based on the maximum entropy reinforcement learning framework. In this framework, the actor aims to
+maximize expected reward while also maximizing entropy. That is, to succeed at the task while acting as randomly as possible.
+Prior deep RL methods based on this framework have been formulated as Q-learning methods. By combining off-policy updates
+with a stable stochastic actor-critic formulation, our method achieves state-of-the-art performance on a range of continuous control
+benchmark tasks, outperforming prior on-policy and off-policy methods. Furthermore, we demonstrate that, in contrast to other
+off-policy algorithms, our approach is very stable, achieving very similar performance across different random seeds.
+
+Entropy for exploration
+,
+
+~
+
+Policy 𝜋 의 Entropy
+
+(Gaussian policy)
+
+(Entropy-Regularized Policy)
+
+단순히 Q-value를 최대화하려는 경향을 반영하여
+𝜋가 구해지기 때문에 Q에서 가장 큰 값에 가까운 위치로
+평균 𝜇가 설정이 된다.
+
+단순히 Q를 최대화하려고 함과 동시에 무작위성을 최대화하려고 하기
+때문에 Mixture of gaussian 형태의 확률분포가 나오고 분포 역시
+넓어진다.
+
+Maximum Entropy RL
+• Standard RL maximizes the expected sum of rewards:
+
+• Maximum Entropy Reinforcement Learning:
+reward를 최대화면서 동시에 (exploration을 증대시키기 위한) entropy도 함께 최대화하는 Objective 설정
+Entropy가 클수록 다양한 actions이 취해지고 이를 통해 exploration을 수행
+
+reward
+
+entropy
+
+[참고] 정보량
+• 정보량 (Information Content)
+
+𝑥: 𝐵 가 알고 있는 정보, 𝐼 𝑥 = 0
+𝑥: 𝐵 가 모르는 정보, 𝐼 𝑥 > 0
+𝐵 에게 놀라운 (surprise) 정보
+(놀라운 정도 ↑, I 𝑥 ↑ )
+𝐵 에게 불확실한 (uncertain) 정보 (확률 ↓,
+I 𝑥 ↑)
+정보량 𝐼 𝑥
+
+발생확률 𝑃 𝑥
+
+[참고] 정보량
+• 주사위 예: 𝐴 → 𝐵
+- 𝑥 는 1이상 6이하이다.
+
+𝐼 𝑥≤𝑥≤6 =0 ⟹ 𝑃 𝑥≤𝑥≤6 =1
+
+- 𝑥 는 짝수다.
+
+𝐼 𝑥 = 2𝑘 > 0
+
+⟹ 𝑃 𝑥 = 2𝑘 = , ∃𝑘 ∈ ℤ
+
+- 𝑥 는 6이다.
+
+𝐼 𝑥=6 >0
+
+⟹ 𝑃 𝑥=6 =
+
+𝐼 정보 = 𝑓(𝑃(사건))
+• 주사위 예: 𝐴
+
+,
+
+𝐼 𝑥 = 6 = 𝐼 𝑥 = 2𝑘 + 𝛼
+
+정보량은 어떤 함수 𝑓 로 표현할 수 있다.
+
+𝐵
+
+- 𝑥 는 1이고 𝑥 는 2이다.
+
+I 𝑥 = 1, 𝑥 = 2 = 𝐼 𝑥 = 1 + 𝐼 𝑥 = 2
+⟹ 𝑓 𝑃 𝑥 = 1, 𝑥 = 2
+
+=𝑓 𝑃 𝑥 =1
+
++𝑓 𝑃 𝑥 =2
+
+𝑃 𝑥 = 1, 𝑥 = 2 = 𝑃 𝑥 = 1)𝑃(𝑥 = 2
+⟹ 𝑓 𝐴𝐵 = 𝑓 𝐴 + 𝑓(𝐵)
+곱을 합으로 변경하는 함수는?
+
+[참고] 정보량
+• Log함수 도입
+𝑓 𝑎
+
+= 𝑓 𝑎 𝑎 ⋯ 𝑎 = 𝑓 𝑎 + 𝑓 𝑎 + ⋯ 𝑓 𝑎 = 𝑛𝑓(𝑎), 𝑎 > 0, 𝑎 ≠ 1
+𝐼 𝑥 = − log 𝑃(𝑥)
+
+𝐼 정보 = 𝑓 𝑃 사건
+𝑓 𝑥 = − log 𝑥 |
+
+= − log 𝑥
+
+𝐼 𝑥 = − log 𝑃(𝑥)
+
+• 주사위 예
+- 𝐼 𝑥 ≤ 𝑥 ≤ 6 = − log 𝑃 𝑥 ≤ 𝑥 ≤ 6
+- 𝐼 𝑥 = 2𝑘 = − log 𝑃 𝑥 = 2𝑘
+- 𝐼 𝑥 = 6 = − log 𝑃 𝑥 = 6
+
+= − log (1) = 0
+
+= − log ( ) = 1
+= − log
+
+≈ 2.585
+𝑃(𝑥)
+
+[참고] 엔트로피 (Entropy)
+• 주사위 예 (1, 2, 3, 4, 5, 6)
+-𝑃 𝑥=1 =𝑃 𝑥=2 …=𝑃 𝑥=6 =
+- 기대값: 𝔼 𝑋 = 1
+
++2
+
++3
+
++4
+
++5
+
++6
+
+- 정보량: 𝐼 𝑋 = 1 = 𝐼 𝑋 = 2 … = 𝐼 𝑋 = 6 = − log
+- 엔트로피: 𝐴
+
+,
+
+….
+
+ℋ 𝑋 = 𝔼 𝐼(𝑋) =
+
+𝐵
+
+=
+
+𝑃 𝑋 = 𝑥 𝑥 = 3.5
+≈ 2.585
+
+평균 정보량
+𝑃 𝑋 = 𝑥 𝐼(𝑋 = 𝑥) : 𝑋 의 엔트로피(entropy) = ℋ(𝑋)
+
+ℋ(𝑋) ≈ 2.585 : 평균 정보량
+(A가 주사위를 끊임없이 던져 그 결과를 𝑥 , 𝑥 ,…와 같이 전달할 때 B가 전달받는 평균 정보량은 2.585가 된다)
+
+[참고] 엔트로피 (Entropy)
+ℋ 𝑋 = 𝔼 𝐼(𝑋) = 𝔼 − log (𝑃 𝑋 ) = 𝔼 log
+ℋ 𝑋 = −
+
+𝑃 𝑥 log 𝑃 𝑥
+
+ℋ 𝑋|𝑌 = 𝑦 =
+
+𝑃 𝑥|𝑦 𝐼 𝑥 𝑦 = −
+
+ℋ 𝜋(𝐴|𝑆 = 𝑠) = −
+ℋ 𝜋( |𝑠) = −
+
+=
+
+𝑃 𝑥 log
+
+1
+𝑃 𝑋
+1
+𝑃 𝑥
+
+𝑃 𝑥|𝑦 log 𝑃(𝑥|𝑦)
+
+𝑃 𝐴 = 𝑎|𝑆 = 𝑠 log 𝑃(𝐴 = 𝑎|𝑆 = 𝑠)
+
+𝜋 𝑎|𝑠 log 𝜋(𝑎|𝑠)
+
+⟵ 𝐼 𝑥 𝑦 = − log 𝑃(𝑥|𝑦)
+
+Maximum Entropy RL
+,
+
+~
+
+Soft Policy Iteration
+• 기존의 Bellman eq.에 entropy regularization term을 추가
+• Policy Evaluation using Bellman optimality equation
+𝑄 𝑠 ,𝑎
+
+← 𝑄 𝑠 ,𝑎
+
++ 𝛼(𝑟
+
++ 𝛾 max 𝑄(𝑠
+
+,𝑎
+
+)) − 𝑄 𝑠 , 𝑎
+
++𝛾 𝑉 𝑆
+
+− 𝑄 𝑠 ,𝑎
+
+• Soft Policy Evaluation
+𝑄 𝑠 ,𝑎
+
+← 𝑄 𝑠 ,𝑎
+
++ 𝛽(𝑟
+
+𝑉 𝑠
+
+≈𝔼
+
+𝑄 𝑠
+
+~
+
+,𝑎
+
+• Soft Policy Improvement
+𝑉 𝑠
+
+≈𝔼
+
+~
+
+𝑄 𝑠 ,𝑎
+
+− 𝛼 log 𝜋(𝑎 |𝑠 )
+
+− 𝛼 log 𝜋(𝑎
+
+|𝑠
+
+)
+
+SAC Network Architecture
+Agent
+Network
+
+Environment
+
+Value Loss
+Function
+
+Policy
+Entropy
+
+Target
+Network
+
+Critic
+Network
+
+Replay
+Buffer
+
+Agent Loss
+Function
+
+AILinkDeepTech, Feb 5, 2025
+
+SAC Objective Functions
+• Soft value function
+
+• Soft Q-function
+with
+
+• Policy
+(Add action noise)
+
+SAC (Soft Actor Critic) Algorithm
+
+Soft Actor Critic v2
+• Soft Q-function (최종버전: state-value V 대신 Q-value의 overestimation bias를 줄이기 위해 2개의 critics 𝑄 , 𝑄
+
+• Policy
+(Add action noise)
+
+사용)
+
+SAC v2 Entropy Adjustment
+• Automatic Entropy Adjustment
+• Temperature α는 다음과 같이 학습을 통해서 자동적으로 적응될 수 있도록 한다.
+Maximum Entropy RL을 Constraint optimization 문제로 설정
+
+SAC (Soft Actor Critic) Algorithm
+
+SAC with HER
+SAC(
+policy,
+env,
+policy_kwargs=None,
+learning_rate=0.0003,
+gamma=0.99,
+learning_starts=100,
+buffer_size=1_000_000,
+batch_size=256,
+train_freq=1,
+gradient_steps=1,
+tau=0.005,
+target_update_interval=1
+action_noise=None
+replay_buffer_class=None,
+replay_buffer_kwargs=None,
+ent_coef='auto'
+target_entropy='auto'
+…
+)
+
+# policy 모델 (MlpPolicy, CnnPolicy, MultiInputPolicy)
+# 환경 (gym 또는 custom environment)
+# policy에 추가적으로 넘길 파라메터 딕셔너리
+# 학습률 (신경망의 가눙치를 업데이크하는 step의 크기)
+# discount factor 값
+# 학습을 하기 전 random action으로 experience data를 수집할 step 수
+# replay buffer 크기
+# gradient update를 하기 위한 minibatch 사이즈
+# policy를 update하는 빈도 (n번의 interaction이 있은 후 에 학습 수행)
+# 각 학습단계 동안 수행할 gradient step 수
+# target network를 soft update하는데 사용되는 Polyak Averaging parameter
+# Target Q Network의 soft update 빈도 (1인 경우, Main Q Network가 update될 때마다 soft update)
+# exploration을 위한 action noise
+# 사용할 replay buffer (HerReplayBuffer 사용)
+# replay buffer에 전달할 추가 인자
+# entropy bonus coefficient α (auto는 α값을 자동 조절)
+# 목표 엔트로피 값 (최대 얼만큼의 exploration을 할 것인지 설정, auto인 경우 자동설정)
+
+def train(env_id, algo_class=SAC, log_base_dir="logs", model_base_dir="models"):
+# set arguments -------------------------------------------------------------------------...
+# create the environment -----------------------------------------------------------------env = gym.make(env_id, render=False)
+env = Monitor(env, os.path.join(callback_log_path, 'monitor.csv'))
+
+# set the model : https://github.com/DLR-RM/rl-trained-agents/tree/master/her -------------replay_buffer_kwargs=dict(n_sampled_goal=4, goal_selection_strategy="future", online_sampling=True, max_episode_length=env._max_episode_step
+model = algo_class(
+policy="MultiInputPolicy",
+env=env,
+buffer_size=1000000,
+learning_starts=1000,
+batch_size=256,
+policy_kwargs={'net_arch': [64, 64]},
+gamma=0.95,
+...
+replay_buffer_class=HerReplayBuffer,
+replay_buffer_kwargs=replay_buffer_kwargs,
+...
+)
+# train the model ----------------------------------------------------------------------------callback = SaveOnBestTrainingRewardCallback(check_freq=1000, log_dir=callback_log_path)
+model.learn(total_timesteps=20_000, callback=callback, progress_bar=True)
+# save the trained model ---------------------------------------------------------------------model.save(model_path)
+print("model saved to {}".format(model_path))
+# close the environment
+env.close()
+
+HER (Hindsight Replay Buffer)
+• Motivation
+□ Designing reward function is challenging
+Requires RL expertise and domain specific knowledge
+we could only learn from binary signals, like success or failure?
+
+□ Many applications with sparse rewards, i.e. observe success very rarely
+This significantly reduces the rate of learning with naïve use of continuous control algorithm like DDPG, PPO
+we could learn from failure in applications with sparse rewards?
+
+HER (Hindsight Replay Buffer)
+• Concept
+g (Desired goal)
+
+g
+g'
+
+g' (Achieved goal)
+
+(st , at, rt, st+1 ) in R
+
+(st ||g', at, rt', st+1 ||g') in R
+
+Standard Experience Replay
+
+Hindsight Experience Replay
+
+Goal-Conditioned MDP
+• Goal-Conditioned MDP
+
+• Standard MDP
+
+reward: 𝑟(𝑠 , 𝑎 , 𝑔)
+
+reward: 𝑟(𝑠 , 𝑎 )
+
+Q-value: 𝑄(𝑠 , 𝑎 , 𝑔)
+
+Q-value: 𝑄(𝑠 , 𝑎 )
+
+policy: 𝜋(𝑎 |𝑠 , 𝑔)
+
+policy: 𝜋(𝑎 |𝑠 )
+
+- Goal 을 state에 concat해서 새로운 state로 사용
+𝑠̃ = (𝑠 , 𝑔)
+- Transition (한 episode 내에서 goal 𝑔는 고정)
+𝑃 𝑠̃
+
+𝑠̃ , 𝑎
+
+=𝑃 𝑠
+
+- Replay Buffer
+(𝑠 | 𝑔, 𝑎 , 𝑟 , 𝑠
+
+|𝑔)
+
+,𝑔 | 𝑠 ,𝑔 ,𝑎
+
+= 𝑃(𝑠
+
+|𝑠 , 𝑎 )
+
+HER in stable-baselines3
+• GoalEnv
+observation = {
+'observation': np.array([...]),
+'achieved_goal': np.array([...]),
+'desired_goal': np.array([...])
+}
+
+# 실제 관측값
+# 현재 달성한 goal 𝑔
+# 원하는 목표 상태 𝑔
+
+= 𝑚(𝑠 )
+
+-
+
+achieved_goal 중 일부를 선택해서 새로운 desired_goal(𝑔 ) 로 사용
+(선택 전략)
+ㆍ final : 에피소드의 마지막 achieved_goal을 선택
+ㆍ future (가장 많이 쓰는 전략): 이후 시점들 {𝑡 + 1, 𝑡 + 2, … , 𝑇} 중에서 몇 개의 achieved_goal을 랜덤으로 선택
+ㆍ episode : 에피소드 전체 {1, 2, … , 𝑇}로부터 몇 개의 achieved_goal을 랜덤으로 선택
+ㆍ random : 에피소드와 관계없이 전체 replay buffer로부터 몇 개의 achieved_goal을 랜덤으로 선택
+
+-
+
+기존의 reward를 (𝑠 , 𝑎 , 𝑔 )로 다시 계산하여 (𝑠 | 𝑔 , 𝑎 , 𝑟
+
+,𝑠
+
+|𝑔 )를 replay buffer에 추가
+
+HER Algorithm
+
+Sample action a1:T using behavior policy
+Collected data Dk = {(s1:T,a1:T,r1:T,s‘1:T,sg)}
+
+Store data in replay buffer D ← D U Dk
+Perform hindsight relabeling:
+Relabel experience in Dk using last state as goal:
+Dk‘ = {(s1:T,a1:T,r‘1:T ,s‘1:T,sT)}
+Store relabeled data in replay buffer D ← D U Dk
+
+Update policy using replay buffer D
+
+QUESTIONS
+
+ANSWERS
+
+

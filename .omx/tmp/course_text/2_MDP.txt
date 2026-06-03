@@ -1,0 +1,1031 @@
+Markov Decision
+Process
+김현
+hyunkim@etri.re.kr
+
+목차
+• K-Armed Bandit Problem
+• Sequential Decision-Making Problem
+• Markov Decision Process
+• Agent and Environment
+• State
+• Action
+• Reward
+• Discounting
+
+Reinforcement Learning (Wikipedia)
+An area of machine learning inspired by behaviorist psychology,
+concerned with how software agents ought to take actions in an
+environment so as to maximize some notion of cumulative reward
+강화학습(reinforcement learning)이란 행동주의 심리학(behaviorist
+psychology)에 기반한 기계학습 영역으로서,
+에이전트(agents)가 어떤 환경(environment)에서
+누적보상(cumulative reward)을 최대화할 수 있도록 행동(actions)을
+취하는 순차적 의사결정(sequential decision making) 문제를
+해결하는 학습 방법이다.
+
+의사결정 (Decision Making) 문제
+• 강화학습은 에이전트(agents)가 어떤 환경(environment)에서 누적보상(cumulative reward)을
+최대화할 수 있도록 행동(actions)을 취하는 순차적 의사결정(sequential decision making)
+문제를 해결하는 학습 방법이다.
+• 비교적 간단한 의사결정 문제로 Multi-Armed Bandit Problem을 살펴본다.
+슬롯머신
+(Environment)
+
+행동
+(Action)
+
+정책
+(Policy)
+
+노름꾼
+(Agent)
+
+여러분이 카지노에 갔다.
+카지노에는 K개의 Slot Machine (Bandit)이 있다.
+한 번에 한 개의 슬롯머신의 Arm만 당길 수 있고
+총 H번의 시도를 할 수 있다.
+각 Slot Machine에서 받을 수 있는 보상(reward)은 다르다.
+이때 가장 많은 보상을 받기 위해서 어떻게 해야할까?
+평균보상
+550
+
+평균보상
+540
+
+평균보상
+200
+
+K-Armed Bandit Problem
+불확실성을 갖는 의사결정 (행동선택)
+Decision Making (Action Selection)
+under Uncertainty
+
+Agent
+K=3
+Actions
+Bandits
+
+Reward
+
+K-Armed Bandit Problem
+• 행동가치(Action Value): 행동을 취했을 때 예상되는 보상 (expected reward)
+
+행동가치함수(Action Value Function)
+∗
+
+Expected Reward
+Action a가 얼마나 좋았는지에 대한 모든
+가능한 보상값들의 평균(Expectation)
+
+행동선택(Action Selection)
+Agent
+
+∗
+
+Optimal policy
+행동가치함수, 즉 expected reward의
+기대값이 가장 큰 행동선택
+
+K=3
+Actions
+Bandits
+
+Reward
+
+K-Armed Bandit Problem
+If the treatment succeeds.
+reward = 1
+else:
+reward = 0
+
+행동가치함수 (Action Value Function)
+𝑄 (𝑎) =̇
+
+=
+
+𝒔𝒖𝒎 𝒐𝒇 𝒓𝒆𝒘𝒂𝒓𝒅𝒔 𝑤ℎ𝑒𝑛 𝑎 𝑡𝑎𝑘𝑒𝑛 𝑝𝑟𝑖𝑜𝑟 𝑡𝑜 𝑡
+𝒏𝒖𝒎𝒃𝒆𝒓 𝒐𝒇 𝒕𝒊𝒎𝒆𝒔 𝒂 𝑡𝑎𝑘𝑒𝑛 𝑝𝑟𝑖𝑜𝑟 𝑡𝑜 𝑡
+∑
+
+𝑅
+𝑡
+
+K-Armed Bandit Problem
+If the treatment succeeds.
+reward = 1
+O
+
+else:
+reward = 0
+
+행동가치함수 (Action Value Function)
+𝑄 (𝑎) =̇
+
+𝒔𝒖𝒎 𝒐𝒇 𝒓𝒆𝒘𝒂𝒓𝒅𝒔 𝑤ℎ𝑒𝑛 𝑎 𝑡𝑎𝑘𝑒𝑛 𝑝𝑟𝑖𝑜𝑟 𝑡𝑜 𝑡
+𝒏𝒖𝒎𝒃𝒆𝒓 𝒐𝒇 𝒕𝒊𝒎𝒆𝒔 𝒂 𝑡𝑎𝑘𝑒𝑛 𝑝𝑟𝑖𝑜𝑟 𝑡𝑜 𝑡
+
+= 1 / 1 = 1.0
+1.0
+
+K-Armed Bandit Problem
+If the treatment succeeds.
+reward = 1
+else:
+reward = 0
+
+O
+X
+
+행동가치함수 (Action Value Function)
+𝑄 (𝑎) =̇
+
+𝑠𝑢𝑚 𝑜𝑓 𝑟𝑒𝑤𝑎𝑟𝑑𝑠 𝑤ℎ𝑒𝑛 𝑎 𝑡𝑎𝑘𝑒𝑛 𝑝𝑟𝑖𝑜𝑟 𝑡𝑜 𝑡
+𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑡𝑖𝑚𝑒𝑠 𝑎 𝑡𝑎𝑘𝑒𝑛 𝑝𝑟𝑖𝑜𝑟 𝑡𝑜 𝑡
+
+= 1 / 2 = 0.5
+0.5
+
+K-Armed Bandit Problem
+If the treatment succeeds.
+reward = 1
+else:
+reward = 0
+
+O
+X
+
+O
+
+행동가치함수 (Action Value Function)
+𝑄 (𝑎) =̇
+
+𝑠𝑢𝑚 𝑜𝑓 𝑟𝑒𝑤𝑎𝑟𝑑𝑠 𝑤ℎ𝑒𝑛 𝑎 𝑡𝑎𝑘𝑒𝑛 𝑝𝑟𝑖𝑜𝑟 𝑡𝑜 𝑡
+𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑡𝑖𝑚𝑒𝑠 𝑎 𝑡𝑎𝑘𝑒𝑛 𝑝𝑟𝑖𝑜𝑟 𝑡𝑜 𝑡
+
+= 1 / 1 = 1.0
+0.5
+
+1.0
+
+0. 0
+
+K-Armed Bandit Problem
+If the treatment succeeds.
+reward = 1
+else:
+reward = 0
+
+O
+X
+
+O
+
+X
+
+행동가치함수 (Action Value Function)
+𝑄 (𝑎) =̇
+
+𝑠𝑢𝑚 𝑜𝑓 𝑟𝑒𝑤𝑎𝑟𝑑𝑠 𝑤ℎ𝑒𝑛 𝑎 𝑡𝑎𝑘𝑒𝑛 𝑝𝑟𝑖𝑜𝑟 𝑡𝑜 𝑡
+𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑡𝑖𝑚𝑒𝑠 𝑎 𝑡𝑎𝑘𝑒𝑛 𝑝𝑟𝑖𝑜𝑟 𝑡𝑜 𝑡
+
+= 0 / 1 = 0.0
+0.5
+
+1.0
+
+0. 0
+
+K-Armed Bandit Problem
+If the treatment succeeds.
+reward = 1
+else:
+reward = 0
+
+행동가치함수 (Action Value Function)
+𝑠𝑢𝑚 𝑜𝑓 𝑟𝑒𝑤𝑎𝑟𝑑𝑠 𝑤ℎ𝑒𝑛 𝑎 𝑡𝑎𝑘𝑒𝑛 𝑝𝑟𝑖𝑜𝑟 𝑡𝑜 𝑡
+𝑄 (𝑎) =̇
+𝑛𝑢𝑚𝑏𝑒𝑟 𝑜𝑓 𝑡𝑖𝑚𝑒𝑠 𝑎 𝑡𝑎𝑘𝑒𝑛 𝑝𝑟𝑖𝑜𝑟 𝑡𝑜 𝑡
+
+O
+X
+
+O
+X
+
+O
+
+X
+O
+X
+0.25
+
+X
+
+O
+X
+
+O
+0.75
+
+0. 5
+
+K-Armed Bandit Problem
+의사는 환자에게 처방을 무작위로 하지 않는다.
+현재 가장 좋다고 생각되는 처방을 할 것이다.
+
+0.25
+
+0.75
+
+0.5
+
+만약 겨울철에는 처방 Y보다 B가 더 효과적이라고
+가정해보자.
+
+0.25
+greedy action
+
+0.75
+
+0.9
+
+Exploration vs. Exploitation
+ Exploitation (활용)
+• 현재까지 알고 있는 정보 (또는 경험)를 기반으로 최선의 행동을 취한다. (Shot-term benefit)
+
+ Exploration (탐색)
+• 아직 알려지지 않은 행동을 시도하여 새로운 정보 (또는 경험)를 얻는다. (Long-term benefit)
+Exploitation: 가장 잘 터지는 슬롯머신에서 게임을 한다.
+Exploration: 새로운 슬롯머신에 가서 게임을 시도해본다.
+Exploitation: 늘 가던 단골식당에 간다.
+Exploration: 안 가본 식당에 가본다.
+Exploitation: 가장 성공적인 광고를 한다.
+Exploration: 기존과는 다른 광고를 해본다.
+
+Exploration 방법 예
+• ε-Greedy 방법: ε 확률로 다른 행동을 탐색(exploration)
+ε = 1/6
+임의로 Bandit을 탐색
+(exploration)
+
+가장 좋은 Bandit을 선택
+(exploitation)
+
+• Upper Confidence Bound (UCB) 방법: 선택된 횟수가 적은 행동(action)을 탐색(exploration)
+t : 현재까지 취한 모든 action의 횟수
+𝑁 (𝑎): 현재까지 a를 선택했던 횟수
+
+c : 탐색(exploration)을 조정하는 변수 (c가 클수록 더 많은 탐색)
+(행동 𝑎 를 선택한 횟수 𝑁 (𝑎)가 적을수록 (즉, 덜 탐색되었을수록) 더 큰 값이 더해진다.)
+
+순차적 의사결정 (Sequential Decision Making) 문제
+
+상태(state)가 고정된 환경으로 변화하지 않으며,
+각 의사결정이 독립적으로 이루어진다.
+
+어떤 의사결정을 하느냐에 따라 상태(state)가 변하고
+이러한 상태변화에 따라 다음 의사결정이 이루어진다.
+
+state 1
+
+action 1
+
+action 2
+
+state 2
+
+state 3
+
+state 4
+
+한번의 행동에 따른 의사결정이 아닌 순차적인 행동들에
+따른 의사결정 문제를 순차적 의사결정 (Sequential
+Decision Making) 문제라고 한다.
+순차적 의사결정 문제는 한번의 보상이 아닌
+누적된 보상(Cumulated Reward)이 고려된다.
+
+환경과의 상호작용
+Observation
+상태인식
+(보기, 듣기, 냄새맡기 …)
+
+sensor
+
+actuator
+
+Action
+행동
+Agent
+
+(걷기, 뛰기, 먹기 …)
+
+Environment
+
+토끼는 처음 태어나면서 걷는 것 조차 못하지만 환경과의 상호작용을 통해 행동을 배워간다.
+환경과의 상호작용으로부터 어떻게 배울 것인가의 중심에 “보상(Reward)”이 있다
+
+보상 (Reward)
+• 보상(Reward) Rt 는 에이전트가 어떤 행동(Action)을 취했을 때 그 행동이 얼마나 좋은 행동이었
+는지를 알려주는 일종의 scalar feedback signal이다.
+• 순차적 의사결정 문제에서 에이전트가 목표를 달성하기 위해서는 각 시간 단계에서 얻게 되는
+누적 보상을 최대화하는 의사결정(행동선택)을 해야 한다 (Reward Hypothesis).
+• 보상은 행동을 취한 후 바로 발생하지 않고, 지연되어 발생할 수 있다.
+Definition (Reward Hypothesis)
+All goals can be described by the maximization of expected cumulative sum of
+a received scalar signal
+
+(가설) 학습을 위해 어떤 행동이 얼마나 좋은지 나쁜지를 판단하는 적절한 보상함수가 주어지면,
+에이전트는 시간에 따라 누적되는 보상의 기대값을 최대화함으로써 목표를 달성할 수 있다.
+
+확률과정 (Stochastic Process)
+• 순차적 의사결정 과정은 일반적으로 stochastic process (random process)에 기반한다.
+Stochastic process: 매 시간마다 확률적으로 다른 결과 (random variables)를 얻는 일련의 과정
+Stochastic process
+random variables
+, , ,…
+Stochastic dynamics
+(Transition Probability)
+
+S1
+
+S2
+
+S3
+
+S4
+
+S5
+
+맑음
+
+흐림
+
+흐림
+
+비
+
+?
+
+ℙS
+ℙS
+ℙS
+
+= 비 | S = 맑음, S = 흐림, S = 흐림, S = 비 = 0.4
+= 흐림 | S = 맑음, S = 흐림, S = 흐림, S = 비 = 0.5
+= 맑음 | S = 맑음, S = 흐림, S = 흐림, S = 비 = 0.1
+
+마코프 특성 (Markov Property)
+• Stochastic process에서 현재 상태에서 다음 상태를 예측하기 위해서는 과거 상태들의 history가
+필요하다. 하지만 다음 상태를 예측하기 위해 과거의 모든 상태를 알고 있어야 하나?
+Markov Assumption:
+current state depends only on a finite history of past states
+S1
+
+S2
+
+S3
+
+S4
+
+S5
+
+The first order Markov model
+ℙS
+
+|S , … , S = ℙ S
+
+|S
+
+The second order Markov model
+S1
+
+S2
+
+S3
+
+S4
+
+S5
+
+ℙS
+
+|S , … , S = ℙ S
+
+|S , S
+
+마코프 특성 (Markov Process)
+• 현재 상태(state)가 주어졌을 때, 미래 상태의 조건부 확률분포는 과거 상태에 영향을 받지 않고
+독립적으로 현재 상태로만 결정되는 성질을 Markov Property라고 한다.
+
+오늘의 날씨: W ∈ {맑음, 흐림, 비, 눈} 일 때 내일의 날씨는?
+
+ℙ = [𝑤
+
+|𝑤 = 맑음, … , 𝑤
+
+= 흐림, 𝑤 = 비] = ℙ[𝑤
+
+윷놀이: 지금 말의 위치가 𝑂 일 때, 다음 위치는?
+
+ℙ = [𝑙
+
+|𝑙 , 𝑙
+
+,𝑙
+
+, … ] = ℙ[𝑙
+
+|𝑙 = 𝑂]
+
+|𝑤 = 비]
+
+마코프 프로세스 (Markov Process)
+• Markov process는 Markov property를 따르는 이산시간(discrete time) 확률과정(stochastic
+process)이다.
+• Discrete time: 시간이 연속적으로 변하지 않고 이산적으로 변함을 의미 (Continuous time 역시 고려될 수 있음)
+• Stochastic process: 시간에 따라 어떤 사건이 발생할 확률이 변화하는 과정
+
+• Markov process (Markov chain, memoryless process)
+
+마코프 프로세스 (Markov Process)
+
+마코프 결정 프로세스 (Markov Decision Process)
+• 의사결정 문제에 Markov process를 이용한 모델이며, 기존 Markov process에 행동(action)의
+개념이 추가되고 그 행동의 결과에 따른 보상(reward)을 함께 고려한다.
+• Markov Decision Process(MDP)는 <S, A, P, R, γ>라는 Tuple로 정의된다.
+
+마코프 결정 프로세스 (Markov Decision Process)
+
+• 3 states: , ,
+• 2 actions: ,
+• 2 rewards: +1, -1
+•
+
+= ?? 0.3
+
+•
+
+= ?? +1
+
+MDP in Grid World
+• States
+• Actions
+• State transition probability
+( , )( , )
+
+( , )( , )
+
+( , )( , )
+
+• Reward
+( , )( , )
+
+( , )( , )
+
+( , )( , )
+
+(c is a small negative value)
+
+강화학습이란?
+• 강화학습은 Markov Decision Process에 기반한다.
+-
+
+환경으로부터 관찰을 하고 (Observation), 관찰된 결과로부터 현재 환경이 어떤지를 알아내고 (State)
+
+-
+
+지금 해야 할 가장 최선의 행동을 결정하고 (Action)
+
+-
+
+그 결과가 어떤 지를 확인하고 (Reward), 자신이 갖고 있던 State에 대한 정보를 바꾼다 (State
+Transition).
+이러한 과정이 반복되면서 경험을 쌓게 되고 이를 통해 자신의 행동을 취하게 된다.
+
+-
+
+• 강화학습은 에이전트(agents)가 환경(environment)과의 지속적인 상호작용을 통해 누적보상
+(cumulative reward)이 최대가 되는 최적의 의사결정 또는 행동(actions)을 찾아가는 과정이다.
+
+강화학습 모델 및 학습 목표
+Model
+
+Goal
+
+Markov Decision Process
+
+Optimal policy to maximize future rewards
+Future Reward
+
+Discounted Future Reward
+현재 보상과 앞으로 받을 보상에 대한 차별을 주고 계산된 보상
+
+1 (State)
+
+Agent observes a state St
+
+Value Function
+
+2 (Action)
+
+Agent tasks an action At
+
+미래에 얻을 수 있는 보상의 합에 대한 기대값
+
+3 (Transition)
+
+Agent goes into a next state St+1
+
+4 (Reward)
+
+Agent receives a reward Rt+1
+
+Policy
+
+5 (Repeat)
+
+Agent tasks another action At+1, and Repeat
+
+Policy: 𝜋(s) -> a,
+
+What action should take in a state?
+
+∗
+
+𝜋 Optimal policy:
+
+The policy to maximize the long-term expected reward
+
+강화학습 기본 모델
+
+state
+
+강화학습 기본 모델
+
+state
+
+action
+
+강화학습 기본 모델
+
+state
+
+action
+
+강화학습 기본 모델
+
+state
+
+reward
+
+action
+
+강화학습 기본 모델
+Agent
+state
+
+Reward
+
+𝒕
+
+𝒕
+
+Action
+𝒕
+
+𝒕
+𝒕
+
+S0
+
+A0
+
+R1
+
+S1
+
+Environment
+
+A1
+
+R2
+
+S2
+
+A2
+
+R3
+
+S3
+
+………..
+
+마코프 결정 과정 (Markov Decision Process)
+• 에이전트(Agent)는 의사결정자,
+즉 우리가 개발할 학습기(Learner)가 된다.
+• 환경(Environment)은 에이전트가 상호작용하는 외부환경이다.
+• 상태(State, S)란 환경의 상태이며,
+임의의 시점에서 환경을 가장 잘 표현할 수 있는 정보이다.
+• 행동(Action, A): 에이전트가 환경과의 상호작용을 위해 취한 행동이다.
+• 보상(Reward, R): 에이전트가 취한 행동을 통해서 환경으로부터 받는 보상으로서 특정 수치값이다.
+• 상태전이(State Transition, P): 어떤 상태에서 에이전트가 행동을 취하면 다른 상태로 변경이 되는
+데 이러한 상태의 변화를 State Transition이라고 한다.
+• 감가율(Discount factor, γ): 에이전트가 어떤 행동으로 지금 당장 받는 보상뿐만 아니라 미래에 받
+을 보상도 함께 고려하기 위한 계수이다. 0과 1 사이의 값이다.
+
+에이전트 (Agent)
+Intelligence
+
+• Brain (Intelligence)
+• 강화학습을 이용해 우리가 만들고 싶은 것
+• 일종의 알고리즘으로서 action을 선택하는 주체
+
+에이전트(Agent)와 환경(Environment)
+Agent
+
+• At each time t, the agent:
+• Executes action At
+• Receives observation Ot
+• Receives reward Rt
+
+• The Environment:
+• Receives action At
+• Emits observation Ot
+• Emits reward Rt
+
+Environment
+
+상태(State)
+• 상태(state)는 환경의 상황을 나타내는 정보이다.
+• State는 environment state, agent state 및 information state로 구분할 수 있다.
+이들 3개의 state는 같은 현실을 표현하지만 관점이 다르다.
+- Environment state: 환경 전체에 대한 모든 정보
+- Agent state: 에이전트가 알고 있는 환경에 대한 정보
+- Information state: 에이전트가 의사결정을 하기 위해 사용하는 최소한의 정보
+
+Environment State
+• Environment state 𝑆 는 말 그대로
+에이전트가 상호작용하는 환경의 전체
+상태를 표현한 것이다.
+• Environment state는 에이전트에게
+보여지지 않을 수 있으며, 보여지더라도
+일부가 보여지거나 관련 없는 정보가
+포함되어 있을 수 있다.
+(환경이 에이전트에게 다음 observation과
+reward를 알려주기 위해 필요한 모든
+정보이다)
+
+Agent State
+• Agent state 𝑆 는 에이전트가 환경을
+인식하는 내부적 표현이다.
+• 현재 상태는 에이전트가 과거 어떤 행동을
+취했고 그에 따라 어떻게 환경이
+변해왔는지에 따라 결정된다. 이 일련의 과정
+(the sequence of observations, actions,
+rewards)을 History라고 하고 Agent state는
+
+history의 함수다.
+State 𝑆 = 𝑓(𝐻 )
+History 𝐻 = 𝐴 , 𝑂 , 𝑅 , … 𝐴
+
+,𝑂 ,𝑅
+
+(Agent state는 에이전트가 다음 action을
+선택하기 위해 사용되는 모든 정보이며
+강화학습 알고리즘에 의해서 사용되는
+정보라고 할 수 있다)
+
+Information State
+• Information state (또는 Markov state)는 Agent state 내 모든 history로부터 행동을 선택하기
+위해 필요한 최소한의 정보를 담고 있는 수학적으로 표현된 상태이다.
+
+• 현재의 state가 주어지면 그동안의 과거 history는 미래와 관련이 없다.
+:
+
+:
+
+State 설계
+
+Environment
+
+Raw State
+이미지, 센서데이터
+
+• 의사결정 (행동 선택)에 영향을 주는 환경 상황에
+대한 모든 정보
+• 환경에 대한 정보를 어떤 형태로 포함할 것인가?
+
+데이터의 복잡성을 줄이거나 잡음을
+제거하기 위한 초기 처리
+
+Designed State
+다운사이징, 서브샘플링, 그레이스케일
+
+- 스칼라(rank-0 tensor): 온도
+
+의미 있는 정보로 변환
+(Feature Extraction)
+
+- 벡터(rank-1 tensor): [위치, 속도, 가속도]
+- 행렬(rank-2 tensor): 그레이스케일 이미지 픽셀
+
+Designed State
+High-level state (예: 위치, 속도)
+
+- 데이터큐브(rank-3 tensor): RGB 픽셀
+
+• 문제에 대한 배경지식을 이용하여 학습에 유용한
+정보를 추출
+
+알고리즘이 처리하기에 적합한 형태로의
+한단계 더 처리된 상태로 변환
+
+Preprocessed State
+정규화, 차원축소, 적층 등
+
+Agent
+
+Algorithm
+
+State Transition Probability
+• 주어진 현재 상태에서 다음 상태로 전이될 확률
+(환경의 불확실성에 대한 고려)
+State Transition Probability in MP
+𝑃
+
+= 𝑝 𝑠 𝑠 = 𝑝(𝑆
+
+r'
+s
+
+= 𝑠 |𝑆 = 𝑠)
+
+𝑎
+
+0.4
+0.6
+
+r''
+
+State Transition Probability in MDP
+𝑃
+
+r'1
+
+= 𝑃(𝑆
+
+0.2
+
+= 𝑠 |𝑆 = 𝑠, 𝐴 = 𝑎)
+
+s
+𝑝(𝑠 , 𝑟|𝑠, 𝑎)
+∈ℛ
+
+S''
+
+𝑝 𝑠 𝑠, 𝑎 = 0.4
+=
+𝑝 𝑠 , 𝑟′ 𝑠, 𝑎 = 0.4
+
+r'2
+
+= 𝑝 𝑠 𝑠, 𝑎
+
+=
+
+S'
+
+𝑎
+
+r‘’1
+
+𝑝 𝑠 , 𝑟′ 𝑠, 𝑎 = 0.4
+
+0.8
+0.4
+0.6
+
+r‘’2
+
+S'
+S''
+
+𝑝 𝑠 , 𝑟 , 𝑎 = 0.08
+𝑝 𝑠 , 𝑟 𝑠, 𝑎 = 0.32
+
+Fully vs. Partially Observable Env.
+ Fully observable: agent directly
+observes environment state
+agent state = environment state
+
+𝑆
+
+ Partially observable: agent indirectly
+observes environment.
+agent state ≠ environment state
+
+𝐴
+
+𝑅
+
+𝑅
+Fully
+Observable
+Environment
+
+𝐴
+
+𝑂
+
+𝑆
+
+Partially
+Observable
+Environment
+
+POMDP (Partially Observable MDP)
+
+보상 (Reward)
+• 보상(Reward) Rt 는 에이전트가 어떤 행동(Action)을 취했을 때 그 행동이 얼마나 좋은 행동이었
+는지를 알려주는 일종의 scalar feedback signal이다.
+• 강화학습 이론은 ‘에이전트의 모든 Goal은 reward라고 하는 하나의 scalar로 설명할 수 있다’는
+Reward Hypothesis를 기반으로 한다.
+Definition (Reward Hypothesis)
+All goals can be described by the maximization of expected cumulative sum of
+a received scalar signal
+
+(가설) 학습을 위해 어떤 행동이 얼마나 좋은지 나쁜지를 판단하는 적절한 보상함수가 주어지면,
+에이전트는 시간에 따라 누적되는 보상의 기대값을 최대화함으로써 목표를 달성할 수 있다.
+• 따라서 강화학습으로 문제를 해결하기 위해서는 이 reward를 어떻게 설정할 것인지, 즉 reward
+shaping이 사람의 supervision이 된다.
+
+보상(Reward)의 예
+𝑹 𝒔, 𝒂 = -1
+Start
+0
+
+0
+
+0
+
+0
+
+0
+
+𝑅 𝑠 =-10
+
+0
+
+𝑅 𝑠 =-10
+
+0
+
+0
+
+0
+
+𝑅 𝑠 =-10
+
+𝑅 𝑠 =-10
+
+0
+
+0
+
+𝑅Goal
+𝑠 =
+𝑹 𝒔 =10
+
+Expected Reward
+• State-Action 쌍에 대한 Expected Reward
+- 𝑠에서 𝑠′ 또는 𝑠′′ 로 전이될 때 Expected reward:
+
+𝑅 = 𝑟 𝑠, 𝑎
+= 𝔼[𝑅
+
+|𝑆 = 𝑠, 𝐴 = 𝑎]
+
+𝔼𝑅
+
+= 0.2 𝑟 + (0.8 𝑟 )
+
+𝔼𝑅
+
+= 0.5 𝑟
+
++ (0.5 𝑟
+
+𝑟 𝑝(𝑟|𝑠, 𝑎)
+∈ℛ
+
+r'1
+
+𝑝 𝑠 , 𝑟 𝑠, 𝑎 = 0.4
+𝑝 𝑠 , 𝑟 𝑠, 𝑎 = 0.6
+
+0.8
+
+0.2
+
+)
+
+- 𝑠에서 𝑠′ 또는 𝑠′′ 로의 전이확률:
+
+=
+
+r'2
+
+s
+
+0.4
+0.6
+
+𝑎
+0.5
+
+r‘’1
+
+0.5
+
+r‘’2
+
+- 전체 expected reward
+
+=
+
+𝑟
+∈ℛ
+
+𝑝(𝑠 , 𝑟|𝑠, 𝑎)
+
+𝔼 𝑅 = ( 0.2 𝑟 + (0.8 𝑟 )) 0.4 + ( 0.5 𝑟
+
++ (0.5 𝑟 )) 0.6
+
+∈
+
+(일반적으로 reward는 확률적으로 변하지 않는 것으로 가정)
+
+S'
+S''
+
+이득 (Return)
+• Episode가 끝났을 때 받은 모든 Reward
+
+• Return을 최대화하는 것이 에이전트의 Goal이다.
+maximize the expected return
+
+에피소드 (Episode)
+• Episode: 시작 상태(Start State)에서 마지막 상태(Terminal State)까지의 과정
+• Episodic task는 여러 개의 다양한 episode들이 만들어지는 Task이다.
+
+Continuing Tasks
+• Terminal State가 없는 Task
+
+Discounting
+
+Discounting
+
+: Discount factor (0 ≤
+
+< 1)
+
+• 무한한 Return 값을 유한 값으로 유지
+• 학습의 수렴성 향상
+• 미래의 불확실성의 반영
+• 실세계의 시간 가치 반영
+
+Discounting
+
+Finite as long as 0 ≤
+
+<1
+
+Discounting
+
+𝐺 = 1 + γ + γ2 + γ3 +…
+γGt = γ + γ2 + γ3 + γ4+…
+= Gt - 1
+𝐺 =
+
+Converging geometric series when
+
+<1
+
+Discounting
+
+에이전트는 즉각적인 보상에만 관심을 둔다 (Short-sighted agent)
+
+에이전트는 미래 보상을 매우 크게 고려한다. (Long-sighted agent)
+
+Discounted Return
+• 현재 받은 reward와 미래에 받을 reward에 차이를 두기 위해 discount factor
+를 고려한 이득(Return)
+
+QUESTIONS
+
+ANSWERS
+
+

@@ -1,0 +1,2 @@
+timesteps,mean_return,completion_rate,collapse_rate,extraction_rate,avg_steps,avg_target_displacement,avg_neighbor_motion,avg_contact_steps
+1000.0,15.385926567874254,0.8,0.0,0.8,28.8,0.0938284933567047,0.007966366552864201,19.4

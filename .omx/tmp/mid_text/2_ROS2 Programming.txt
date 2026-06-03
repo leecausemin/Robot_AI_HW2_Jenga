@@ -1,0 +1,654 @@
+ROS2 설치 및
+프로그래밍 기초
+김현
+hyunkim@etri.re.kr
+
+What to do
+• Introduce ROS (Robot Operating System)
+• Install ROS2 Humble
+• Setup ROS2 development environment
+• Program ROS2 nodes
+• Build and execute ROS2 package
+• ROS2 log messages
+
+ROS 탄생 배경
+Willow Garage, located in Menlo Park, California,
+released ROS
+On 7th November 2007 4:07:42 p.m. PT
+
+ROS (Robot Operating System)
+Robot Operating System (ROS) is an open-source robotics middleware suite. Although ROS is not
+an operating system (OS) but a set of software frameworks for robot software development, it
+provides services designed for a heterogeneous computer cluster such as hardware abstraction,
+low-level device control, implementation of commonly used functionality, message-passing
+between processes, and package management.
+
+Communication
+middleware
+
+분산 Node간 통신 지원
+(Message-passing system)
+
+로봇 응용개발을 위한
+개발자 도구 지원
+
+다양한 로봇 소프트웨어
+구성 요소 제공
+
+전세계 로봇 개발자를 위한
+ROS 커뮤니티 지원
+
+ROS Tools
+
+RQt
+
+ROSBag
+
+RViz
+
+Gazebo
+
+Support to ROS Community
+
+https://www.ros.org/blog/getting-started
+
+ROS Map
+
+http://metrorobots.com/rosmap.html
+
+ROS History: ROS1
+https://wiki.ros.org/Distributions
+
+ROS1의 종료 (python 2.7과 운명을 같이함)
+
+ROS History: ROS2
+Humble
+Hawksbill
+
+Iron
+Irwini
+
+2022.07
+
+2023.05
+
+2024.05
+
+2025.05
+
+(2027)
+
+(2024.11)
+
+(2029.05)
+
+(2026.12)
+
+https://docs.ros.org/en/humble/Releases.html
+
+Goals of ROS2
+• ROS1의 개정된 버전이 아닌, 개념은 같지만 완전히 다른 새로운 소프트웨어 플랫폼
+
+https://design.ros2.org/articles/why_ros2.html
+
+ROS2 Architecture
+
+ROS2 Default
+
+Commercial (RTI)
+
+Commercial (ADLink)
+
+DDS: Data Distribution Service
+실시간 분산 시스템에서 데이터를
+교환하고 통신하기 위한 미들웨어 표준
+
+Install ROS2 Humble
+• Install Humble
+https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html
+(python 3.10.x)
+
+• .bachrc setting
+# for ROS2
+export LANG=en_US.UTF-8
+source /opt/ros/humble/setup.bash
+
+• Check
+$ ros2
+
+Install ROS2 Build System
+• Install Colcon the ROS 2 build system with mixin:
+(Mixin: colcon 빌드 도구에서 사용되며, 매번 길게 입력해야 하는 빌드 설정들을 묶어서 관리하도록 지원)
+$ sudo apt install python3-colcon-common-extensions
+$ sudo apt install python3-colcon-mixin
+$ colcon mixin add default
+https://raw.githubusercontent.com/colcon/colcon-mixinrepository/master/index.yaml
+$ colcon mixin update default
+
+Add source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash to your ~/.bashrc
+
+Install Gazebo
+• Install Gazebo
+$ sudo apt-get update
+$ sudo apt install -f ros-humble-gazebo-ros-pkgs
+$ gazebo –verbose
+Gazebo multi-robot simulator, version 11.10.2
+Copyright (C) 2012 Open Source Robotics Foundation.
+Released under the Apache 2 License.
+http://gazebosim.org
+Gazebo multi-robot simulator, version 11.10.2
+Copyright (C) 2012 Open Source Robotics Foundation.
+Released under the Apache 2 License.
+http://gazebosim.org
+
+Install Gazebo
+• Add the followings to ~/.bashrc
+# For Gazebo
+export GAZEBO_MODEL_PATH=/usr/share/gazebo-11/models
+export GAZEBO_RESOURCE_PATH=/usr/share/gazebo-11
+export GAZEBO_PLUGIN_PATH=/opt/ros/humble/lib
+
+• Execute the gazebo simulator
+$ gazebo /usr/share/gazebo-11/worlds/seesaw.world
+
+Install MoveIt2
+• Install MoveIt2 for ROS2 Humble on Ubuntu 22.04
+$ sudo apt install ros-humble-moveit
+$ sudo apt install ros-humble-rmw-cyclonedds-cpp
+Add
+
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+
+to your ~/.bashrc
+
+• Install MoveIt2 Tutorials
+(Humble, Iron –stable)
+https://moveit.picknik.ai/humble/doc/tutorials/getting_started/getting_started.html
+(Rolling, Humble, Iron –unstable)
+https://moveit.picknik.ai/main/doc/tutorials/getting_started/getting_started.html
+
+Install ROS2 packages
+• ROS2 Control
+$ sudo apt install ros-humble-ros2-control
+
+• ROS2 Controllers
+$ sudo apt install ros-humble-ros2-controllers
+$ sudo apt install ros-humble-gripper-controllers
+
+• Gazebo-ROS2
+$ sudo apt install ros-humble-gazebo-ros2-control
+
+• XACRO
+$ sudo apt install ros-humble-xacro
+
+Necessary packages
+• Install ros-dep
+$ sudo apt-get install python3-rosdep
+$ sudo rosdep init
+$ rosdep update
+$ sudo apt update
+$ sudo apt dist-upgrade
+
+package 설치 후 이 package에 필요한 dependencies를 설치 시
+$ rosdep install --from-paths src -y --ignore-src
+
+• Install joint-state-publisher-gui
+$ sudo apt install ros-humble-joint-state-publisher-gui
+
+Setup ROS2 Build System
+• Build System은 SW 개발에서 개발자가 프로그램 언어로 작성한 소스코드를 컴퓨터에서 실행 가능한 프로그램으로
+만드는 일련의 과정을 자동화하는 도구 및 전체 프로세스이다. (예: CMake, Maven, MSBuild, Ant, python setuptools, Poetry 등)
+• ROS 2는 CMake 기반의 ament라는 Build System을 사용하며, colcon을 Build를 위한 command line tool로 사용
+- ament: 기존 CMake 기반의 C++뿐만 아니라 Python 패키지도 함께 ROS 2 환경 내에서 일관된 방식으로 빌드 및
+설치될 수 있도록 하는 규칙과 절차 (ament_cmake, ament_python)
+- colcon: 여러 개의 ROS 2 패키지를 적절한 순서로 빌드하고, 의존성 관리, 테스트, 패키징, 배포 등을 위한 Build tool
+$ sudo apt update
+$ sudo apt install python3-colcon-common-extensions
+• .bachrc setting
+# for ROS2
+export LANG=en_US.UTF-8
+source /opt/ros/humble/setup.bash
+source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
+
+[참고] set ~./bashrc
+...
+# for ROS2
+export LANG=en_US.UTF-8
+source /opt/ros/humble/setup.bash
+source /usr/share/colcon_argcomplete/hook/colcon-argcomplete.bash
+# for Gazebo
+export GAZEBO_MODEL_PATH=/usr/share/gazebo-11/models
+export GAZEBO_RESOURCE_PATH=/usr/share/gazebo-11
+export GAZEBO_PLUGIN_PATH=/opt/ros/humble/lib
+# for MoveIt2
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+
+ROS 주요 용어 정리
+• 노드(Node): 최소 단위의 실행 가능한 프로세스 (프로그램)
+(예) 경로계획 노드, 영상처리 노드, 모터제어 노드 …
+
+[참고] 실행파일(Executable): ROS2 Runtime에서 호출되는 실행 가능한 프로그램 (C++ 또는 Python)
+하나의 executable에 여러 개의 node가 포함될 수 있음
+
+ros2 run <package> <executable>
+• 패키지(Package): 노드들을 공유 및 배포하기 위한 묶음
+• 메시지(Message): 노드(Node)와 노드(Node) 사이에 주고 받는 데이터
+- 토픽(Topic): 비동기식 단방향 메시지 송수신 방식 (Publisher 노드와 Subscriber 노드 간 통신)
+- 서비스(Service): 동기식 양방향 메시지 송수신 방식 (Client 노드와 Server 노드 간 통신)
+- 액션(Action): 비동기식 양방향 메시지 송수신 방식 (Client 노드와 Server 노드 간 비동기 통신)
+
+Node
+• ROS 시스템에서 독립적으로 실행되는 단위 프로그램을 Node라고 한다.
+• 하나의 package 내 다양한 복수의 node들이 구성된다.
+(Node 예)
+하나의 로봇 시스템을 여러 개의 Node로 분할하여 구현
+
+- Node for reading data from a sensor
+- Node for receiving operator controls from a joystick
+- Node for sending control signals to a motor
+- Node for displaying a visualization to an operator
+- Node for computing trajectory to follow
+
+• ROS2 node는 다른 node들과 ROS communication middleware를 사용하여 서로 데이터를 주고 받는다.
+
+Package
+• Package란 ROS2 program에 관련된 모든 프로그램 코드, 설정 파일, 데이터 등을 묶어주는 소프트웨어 기본 단위이다.
+
+• 일반적으로 하나의 package는 하나의 기능을 수행한다. 예를 들어, Sensor package, Navigation package,
+Manipulation Package 등으로 만들어질 수 있다.
+
+$ ros2 run <package> <executable>
+
+Workspace
+• Workspace는 ROS2 programming을 위한 일종의 작업공간으로 개발자가 ROS package를 만들고 build하고
+관리하기 위한 최상위 directory이다.
+• Workspace에 다양한 package들을 만들고, 각 package에는 다양한 node들을 만든다.
+• Create workspace
+$ mkdir -p ~/${workspace}/src
+$ cd ~/${workspace}/
+$ colcon build
+(예) $ export workspace=~/Dev/lecture/ros2/basics_ws
+• 정상적으로 build되었다면 ${workspace} 하위 폴더에
+src, build, install, log라는 폴더가 생성된다
+- build 폴더 : 패키지의 컴파일 과정에서 생성되는 중간 파일들을 저장. 소스 코드의
+컴파일에 필요한 모든 파일이 이곳에 위치
+- install 폴더: 빌드 과정이 성공적으로 완료된 후, 실행 가능한 파일, 라이브러리,
+그리고 패키지가 사용하는 리소스 파일들이 이곳에 설치.
+- Log 폴더: 빌드 과정에서 발생하는 모든 로그를 저장합니다. 빌드 중에 문제가
+발생했을 때, 이 로그를 통해 문제의 원인을 파악
+
+Create Package
+• Create ROS2 package
+$ mkdir –p ${workspace}/src
+(Python package)
+$ cd ~/${workspace}/src
+$ ros2 pkg create <package_name> --build-type ament_python --dependencies rclpy
+$ ros2 pkg create my_first_pkg --build-type ament_python --dependencies rclpy
+(C++ package)
+$ cd ~/${workspace}/src
+$ ros2 pkg create <package_name> --build-type ament_python --dependencies rclcpp
+$ ros2 pkg create my_first_pkg --build-type ament_python --dependencies rclcpp
+
+[참고] Package 관련 commands
+$ ros2 pkg –h
+...
+options:
+-h, --help
+Commands:
+create
+executables
+list
+prefix
+xml
+
+show this help message and exit
+Create a new ROS 2 package
+Output a list of package specific executables
+Output a list of available packages
+Output the prefix path of a package
+Output the XML of the package manifest or a specific tag
+
+ros2 pkg executables <package_name>: package 내 실행가능한 module들을 보여줌
+ros2 pkg prefix <package_name>: package가 설치된 디렉토리를 보여줌
+ros2 pkg xml <package_name>: package 내 작성된 package.xml 내용을 보여줌
+
+Setup Package: package.xml
+• package.xml: 우리가 만든 my_first_pkg package에 대한 meta 정보와 dependencies 정보가 들어있다.
+- 패키지 기본 정보 (이름, 버전, 유지보수자, 라이선스 등)
+- 의존성 관리 (dependencies 선언)
+우리가 수정해야할 라인: 이 package가 참조할 다른 package들을 포함한 dependencies를 여기에 추가
+
+<depend>rclpy</depend>
+<depend>sensor_msgs</depend>
+...
+- 빌드 도구 및 환경 설정 (CMake, Colcon과 연동)
+<buildtool_depend>ament_cmake</buildtool_depend>
+<buildtool_depend>ament_python</buildtool_depend>
+
+Setup Package: setup.py
+• setup.py: 이 package를 build하고 install하기 위해 필요한 정보들이 들어있다.
+- package meta data 정의, 의존성 관리 (install_requires, tests_require 등), ROS 2 Executable 등록 등의 정보
+우리가 수정해야할 라인: 이 package 내 실행가능한 Executable들을 terminal에서 실행할 때 쓰는 script를 지정
+
+# Specify non-python files we want to install (launch/, rviz/, urdf/, ...)
+data_files=[
+('share/ament_index/resource_index/packages', ['resource/' + package_name]),
+('share/' + package_name, ['package.xml']),
+],
+...
+# Register ROS2 executables
+entry_points={
+'console_scripts’: [
+],
+},
+
+Setup Package: setup.py
+entry_points={
+'console_scripts’: [
+'my_script = my_package.my_node:main',
+],
+},
+
+# ros2 run my_package my_script
+
+- my_script: Terminal의 command line에서 “ros2 run <pkg_name> <executable>” 명령어로 호출될 executable name
+- my_package: 우리가 만든 package name
+- my_node: 우리가 만든 node name (일반적으로는 node지만, ROS와 무관한 python program이 될 수도 있다)
+Terminal의 command line에서 다음과 같이 실행하면, my_package.my_module 내 main()함수가 실행된다.
+$ ros2 run my_package my_script
+
+Setup Package: CMakeLists.txt
+• CMakeLists.txt in C++ package
+...
+# find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
+...
+# specify the installation target directories
+install(
+DIRECTORY
+# 설치(배포)되어야 할 폴더
+launch
+rviz
+urdf
+DESTINATION # 설치(배포)될 대상 경로
+share/${PROJECT_NAME}
+)
+...
+
+Build Package
+• Build package
+$ cd ~/${workspace}
+$ colcon build
+Warning 발생 시 setuptools downgrade
+$ pip show setuptools
+Version: 59.6.0
+# downgrade setuptools
+$ pip install setuptools==58.2.0
+• 특정 package만을 Build 할 때
+$ colcon build --packages-select <package_name>
+$ colcon build --packages-select my_first_pkg
+$ source install/setup.bash
+
+Build Package
+• package가 성공적으로 생성되었는지 확인
+$ ros2 pkg list
+$ ros2 pkg list | grep my_first_pkg
+• Program 작성
+$ cd ~/{$workspace}/src
+$ code .
+
+Create Node
+• Create a node
+$ cd src/my_first_pkg/my_first_pkg
+$ touch test_node_template.py
+$ chmod +x test_node_template.py
+• Simple node 작성 (test_node_template.py)
+import rclpy
+from rclpy.node import Node
+class TestNodeTemplate(Node):
+def __init__(self):
+super().__init__("test_node_template")
+self.get_logger().info("Hello World")
+def main(args=None):
+rclpy.init(args=args)
+node = TestNode()
+rclpy.shutdown()
+if __name__ == '__main__':
+main()
+
+Execute package: Python 실행
+• python 실행
+$ python ~/${workspace}/src/my_first_pkg/my_first_pkg/test_node_template.py
+[INFO] [1702881535.866506786] [test_node_template]: Hello World
+• ROS2 node로 실행
+• Launch file을 이용한 실행
+
+Execute package: ROS2 Node 실행
+• ROS2 node로 실행
+
+# in setup.py
+entry_points={
+'console_scripts': [
+"test_node_template=my_first_pkg.test_node_template:main"
+],
+},
+
+• Package build
+$ cd ~/${workspace}
+$ colcon build --symlink-install
+$ source install/setup.bash
+
+# python은 interpreter라 매번 build를 할 필요가 없다.
+
+• Node 실행
+$ ros2 run <package_name> <script_name>
+$ ros2 run my_first_pkg test_node_template
+
+Execute package: Launch file 실행
+• Launch file을 이용한 실행: 여러 개의 node를 한꺼번에 실행할 경우, node에 parameter를 넘겨주어야 하는 경우 유용
+• Launch file 작성 (Launch file은 뒤에서 다시 설명)
+$ cd ~/${workspace}/my_first_pkg
+$ mkdir launch
+$ cd launch
+$ touch my_first_pkg.launch.py
+$ chmod +x my_first_pkg.launch.py
+from launch import LaunchDescription
+from launch_ros.actions import Node
+def generate_launch_description():
+return LaunchDescription([
+Node(
+package='my_first_pkg',
+executable='test_node_template',
+output='screen',
+])
+
+Execute package: Launch file 실행
+• setup.py 수정
+import os
+from glob import glob
+...
+data_files=[
+('share/ament_index/resource_index/packages',
+['resource/' + package_name]),
+('share/' + package_name, ['package.xml']),
+# for launch file --------------------------------------------------------# ('share/' + package_name + '/launch', ['launch/my_first_pkg.launch.py']),
+(os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py'))
+# ------------------------------------------------------------------------],
+...
+
+Execute package : Launch file 실행
+• Build and execution
+$ cd ~/${workspace}
+$ colcon build
+$ source install/setup.bash
+$ ros2 launch my_first_pkg my_first_pkg.launch.py
+
+실습: Node Programming
+• ‘basics_ws’ workspce를 만들고, src directory에 turtlesim_controller’라는 이름으로 package 생성
+• Node class 작성
+class TestNode(Node):
+def __init__(self):
+# initialize a node class called "test_node"
+super().__init__("test_node")
+# Do something you want to do -------------------------------------------# create a timer sending two parameters:
+# - the duration between two callbacks (1.0 seconds)
+# - the timer function (timer_callback)
+self.counter = 0
+self.create_timer(1.0, self.timer_callback)
+def timer_callback(self):
+# print a log message on the terminal
+self.get_logger().info("Hello World_" + str(self.counter))
+self.counter += 1
+# ------------------------------------------------------------------------
+
+실습: Node Programming
+• ‘basics_ws’ workspce를 만들고, src directory에 turtlesim_controller’라는 이름으로 package 생성
+• Node class 작성
+def main(args=None):
+# initialize the ROS communication
+rclpy.init(args=args)
+# instantiate the node
+node = TestNode()
+# keeps the node alive, waits for a request to kill the node (ctl+c) ----rclpy.spin(node)
+# -----------------------------------------------------------------------# shutdown the ROS communication
+rclpy.shutdown()
+
+실습: Node Programming
+• setup.py 수정
+entry_points={
+'console_scripts’: [
+"test_node=turtlesim_controller.test_node:main",
+],
+},
+• Build and execute
+$ ros2 run turtlesim_controller test_node
+
+실습: ROS2 Commands
+$ ros2 pkg –h
+create
+executables <package_name>
+list
+prefix <package_name>
+
+$ ros2 node –h
+info <node_name>
+list
+
+실습: Launch Test
+• 2개의 서로 다른 언어로 개발된 nodes를 launch file로 함께 실행하기
+• Create a package “launch_test” using ament_cmake
+$ cd ${workspace}/src
+$ ros2 pkg create launch_test --build-type ament_cmake --dependencies rclcpp
+$ cd launch_test
+$ ls –la
+total 24
+drwxr-xr-x 4 etri etri 4096 Feb 27 10:41 .
+drwxr-xr-x 13 etri etri 4096 Feb 27 10:41 ..
+-rw-r--r-- 1 etri etri 838 Feb 27 10:41 CMakeLists.txt
+drwxr-xr-x 3 etri etri 4096 Feb 27 10:41 include
+-rw-r--r-- 1 etri etri 647 Feb 27 10:41 package.xml
+drwxr-xr-x 2 etri etri 4096 Feb 27 10:41 src
+$ rm –rf include src
+
+실습: Launch Test
+• Create a launch file
+$ cd ${workspace}/src/launch_test
+$ mkdir launch
+$ touch demo.launch.py
+from launch import LaunchDescription
+from launch_ros.actions import Node
+def generate_launch_description():
+ld = LaunchDescription()
+talker_node = Node(
+package="demo_nodes_cpp",
+executable="talker",
+)
+listener_node = Node(
+package="demo_nodes_py"
+executable="listener",
+)
+ld.add_action(talker_node)
+ld.add_action(listener_node)
+return ld
+
+실습: Launch Test
+• Modify package.xml
+<exec_depend>demo_nodes_cpp</exec_depend>
+<exec_depend>demo_nodes_py</exec_depend>
+• Modify CMakeList.txt
+install(
+DIRECTORY
+launch
+DESTINATION
+share/${PROJECT_NAME}
+)
+
+실습: Launch Test
+• Build
+$ cd ~/${workspace}
+$ colcon build –-packages-select launch_test
+$ source install/setup.bash
+• Execute
+$ ros2 launch launch_test demo.launch.py
+[INFO] [launch]: All log files can be found below /home/etri/.ros/log/2025-03-11-1510-28-122694-DESKTOP-HYUN-48817
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [talker-1]: process started with pid [48818]
+[INFO] [listener-2]: process started with pid [48820]
+[talker-1] [INFO] [1741673429.175270363] [talker]: Publishing: 'Hello World: 1'
+[listener-2] [INFO] [1741673429.183002012] [listener]: I heard: [Hello World: 1]
+[talker-1] [INFO] [1741673430.175190863] [talker]: Publishing: 'Hello World: 2'
+[listener-2] [INFO] [1741673430.176626425] [listener]: I heard: [Hello World: 2]
+
+[참고] Log Messages
+• ROS2 Log는 크게 5개의 level로 구성된다.
+- DEBUG: RCLCPP_DEBUG
+- INFO: RCLCPP_INFO
+- WARNING: RCLCPP_WARNING
+- ERROR: RCLCPP_ERROR
+- FATAL: RCLCPP_FATAL
+$ cd ${workspace}/src
+$ ros2 pkg create log_test --build-type ament_python --dependencies rclpy
+$ cd src
+$ code .
+
+[참고] Log Messages
+import rclpy
+from rclpy.node import Node
+class LoggerExample(Node):
+def __init__(self):
+# initialize the Node object named 'logger_example'
+super().__init__('logger_example')
+# Set the logging level for a <node_name> to <the given severity level>
+rclpy.logging.set_logger_level('logger_example', rclpy.logging.LoggingSeverity.WARN)
+# create a timer sending two parameters:
+# - the duration between 2 callbacks (0.2 seeconds)
+# - the timer function (timer_callback)
+self.create_timer(0.2, self.timer_callback)
+def timer_callback(self):
+# print a ROS2 log debugging
+self.get_logger().debug("No objects nearby!")
+# print a ROS2 log info
+self.get_logger().info("Object is found in the front of the robot")
+# print a ROS2 log warning
+self.get_logger().warn("Almost hit the object!")
+# print a ROS2 log error
+self.get_logger().error("Hit the object, Bang!")
+# print a ROS2 log fatal
+self.get_logger().fatal("Die...")
+
+[참고] Log Messages
+• Build and execute
+$ colcon build --packages-select log_test --symlink-install
+$ source install/setup.bash
+$ ros2 run log_test logger_example
+
+• Log level 변경 후 재실행
+rclpy.logging.set_logger_level('logger_example', rclpy.logging.LoggingSeverity.DEBUG)
+
+QUESTIONS
+
+ANSWERS
+
+

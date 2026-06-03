@@ -1,0 +1,44 @@
+[
+  {
+    "timesteps": 1000.0,
+    "return": 7.248910480510062,
+    "completed": 0.6,
+    "collapsed": 0.4,
+    "extracted": 0.8,
+    "floor": 0.6,
+    "ever_grasped": 1.0,
+    "steps": 25.8,
+    "target_displacement": 0.24727682173252105,
+    "target_height": 0.04727365653961897,
+    "neighbor_motion": 0.17971976846456528,
+    "non_target_contacts": 0.0
+  },
+  {
+    "timesteps": 2000.0,
+    "return": 7.343854406166377,
+    "completed": 0.6,
+    "collapsed": 0.4,
+    "extracted": 0.8,
+    "floor": 0.6,
+    "ever_grasped": 1.0,
+    "steps": 19.4,
+    "target_displacement": 0.23375166356563568,
+    "target_height": 0.060905002802610395,
+    "neighbor_motion": 0.13512235824018717,
+    "non_target_contacts": 0.0
+  },
+  {
+    "timesteps": 3000.0,
+    "return": 0.24243195353319608,
+    "completed": 0.4,
+    "collapsed": 0.6,
+    "extracted": 1.0,
+    "floor": 0.4,
+    "ever_grasped": 1.0,
+    "steps": 27.4,
+    "target_displacement": 0.3088267415761948,
+    "target_height": 0.07778045507147908,
+    "neighbor_motion": 0.18836486004292965,
+    "non_target_contacts": 0.0
+  }
+]

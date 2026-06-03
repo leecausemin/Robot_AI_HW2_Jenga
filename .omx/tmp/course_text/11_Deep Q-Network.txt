@@ -1,0 +1,959 @@
+Deep Q Network
+김현
+hyunkim@etri.re.kr
+
+RECAP
+• Q-Learning in Tabular Method
+Update rule:
+
+𝒂
+
+Q-Learning
+s
+
+Q-Table
+Q11
+
+Q12
+
+…
+
+Q1M
+
+State
+
+Q21
+
+Q22
+
+…
+
+Q2M
+
+Action
+
+…
+
+…
+
+…
+
+…
+
+a1
+Q-Value
+
+QN1 QN2
+
+…
+
+a2
+
+~ π with e-greedy
+
+a3
+
+qπ(s,a3)
+
+s’3
+
+r
+s’1
+
+s’2
+
+~ argmax q
+a3
+
+QNM
+
+a2
+a1
+
+qπ(s'1, a1)
+
+RECAP
+• Q-Learning in Tabular Method
+Update rule:
+
+𝒂
+
+• Q-Learning in Function Approximation
+Q-Table
+
+State
+
+Deep Neural Net
+
+Q11
+
+Q12
+
+…
+
+Q1M
+
+Q21
+
+Q22
+
+…
+
+Q2M
+
+Q-Value Action 1
+Q-Value
+
+Action
+
+…
+
+…
+
+QN1 QN2
+
+…
+…
+
+…
+QNM
+
+Q-Value Action 2
+
+State
+
+…
+𝝏𝑱
+𝒘←𝒘−𝜶
+𝝏𝒘
+
+Q-Value Action M
+
+RECAP
+• Q-Learning in Tabular Method
+Update rule:
+
+𝒂
+
+• Q-Learning in Function Approximation
+- Objective:
+
+2
+
+- Update rule:
+
+𝜕𝐽
+𝜕𝑤
+
++
+
+-
+
+∇𝐽(𝐰𝐭 )
+
+RECAP
+• Q-Learning in Tabular Method
+Update rule:
+
+𝒂
+
+• Q-Learning in Function Approximation
+- Objective:
+
+2
+
+- Update rule:
+𝛻𝐽 𝐰 = 𝛻
+
+𝜕𝐽
+𝜕𝑤
+
+=
+
+𝜇(𝑠, 𝑎)𝛻[ 𝑞 𝑠, 𝑎 − 𝑞(𝑠, a, 𝐰)]2
+
+=−
+
+𝜇(𝑠, 𝑎)2[ 𝑞 𝑠, 𝑎 − 𝑞(𝑠, a, 𝐰)]𝛻𝑞(𝑠, a, 𝐰)
+
+wt+1
+
++
+
+𝜇(𝑠, 𝑎)[ 𝑞 𝑠, 𝑎 − 𝑞(𝑠, a, 𝐰)]2
+
+wt + α[
+
+𝒂
+
+-
+
+∇𝐽(𝐰𝐭 )
+
+Deep Reinforcement Learning
+
+State
+
+Q-Learning
+
+Deep Q-Learning
+
+Q-Table
+
+Deep Neural Net
+
+Q11
+
+Q12
+
+…
+
+Q1M
+
+Q21
+
+Q22
+
+…
+
+Q2M
+
+Q-Value Action 1
+Q-Value
+
+Action
+
+…
+
+…
+
+QN1 QN2
+
+…
+
+…
+
+…
+
+Q-Value Action 2
+
+State
+
+…
+𝝏𝑱
+𝒘←𝒘−𝜶
+𝝏𝒘
+
+QNM
+
+𝑸𝒕 𝟏 𝒔, 𝒂 ← 𝑸𝒕 𝒔, 𝒂 + 𝜶(𝑼𝒕 − 𝑸𝒕 (𝒔, 𝒂))
+
+𝑴𝒊𝒏𝒊𝒎𝒊𝒛𝒆 𝑳𝒐𝒔𝒔: 𝑱(w) = (𝑼𝒕 −𝑸𝒕 (𝒔, 𝒂, 𝒘)) 𝟐
+
+𝑼𝒕 = 𝑹 𝒔, 𝒂 + 𝜸 max 𝑸𝒕 𝟏 𝒔 , 𝒂
+
+𝒘𝒕 𝟏 ← 𝒘𝒕 − 𝜶∇𝑱 (wt)
+
+𝒂
+
+𝑸𝒕 𝟏 𝒔, 𝒂 ← 𝑸𝒕 𝒔, 𝒂 + 𝜶(𝑹 𝒔, 𝒂 + 𝜸 max 𝑸𝒕 𝟏 𝒔 , 𝒂 − 𝑸𝒕 (𝒔, 𝒂))
+𝒂
+
+Q-Value Action M
+
+𝒘𝒕 𝟏 ← 𝒘𝒕 + 𝜶(𝑹 𝒔, 𝒂 + 𝜸 𝒎𝒂𝒙 𝒒 𝒔 , 𝒂 , 𝒘𝒕 − 𝒒(𝒔, 𝒂, 𝒘𝒕 ))𝛁𝒒(𝒔, 𝒂, 𝒘𝒕 )
+𝒂
+
+Deep Reinforcement Learning
+Online update of sequence data (Non IID)
+Bootstrapping: Target depends on w
+
+𝒒 𝒔 , 𝒂 , 𝒘𝒕 − 𝒒(𝒔, 𝒂, 𝒘𝒕 ))𝛁𝒒(𝒔, 𝒂, 𝒘𝒕 )
+④ 𝒘𝒕 𝟏 ← 𝒘𝒕 + 𝜶(𝑹 𝒔, 𝒂 + 𝜸 𝒎𝒂𝒙
+𝒂
+
+⑤ next state 𝒔′
+
+③ action 𝒂′ (greedy)
+Agent
+
+② next state 𝒔′
+reward 𝒓
+
+Value function
+
+① action 𝒂
+
+state
+
+(e-greedy)
+parameter 𝒘
+
+Environment
+
+Deep Q-Network
+• Deep Q-Network (DQN)는 Deep Neural Network를 사용하여 Q-function을 근사하는
+Value-based Off-Policy Temporal Difference Learning이다.
+
+s, a
+
+w
+
+(s, a, w)
+
+s
+
+w
+
+f(W)
+
+• 주요논문 (Google DeepMind)
+•
+•
+•
+•
+•
+
+Playing Atari with Deep Reinforcement Learning, NIPS Workshop, 2013
+Human-level control through deep reinforcement learning, Nature, 2015
+Deep Reinforcement Learning with Double Q-Learning, AAAI, 2016
+Prioritized Experience Replay, ICLR, 2016
+Mastering the game of Go with deep neural networks and tree search, Nature, 2016
+
+(s, a0, w)
+(s, a1, w)
+
+Issues of Q-Learning with DNN
+• Problems
+• Data are highly correlated
+• The target values are not robust
+• Wild rewards make the value function freaks out
+
+• Solutions
+• Experience replay
+• Different Neural networks for Q and Qtarget
+(Update Qtarget every C steps)
+• Clip rewards between -1 and 1
+
+1. Date are highly correlated
+• Data Correlation (Correlation between Samples) 문제
+
+→ Experience Replay 개념을 도입하여 경험 데이터를 replay memory에 저장 후 학습에 사용
+각 timestep에서의 experience
+
+𝑒 = 𝑠 ,𝑎 ,𝑟 ,𝑠
+
+𝑢𝑠𝑖𝑛𝑔 𝑏𝑒ℎ𝑎𝑣𝑖𝑜𝑟 𝑝𝑜𝑙𝑖𝑐𝑦
+
+experiences를 모은 dataset
+
+𝐷 = (𝑒 , 𝑒 , … , 𝑒 )
+
+• Prioritized Experience Replay
+TD error가 큰 transition일수록 샘플링 확률을
+더 크게 하는 조정하는 방법
+
+• Hindsight Experience Replay
+sparse reward 환경에서 실패한 trajectory에도
+성공 보상을 주는 방법
+
+Experience Replay
+Agent
+Behavior Q-Network: 𝜃
+① select action 𝑎 (greedy)
+⑥ update network 𝜃
+
+①
+𝑎 = arg max 𝑄(𝑠 , 𝑎; 𝜃)
+
+(𝜖-greedy)
+
+Environment
+
+⑤ Minibatch
+randomly choose ℬ batch
+{(𝑠 , 𝑎 , 𝑟 , 𝑠 )}ℬ
+③ new transition
+(𝑠 , 𝑎 , 𝑟 , 𝑠 )
+
+Replay Buffer
+(𝑠 , 𝑎 , 𝑟 , 𝑠 )
+…
+(𝑠 , 𝑎 , 𝑟 , 𝑠 )
+④ save recent N transitions
+discard oldest transitions
+
+②
+state 𝑠
+reward 𝑟
+
+oldest transition
+
+2. Target values are not robust
+• Target이 고정이 되어 있지 않기 때문에 발생하는 학습 시 수렴이 어려움
+2
+TD Target
+
+→ 2개의 Networks Q, Qtarget를 이용: Qtarget 을 일정 시간 고정하고 Q를 학습시킨 후 Qtarget 업데이트
+현재 상태 (s, a)로부터 얻어지는 (r, s') 를 이용해 TD-Target 예측
+
+Target Qtarget
+
+r + max Qtarget(s’, a’, 𝐰)
+
+update every time step C (𝐰← w)
+
+Main Q
+
+Q(s, a, w)
+현재 상태 s와 가능한 행동들에 대한 Q-value 예측
+
+Calculate Loss
+𝔼[(r + γ max Qtarget(s’, a’, 𝐰) - Q(s, a, w))]
+
+fix
+Update w
+
+Target Network
+Update w of Main Q(s, a, w)
+wt+1 =̇ wt + α[𝑅
+
+Hyperparameter: target_update_interval=1000
+
++ 𝛾max𝑄𝑡𝑎𝑟𝑔𝑒𝑡 𝑆
+𝒂
+
+, 𝑎 , 𝐰1000 − 𝑞 (𝑠, 𝑎, 𝐰)]𝛻𝑞 (𝑠, 𝑎, 𝐰)
+Iterations
+
+r + max Qt(s’, a’, 𝐰0)
+
+𝐰0
+
+r + max Qt(s’, a’, 𝐰1000)
+
+𝐰1000
+
+r + max Qt(s’, a’, 𝐰2000)
+
+𝐰2000
+
+r + max Qt(s’, a’, 𝐰3000)
+
+𝐰3000
+
+r + max Qt(s’, a’, 𝐰4000)
+
+𝐰4000
+
+Update 𝐰 of Target Qtarget(s, a, 𝐰)
+𝐰2000← w2000
+
+𝐰5000
+
+Deep Q-Network with Target Network
+Target Q-network:
+
+⑥ Target value
+max 𝑄 (𝑠 , 𝑎; 𝜃)
+
+⑧ update
+𝜃=𝜃
+
+Agent
+Behavior Q-Network: 𝜃
+① select action 𝑎 (greedy)
+⑦ update network 𝜃
+𝒘𝒕 𝟏 ← 𝒘𝒕 + 𝜶(𝑹 𝒔, 𝒂 + 𝜸 𝒎𝒂𝒙 𝒒 𝒔 , 𝒂 , 𝒘𝒕 − 𝒒(𝒔, 𝒂, 𝒘𝒕 ))𝛁𝒒(𝒔, 𝒂, 𝒘𝒕 )
+𝒂
+
+①
+𝑎 = arg max 𝑄(𝑠 , 𝑎; 𝜃)
+
+(𝜖-greedy)
+
+Environment
+
+②
+state 𝑠
+reward 𝑟
+
+⑤ Minibatch
+randomly choose ℬ batch
+{(𝑠 , 𝑎 , 𝑟 , 𝑠 )}ℬ
+③ new transition
+(𝑠 , 𝑎 , 𝑟 , 𝑠 )
+
+Replay Buffer
+(𝑠 , 𝑎 , 𝑟 , 𝑠 )
+…
+(𝑠 , 𝑎 , 𝑟 , 𝑠 )
+④ save recent N transitions
+discard oldest transitions
+
+oldest transition
+
+Deep Q-Network
+• Deep Q-Network (DQN)는 Deep Neural Network를 사용하여 Q-function을 근사하는 Valuebased Off-Policy Temporal Difference Learning이다. 구현을 위해 다음 4가지 요소가 필요하다.
+1. Q-function parameterization
+2. Objective to be minimized
+3. Optimization
+
+Deep Q-Network
+• Deep Q-Network (DQN)는 Deep Neural Network를 사용하여 Q-function을 근사하는 Valuebased Off-Policy Temporal Difference Learning이다. 구현을 위해 다음 4가지 요소가 필요하다.
+1. Q-function parameterization: Deep neural network for Q-function
+𝑞 (𝑠, 𝑎, 𝐰) , 𝑞𝜋(𝑠, 𝑎, 𝐰)
+
+2. Objective: Minimize TD Error (MSE error between target value and estimated value)
+𝑱 𝐰 =𝔼
+
+𝑟 + 𝛾 max 𝑞 𝑠 , 𝑎 , 𝐰
+
+− 𝑞 𝑠 ,𝑎 ,𝐰
+
+3. Optimization: Stochastic (Mini-batch) Gradient Descent using Proven Optimizers
+𝐰
+
+←𝐰 +𝛼
+
+𝑅
+
++ 𝛾 max 𝑞 𝑆
+
+,𝑎 ,𝐰
+
+−𝑞 𝑆 ,𝐴 ,𝐰
+
+∇𝑞 𝑆 , 𝐴 , 𝐰
+
+Optimizer: RMSProp (Root Mean Square Propagation), ADAM (Adaptive Moment Estimation)
+
+DQN Model
+• CNN
+Image
+high-dimensional sensory input
+(large or continuous state space)
+
+Action
+discrete output
+(finite but not large) action space
+
+Data Preprocessing
+• 210*160 pixel & 128 color pallet 이미지를 84*84 pixel & gray-scale 이미지로 차원 축소
+
+• 유사한 이미지를 줄여주기 위해 가장 최근 image 중 k번째 (논문에서는 k=4) 이미지만 선택
+
+• 앞에서 정해진 frame과 바로 앞 frame으로부터 pixel-wise maximum 처리 후 새 이미지 생성
+
+• 최종적으로 이렇게 만들어진 이미지를 M개씩 (논문에서는 M=4) 쌓아서 4*84*84 사이즈를 갖는
+입력 데이터를 만든다.
+
+Model Architecture
+s
+
+Buffer size 4
+Processed to
+4 × 84 × 84
+
+-
+
+-
+
+𝑞 (s, a0, w)
+…
+𝑞 (s, a1, w)
+
+w
+
+CNN
+
+32 filters of
+8×8
+stride 4
+
+LeLU
+
+LeLU
+
+LeLU
+
+64 filters of 64 filters of
+3×3
+512 units
+4×4
+stride 2
+
+Number
+actions M
+
+stride 1
+
+동일한 hyperparameter를 사용한 동일한 모델을
+이용하여 49개의 서로 다른 게임에 대해 학습 수행
+(총 5천만 프레임, 게임플레이시간 38일)
+Reward scaling: [-1, 1]
+Actions: 4~18개로 변경 가능하도록 함
+5게임만으로 hyperparameter를 찾고 동일값으로 학습
+Optimizer는 RMSProp 사용
+
+Deep Q-Network Algorithm
+e-greedy policy를 이용하여 데이터를 모으고 replay buffer에 저장
+e-greedy policy를 이용하여 현재 state에서 action을 선택
+(s, a)에 대해 한 step 진행하고 reward와 next state를 확인
+현재 수집된 transaction (s, a, r, s’)를 replay buffer에 저장
+
+replay buffer로부터 데이터를 batch size만큼 추출
+batch 내 각각의 데이터에 대한 TD Target 계산
+Loss 계산 및 Main Q parameter 업데이트
+C steps가 지나고 Target Q parameter 업데이트
+
+Results
+
+Results
+
+라이브러리 설치
+• 가상환경 설정
+• OpenAI Stable Baselines3
+• Code: https://github.com/DLR-RM/stable-baselines3
+• Docs: https://stable-baselines3.readthedocs.io/en/master/
+$ pip install stable-baselines3[extra]
+• OpenAI Gym (Gynasium): https://www.gymlibrary.dev/index.html
+$ pip install gymnasium
+
+OpenAI Stable-baselines3
+
+OpenAI Gymnasium
+import gymnasium as gym
+
+gym.Env):
+
+class FooEnv(
+def
+
+__init__(self):
+# define observation space and action space
+# set initial state and seed
+
+def
+
+step(self, action):
+# get action and run on timestep of the env.
+# return next state, reward, done, info from (s, a)
+
+def
+
+reset(self):
+# reset the env.
+# return state, info
+
+def
+
+render(self):
+# render the env.
+# return render frames
+
+def
+
+close(self):
+# do something for closing the env
+
+Gym Environments
+# (Toy Text)
+# "FrozenLake-v1", "CliffWalking-v0", "Taxi-v3"
+# (Classic Control)
+$ pip install gymnasium[classic-control]
+# "CartPole-v1", "Pendulum-v1", "MountainCar-v0", "Acrobot-v1"
+# (Box2D)
+$ pip install swig
+$ pip install gymnasium[box2d]
+# "LunarLander-v2", "BipedalWalker-v3", "CarRacing-v3"
+# (Atari)
+$ pip install gymnasium[atari]
+# "ALE/Breakout-v5", "ALE/Assault-v5“
+
+Create an environment
+import gymnasium as gym
+# create an environment named “FrozenLake-v1”
+env_name = "FrozenLake-v1"
+env = gym.make(env_name, render_mode=‘human’)
+# initialize (or reset) the environment
+state, info = env.reset()
+# visualize the environment
+env.render()
+... # env.step()
+# close environment
+env.close()
+
+Run Environment
+# Environment
+env = gym.make(env_name, render_mode=‘human’)
+# Run the model
+obs, _ = env.reset()
+while True:
+action = env.action_space.sample()
+obs, reward, terminated, truncated, info = env.step(action)
+if terminated or truncated:
+# break
+obs, _ = env.reset()
+
+terminated는 task를 성공적으로 완료하고 끝난 경우
+truncated는 에피소드의 제한 조건(최대시간)에 도달해서 끝난 경우
+
+실습
+• Frozen Lake
+• Cartpole
+• Lunar Lander
+
+CartPole
+gym.make(“CartPole-v1”)
+
+Action space (Discrete)
+
+https://www.gymlibrary.dev/environments/classic_control/cart_pole/
+
+State space (Continuous)
+
+(𝑥)
+
+Starting State
+
+̇
+(𝑥)
+
+• All observations: uniform random value in 𝜃 (-0.05, 0.05)
+
+Episode End
+• Pole Angle 𝜃 is greater than ±12°
+• Cart Position 𝑥 is greater than ±2.4
+(center of the cart reaches the edge of the display)
+• Episode length is greater than 500
+
+(𝜃)
+̇
+Pole Angular Vel. (𝜃)
+
+Reward
+• +1 for every step taken
+• The threshold for reward: 475 (max_episode_length=500)
+
+Deep neural network for Q-function
+
+Input
+state vector
+
+Output
+action-value function
+Neural Network
+MlpPolicy, CnnPolicy, MultiInputPolicy
+model.policy_kwargs = {'net_arch': [256, 256]}
+
+Experience Replay
+
+State transitions
+Batch data for training
+Replay buffer
+
+Training Q-network
+• Two Q-networks:
+• Main Network :
+• Target Network :
+• Objective
+2
+
+• TD Target
+𝑖
+
+t+1
+
+• Update main network:
+• Update target network:
+
+t+1,
+t+1
+
+t
+t
+
+if the next state Si' is not the terminal
+𝑖
+
+Program code Example
+import gym
+from stable_baselines3 import DQN
+# Environment: What are you trying to solve? (cartpole)
+env, _ = gym.make("CartPole-v1", render_mode="rgb_array")
+# Agent model: What algorithm are you using? (DQN)
+model = DQN("MlpPolicy", env, verbose=1)
+# Train: How do you train the model? (Stochastic Gradient Descent)
+model.learn(total_timesteps=10000)
+# Save
+model.save("model_cartpole_dqn")
+env.close()
+
+Evaluation: Gymnasium
+# Environment
+env = gym.make("CartPole-v1", render_mode="human")
+# Model
+model = DQN.load(“model_cartpole_dqn", env, verbose=1)
+# Run the model
+obs, info = env.reset()
+for i in range(1000):
+action, _state = model.predict(obs, deterministic=True)
+obs, reward, terminated, truncated, info = env.step(action)
+if terminated or truncated:
+obs, info = env.reset()
+
+Agent Model
+DQN(
+policy,
+policy_kwargs=None,
+env,
+learning_rate=0.0001,
+gamma=0.99,
+exploration_fraction=0.1,
+
+# policy 모델 (MlpPolicy, CnnPolicy, MultiInputPolicy): DQN은 Q, Qtarget의 네트워크 모델
+# policy에 추가적으로 넘길 파라메터 딕셔너리 (예) policy_kwargs={‘net_arch’=[256, 256]}
+# 환경 (gym 또는 custom environment)
+# 학습률 (신경망의 가중치를 업데이크하는 step의 크기)
+# discount factor 값
+# 초기에 얼마나 많은 exploration을 할 것인지를 결정
+(초기 10%의 학습단계 동안 exploration에 더 많은 초점을 둔다는 의미)
+exploration_initial_eps=1.0, # exploration을 위한 초기값
+exploration_final_eps=0.05, # exploration을 위한 최종값
+replay_buffer_class=None,
+# 어떤 replay buffer를 쓸 것인지에 따른 replay buffer class (None: 기본 ReplayBuffer 사용)
+replay_buffer_kwargs=None,
+# replay buffer class에 넘겨줄 파라메터 딕셔너리
+buffer_size=1000000,
+# experience replay memory 크기
+learning_starts=50000,
+# 학습을 하기 전 random action으로 experience data를 수집할 step 수
+batch_size=32,
+# 각 학습단계에서 사용할 batch의 크기 (replay buffer로부터 한번에 가져올 mini-batch size)
+…
+
+)
+
+Agent Model
+DQN(
+…
+target_update_interval=10000, # 몇 번의 step이 지난 후에 Qtarget을 Q로 복사할 것인지 결정하기 위한 C-step 수
+tau=1.0,
+# Polyak Averaging parameter: Q로부터 Qtarget을 Soft Update
+(Qtarget = (1-tau)* Qtarget + tau*Q): 학습 과정 중 큰 가중치 변화로 인한 불안정성을 완화
+train_freq=4,
+# 몇번의 interaction이 있은 후 에 trainin을 할지 결정하는 변수 (timestep에 따른 유사성이 많은 경우)
+(만약 4라면 4번의 경험을 수집한 후 이를 replay memory에 넣고 batch를 sample한 후에 학습)
+gradient_steps=1,
+# 한 training 당 몇번의 gradient update (backprop & 가중치 업데이트)를 수행할 지 결정하는
+gradient step 수 (만약 2라면 minibatch를 2번 뽑아 2회의 gradient update를 연속으로 수행)
+optimize_memory_usage=False, # 효율적인 메모리 사용 (중복정보 줄이거나 압축 등)을 위한 선택적인 flag (실행속도는 느려질 수 있음)
+max_grad_norm=10,
+# gradient clipping 최대값 (gradient update, 즉 backprop & 가중치 업데이트할 때 gradient
+값이 임계값 이상 발산하지 않도록 즉 gradient explosion이 발생하지 않도록 크기를 제한하는 방법)
+stats_window_size=100,
+# 학습과정 중 계산되는 통계치(평균보상, 평균에피소드 길이 등)를 log로 저장하기 위한 episode의 수
+tensorboard_log=None,
+# tensorboard 사용 시 log 데이터를 저장할 디렉토리
+verbose=0,
+# 학습 과정 중 message를 print할지 말지
+seed=None,
+# seed값
+device='auto’,
+# 코드가 구동되는 device (cpu, cuda, auto)
+)
+
+Train
+def learn(
+total_timesteps: int,
+
+# 에이전트가 학습을 진행할 동안 수행할 총 타임스텝의 수
+
+callback: MaybeCallback = None,
+
+# 학습과정 중 특정조건 만족 시 호출되는 callback 함수
+
+log_interval: int = 4,
+
+# log 출력 빈도 (4개의 에피소드 완료될 때마다 log 출력)
+
+tb_log_name: str = “DQN”,
+
+# tensorboard에 표기될 log 이름
+
+eval_env: Optional[GymEnv] = None,
+
+# evaluation environment
+
+eval_freq: int = -1,
+
+# 성능 평가 빈도 (timesteps수) (-1은 성능평가 하지 않음)
+
+n_eval_episodes: int = 5,
+
+# 성능을 평가할 때 수행할 에피소드의 수
+
+eval_log_path: Optional[str] = None, # 성능 평가 결과를 기록할 로그 파일의 저장 경로
+
+)
+
+reset_num_timesteps: bool = True,
+
+# True: reset 시 0으로 초기화, False: 이전 timestep 수 유지 (학습재개)
+
+progress_bar: bool = False,
+
+# 학습과정을 Progressive bar로 표시할지
+
+Algorithm in SB3
+def train(self, gradient_steps: int, batch_size: int = 100) -> None:
+…
+for _ in range(gradient_steps):
+replay_data = self.replay_buffer.sample(batch_size, env=self._vec_normalize_env)
+with th.no_grad():
+next_q_values = self.q_net_target(replay_data.next_observations)
+next_q_values, _ = next_q_values.max(dim=1)
+next_q_values = next_q_values.reshape(-1, 1)
+
+# Loop (gradient_steps)
+# Sample the batch from replay buffer
+# Fix target-Q
+# Compute the next Q-values using the target network 𝑞 ( 𝑺 𝒕 𝟏 , 𝒂 , 𝑾 )
+# Follow greedy policy: use the one with the highest value
+# Avoid potential broadcast issue
+
+target_q_values = replay_data.rewards + (1 - replay_data.dones) * self.gamma * next_q_values
+
+# 1-step TD target: R t + 1 + γ m a x 𝑞 ( S t + 1 , 𝑎 ’ , 𝐰 t )
+
+current_q_values = self.q_net(replay_data.observations)
+current_q_values = th.gather(current_q_values, dim=1, index=replay_data.actions.long())
+
+# Get current Q-values estimates 𝑞 ( S , A , w )
+# Retrieve the q-values for the actions from the replay buffer
+
+loss = F.smooth_l1_loss(current_q_values, target_q_values)
+losses.append(loss.item())
+
+# Compute Huber loss (less sensitive to outliers)
+
+self.policy.optimizer.zero_grad()
+loss.backward()
+th.nn.utils.clip_grad_norm_(self.policy.parameters(), self.max_grad_norm)
+self.policy.optimizer.step()
+
+# Initialize weights
+# backprop
+# Clip gradient norm (for gradient explosion)
+# update weights
+
+self._n_updates += gradient_steps
+
+# Increase update counter
+
+QUESTIONS
+
+ANSWERS
+
+

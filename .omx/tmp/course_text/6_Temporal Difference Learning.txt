@@ -1,0 +1,1551 @@
+Temporal Difference
+Learning
+ETRI
+김현
+hyunkim@etri.re.kr
+
+목차
+• What is Temporal Difference Learning
+• Temporal Difference Prediction
+• Temporal Difference Error
+• TD(0) Algorithm
+
+• Temporal Difference Control
+• SARSA
+• Q-Learning
+• Expected SARSA
+
+시간차 학습 (Temporal Difference Learning)
+Dynamic Programming
+
+Monte-Carlo Learning
+
+• DP는 한 step transition만 이용해 value
+function을 개선한다
+• 이 방법은 MDP 모델에 대한 정보를 모두 알고
+있어야 하고
+• 모든 state에 대해서 value function을 계산해야
+하기 때문에 state 숫자가 늘어날수록 계산량이
+급격히 증가한다.
+
+• MC Learning은 MDP 모델없이 학습하는 경험
+(Sample) 기반의 Model-free 학습이다.
+• 이 방법은 한 episode가 다 끝나고 나서야
+value function을 업데이트할 수 있다는 단점이
+있다.
+• 바둑과 같이 한 에피소드가 매우 길 경우
+학습하기가 어렵다.
+
+TD Learning은 MC Learning과 같이 모델없이 경험을 통해 학습하며, DP와 같이 매 time step마다 학습
+
+Recall MC Prediction (Policy Evaluation)
+• 환경의 MDP 모델을 모를 경우, 충분히 많은 sample을 모아서 value를 estimation
+
+𝒕
+
+환경과의 상호작용을 통해 sample을 수집
+𝜇 =
+
+1
+𝑛
+
+𝑥 =𝜇
+
+1
++ (𝑥 − 𝜇
+𝑛
+
+)
+
+Recall MC Control (Policy Improvement)
+• State value function을 계산해도 MDP 모델을 모르면 이 자체로는 policy를 개선할 수 없음
+
+따라서 State value function
+
+대신 Action value function
+
+를 계산
+
+- Policy가 방문하지 않는 state에 대해서는 value function을 estimate할 수 없음
+
+따라서 Exploration이 필요함
+• Exploring Starts
+• Stochastic Policy (ε-Greedy, ε-Soft)
+• Off-policy Learning
+
+Temporal Difference Prediction
+• Recall MC Policy Evaluation
+
+𝒕
+
+• TD Policy Evaluation (one-step lookahead)
+
+𝒕 𝟏
+
+𝝅
+
+𝒕 𝟏
+
+Temporal Difference Prediction
+• Temporal-Difference Learning은 전체 에피소드가 아니라 한 step 또는 몇번의 steps만을 더
+가보고 거기서 얻는 return을 이용해서 현재 state의 value function을 추정한다.
+TD Target
+
+V ( S t ) ← V ( S t ) + α[ G t:t+n – V ( S t )]
+TD Error
+
+n-step Temporal-Difference
+n=1
+
+(TD)
+
+V ( S t ) ← V ( S t ) + α [( R t+1 + γV ( S t+1 ))– V ( S t )]
+
+n=2
+.
+.
+.
+
+V ( S t ) ← V ( S t ) + α [( R t+1 + γR t+2 + γ 2 V ( S t+ 2 ))– V ( S t )]
+
+n = ∞ (MC)
+
+V ( S t ) ← V ( S t ) + α [( R t+1 + γR t+2 + γ 2 R t+3 + … + γ T−1 R T )– V ( S t )]
+
+1-Step TD Prediction
+• 전체 에피소드가 아니라 one step만 더 가보고 거기서 얻는 return을 이용해서 현재 state의
+value function을 추정한다.
+
+와
+를
+• Dynamic Programming에서는 MDP모델을 알고 있기 때문에
+이용하여
+를 구할 수 있었지만, TD는 MC와 같이 MDP모델을 모른다는 가정을 기반으로
+하기 때문에 실제로 환경과의 상호작용을 통해서 행동을 취해본 후 값을 얻는다.
+t
+
+t
+
+t+1
+
+t+1
+
+t+1
+
+t+2
+
+t+2
+
+t+2
+
+t+1
+
+t+1
+
+t+2
+
+t+2
+
+t+2
+
+update
+t
+
+t
+
+t+1
+
+TD Target
+TD Error
+
+t+1
+
+t+1
+
+t+2
+
+t+2
+
+t+2
+
+TD(0) Prediction Algorithm
+
+MC vs. TD Prediction 예
+• 일을 마치고 집으로 돌아가는 상황을 예로 들어 두 방법의 차이를 살펴보자
+leave
+
+30
+
+total time
+
+0 mins
+elapsed
+
+MC vs. TD Prediction 예
+• 일을 마치고 집으로 돌아가는 상황을 예로 들어 두 방법의 차이를 살펴보자
+leave
+
+30
+
+exit
+
+5
+elapsed time
+
+35
+
+total time
+
+0 mins
+elapsed
+
+5 mins
+
+MC vs. TD Prediction 예
+• 일을 마치고 집으로 돌아가는 상황을 예로 들어 두 방법의 차이를 살펴보자
+leave
+
+30
+
+exit
+highway
+
+exit
+
+5
+elapsed time
+
+35
+
+15
+
+15
+
+total time
+
+0 mins
+elapsed
+
+5 mins
+
+20 mins
+
+MC vs. TD Prediction 예
+• 일을 마치고 집으로 돌아가는 상황을 예로 들어 두 방법의 차이를 살펴보자
+leave
+
+30
+
+exit
+highway
+
+exit
+
+5
+elapsed time
+
+35
+
+15
+
+15
+
+secondary
+road
+
+10
+
+10
+
+total time
+
+0 mins
+elapsed
+
+5 mins
+
+20 mins
+
+30 mins
+
+MC vs. TD Prediction 예
+• 일을 마치고 집으로 돌아가는 상황을 예로 들어 두 방법의 차이를 살펴보자
+leave
+
+30
+
+exit
+highway
+
+exit
+
+5
+elapsed time
+
+35
+
+15
+
+15
+
+secondary
+road
+
+10
+
+10
+
+enter home
+street
+
+10
+
+3
+
+total time
+
+0 mins
+elapsed
+
+5 mins
+
+20 mins
+
+30 mins
+
+40 mins
+
+MC vs. TD Prediction 예
+• 일을 마치고 집으로 돌아가는 상황을 예로 들어 두 방법의 차이를 살펴보자
+leave
+
+exit
+highway
+
+exit
+
+secondary
+road
+
+arrive
+home
+
+enter home
+street
+
+initial guess
+(predicted time to go)
+
+30
+
+5
+elapsed time
+
+35
+
+15
+
+15
+
+10
+
+10
+
+10
+
+3
+
+actual elapsed time
+
+total time
+
+0 mins
+elapsed
+
+3
+
+5 mins
+
+20 mins
+
+30 mins
+
+40 mins
+
+43 mins
+
+MC vs. TD Prediction 예
+• Monte-Carlo Learning
+
+t
+
+leave
+
+t
+
+t
+
+exit
+highway
+
+exit
+
+t
+secondary
+road
+
+arrive
+home
+
+enter home
+street
+
+initial guess
+(predicted time to go)
+
+43
+30
+
+5
+elapsed time
+
+35
+
+15
+
+10
+
+15
+
+10
+
+10
+
+3
+
+G0 = 5 + 15 + 10 + 10 + 3 = 43
+V ( S t ) ← V ( S t ) + α ( G t - V ( S t )),
+V ( leave ) ← V ( leave ) + α ( G 0 - V ( leave ))
+30
+
++
+
+43 - 30
+
+α=1
+
+3
+
+MC vs. TD Prediction 예
+• Monte-Carlo Learning
+leave
+
+t
+
+t
+
+t
+
+exit
+highway
+
+exit
+
+t
+secondary
+road
+
+arrive
+home
+
+enter home
+street
+
+initial guess
+(predicted time to go)
+
+43
+
+5
+elapsed time
+
+38
+35
+
+15
+
+15
+
+10
+
+10
+
+10
+
+3
+
+G1 = 15 + 10 + 10 + 3 = 38
+V ( S t ) ← V ( S t ) + α ( G t - V ( S t )),
+V ( exit ) ← V ( exit ) + α ( G 0 - V ( exit ))
+35 +
+
+38 - 35
+
+α=1
+
+3
+
+MC vs. TD Prediction 예
+• Monte-Carlo Learning:
+leave
+
+t
+
+t
+
+t
+
+exit
+highway
+
+exit
+
+t
+secondary
+road
+
+arrive
+home
+
+enter home
+street
+
+initial guess
+(predicted time to go)
+
+43
+
+5
+elapsed time
+
+38
+
+15
+
+23
+
+10
+
+13
+
+V ( S t ) ← V ( S t ) + α ( G t - V ( S t )),
+
+10
+
+3
+
+3
+
+α=1
+
+• 에피소드가 다 끝난 후 43분이 걸린 걸 알고 이걸 이용해서 각 state의 value function을 업데이트
+(학습이 시작되기 위해서는 episode가 끝날 때까지 (terminal state에 도달할 때까지) 기다려야 한다)
+
+MC vs. TD Prediction 예
+• Temporal Difference Learning:
+leave
+initial guess
+(predicted time to go)
+
+30
+
+𝑉 𝑆
+
+←𝑉 𝑆 +α 𝑅
+
++ 𝛾𝑉 𝑆
+
+−𝑉 𝑆
+
+,
+
+𝛼 = 1,
+
+𝛾=1
+
+MC vs. TD Prediction 예
+• Temporal Difference Learning:
+leave
+
+exit
+
+initial guess
+(predicted time to go)
+
+40
+30
+
+5
+elapsed time
+
+35
+
+𝑉 𝑆
+
+←𝑉 𝑆 +α 𝑅
+
++ 𝛾𝑉 𝑆
+
+−𝑉 𝑆
+
+,
+
+V ( leave ) ← V ( leave ) + α ( R 1 + γV ( exit ) - V ( leave ))
+30
+
+5
+
+35
+
+30
+
+𝛼 = 1,
+
+𝛾=1
+
+MC vs. TD Prediction 예
+• Temporal Difference Learning:
+leave
+
+exit
+highway
+
+exit
+
+initial guess
+(predicted time to go)
+
+40
+
+5
+elapsed time
+
+𝑉 𝑆
+
+30
+35
+
+15
+
+15
+
+←𝑉 𝑆 +α 𝑅
+
++ 𝛾𝑉 𝑆
+
+−𝑉 𝑆
+
+,
+
+𝛼 = 1,
+
+V ( exit ) ← V ( exit ) + α ( R 2 + γV ( exit highway ) - V ( exit ))
+35
+
+15
+
+15
+
+35
+
+𝛾=1
+
+MC vs. TD Prediction 예
+• Temporal Difference Learning:
+leave
+
+exit
+
+exit
+highway
+
+secondary
+road
+
+enter home
+street
+
+20
+
+13
+
+3
+
++ 𝛾𝑉 𝑆
+
+−𝑉 𝑆
+
+arrive
+home
+
+initial guess
+(predicted time to go)
+
+40
+
+5
+elapsed time
+
+𝑉 𝑆
+
+30
+
+15
+
+←𝑉 𝑆 +α 𝑅
+
+,
+
+𝛼 = 1,
+
+𝛾=1
+
+• 한 step만 간 후 O분이 걸린다는 것을 알고 바로 각 state의 value function을 업데이트
+(episode가 끝날 때까지 (terminal state에 도달할 때까지) 기다리지 않고 online 학습을 한다)
+
+MC vs. TD Prediction 예
+•
+•
+
+Reward: elapsed time on each lag
+No discounting 𝛾 = 1
+
+매 step마다 얻은 reward를 바탕으로
+value function을 update
+
+총 걸린 시간 (reward의 총합)을 바탕으로
+각 state에서 predict한 total time과 비교
+이 error만큼 value function을 update
+
+MC
+43
+
+38
+
+23
+
+13
+
+3
+
+0
+
+TD
+40
+
+30
+
+20
+
+13
+
+3
+
+0
+
+MC vs. TD Prediction 비교
+• Random Walks
+TD가 MC보다 수렴이 더 빠른 것에 대해 수학적으로 증명되어 있지는 않다.
+실험적으로 확인했을 때 TD가 MC보다 수렴이 빠르다는 것을 알 수 있다.
+
+start
+
+MC vs. TD Prediction 비교
+Target (Exact Values)
+
+Updates using TD Learning
+
+Updates using MC Learning
+
+MC vs. TD Prediction 비교
+Target (Exact Values)
+
+Updates using TD Learning
+
+V ( S t ) ← V ( S t ) + α ( R t+1 + γV ( S t+1 ) - V ( S t ))
+α=0.5
+V(E) =0.5 + 0.5(1+ γ 0 – 0.5)=0.75
+
+First episode
+Updates using MC Learning
+
+V ( S t ) ← V ( S t ) + α ( G t - V ( S t ))
+V(St)=0.5 + 0.5(1 – 0.5)=0.75
+
+MC vs. TD Prediction 비교
+Target (Exact Values)
+
+Updates using TD Learning
+
+V ( S t ) ← V ( S t ) + α ( R t+1 + γV ( S t+1 ) - V ( S t ))
+α=0.5
+V(St)=0.5 + 0.5(0+γ *0.75–0.5)=0.625
+(Terminal state에 도달하지 않더라도
+지속적으로 value가 update된다.)
+
+Next episode
+Updates using MC Learning
+
+V ( S t ) ← V ( S t ) + α ( G t - V ( S t )) (Terminal state에 도달하지 않는 이상
+value는 update되지 않는다.)
+
+MC vs. TD Prediction 비교
+Target (Exact Values)
+
+Updates using TD Learning
+
+V ( S t ) ← V ( S t ) + α ( R t+1 + γV ( S t+1 ) - V ( S t ))
+
+Updates using MC Learning
+
+V ( S t ) ← V ( S t ) + α ( G t - V ( S t ))
+
+MC vs. TD Prediction 비교
+• TD의 경우, 100회 정도의 iteration으로 정답에 거의 근접
+
+The first episode
+
+Estimated Value
+
+State
+
+MC vs. TD Prediction 비교
+
+RMS Error
+averaged over states
+
+V(St) ← V(St) + α(Gt - V(St))
+
+V(St) ← V(St) + α(Rt+1 + γV(St+1) - V(St))
+
+Walks /Episodes
+
+n-step TD
+• Consider n-step returns for n=1, 2, …,
+
+• Define the n-step return
+
+• n-step TD
+
+TD( )
+• 한 에피소드에서 얻은 여러 step의 return 정보를 가중 평균(weighted
+average) 해서 하나의 가치 추정으로 만드는 방식
+𝐺 = 1−𝜆 𝐺
+𝐺 = 1−𝜆
+
+( )
+
++ 1 − 𝜆 𝜆𝐺
+
+𝜆
+
+𝐺
+
+( )
+
++ 1−𝜆 𝜆 𝐺
+
+( )
+
++⋯+ 𝜆
+
+𝐺
+
+( )
+
+( )
+
+모든 n-step return을 1 − 𝜆 𝜆
+가중치로 섞은 평균
+λ는 0~1 사이의 값으로, 과거 몇 step까지의 return을 반영할지를 조절
+λ값
+
+의미
+
+방법
+
+λ=0
+
+오직 1-step TD 사용
+
+TD(0)
+
+λ=1
+
+모든 step의 return 평균 (MC 방식)
+
+0<λ<1
+
+중간적인 형태
+
+Monte Carlo
+TD(λ)
+
+최근의 정보를 좀 더 고려하고 (1 − 𝜆), 먼 미래의 정보도 조금만 고려한다는 (𝜆
+
+) 의도
+
+TD( )
+• 한 에피소드에서 얻은 여러 step의 return 정보를 가중 평균(weighted
+average) 해서 하나의 가치 추정으로 만드는 방식
+𝐺 = 1−𝜆 𝐺
+𝐺 = 1−𝜆
+
+( )
+
++ 1 − 𝜆 𝜆𝐺
+
+𝜆
+
+𝐺
+
+( )
+
+( )
+
++ 1−𝜆 𝜆 𝐺
+
+( )
+
++⋯+ 𝜆
+
+𝐺
+
+( )
+
+The Forward View of TD( )
+• Forward View : λ-return(
+
+)
+
+TD( )를 이용해 value update를 하려면 n-step return을 다 계산해야 하고 이를 위해 앞으로의
+n-step 이후의 sate와 reward를 전부 관찰해야 해야 함
+
+𝐺 = 1−𝜆 𝐺
+
+( )
+
++ 1 − 𝜆 𝜆𝐺
+
+( )
+
++ 1−𝜆 𝜆 𝐺
+
+( )
+
++ ⋯+ 𝜆
+
+𝐺
+
+( )
+
+(1-step return, 2-step return, 3-step return … 전부 계산해서 평균 낸 값을 사용)
+
+The Back of View of TD( )
+• Backward View: Eligibility Trace
+- 현재 받은 reward에 대해서 과거의 어떤 action이 얼마나 기여했는지를 결정하는 방식을 이용
+- 매 step마다 value update 시 단 한 번의 1-step TD error ( 𝑡)만 계산하고, 이 에러를 과거에
+방문한 state들에게 분배 (이 분배 비율을 Eligibility Trace
+라고 하고 함)
+
+𝛾: discount factor (미래의 가치에 대한 반영)
+𝜆: trace decay (과거의 공로에 대한 반영)
+
+Eligibility Trace
+• 각 시점에서 지금 생긴 1-step TD error 𝛿 를, 과거에 방문했던 state들에게 eligibility 크기 𝑒 𝑠 만큼 분배
+
+𝑒 𝑠 = 𝛾𝜆𝑒
+
+𝑠 + 𝟏 (𝑆 = 𝑠)
+
+- Frequency (+𝟏) : 현재 방문한 상태 𝑆 에 +1로 선명한 발자국을 남기고,
+- Recency (𝛾𝜆𝑒
+
+𝑠 ): 시간이 흐를수록 (1 step 지날 때 마다) 기존의 발자국을 𝛾𝜆배로 감쇠 (decay)
+
+• 임의의 t 시점에서 value update를 위한 𝑒 𝑠 는 과거로 갈수록 지수적으로 감쇄
+𝑒 𝑆
+
+= 1, 𝑒 𝑆
+
+= 𝛾𝜆, 𝑒 𝑆
+
+= (𝛾𝜆) , …, 𝑒 𝑆
+
+= (𝛾𝜆)
+
+Eligibility Trace
+learning rate
+𝛼 = 0.1
+discount factory
+𝛾 = 0.9
+eligibility decay parameter 𝜆 = 0.8
+e 𝑆
+
+e 𝑆
+e 𝑆
+𝑒 𝑆
+𝑒 𝑆
+𝑅
+𝑣 𝑆
+
+현재 발생한 TD error 𝛿 를 현재 state뿐만 아니라
+최근에 방문했던 state들에도 일정 비율로 나누어 업데이트
+
+𝑣 𝑆
+
+Eligibility Trace
+𝛿 is propagated backward to all previous states weighted by their eligibility traces.
+
+𝛿
+𝑅 = 0.5
+
+S0
+𝑣 𝑆
+
+S1
+
+= 0.0
+
+𝑣 𝑆
+
+= 0.05
+
+S3
+
+S2
+𝑣 𝑆
+
+= 0.1
+
+𝑣 𝑆
+
+𝛿 = 𝑅 + 𝛾𝑣 𝑆 − 𝑣 𝑆
+= 0.5 + 0.9 0.3 − 0.2 = 0.57
+
+= 0.15
+
+𝑒 𝑠
+
+S5
+
+S4
+𝑣 𝑆
+
+= 0.2
+
+𝑣 𝑆
+
+𝛼𝛿 𝑒 𝑠
+
+𝑣old(s)
+
+𝑣new(s)
+
+𝑒 𝑆
+
+=1
+
+s4
+
+1.000000 0.057000
+
+0.20
+
+0.257000
+
+𝑒 𝑆
+
+= 𝛾𝜆 = 0.9 0.8 = 0.72
+
+0.720000 0.041040
+
+0.15
+
+0.191040
+
+𝑒 𝑆
+
+= (𝛾𝜆) = 0.72 ＝0.5184
+
+s3
+
+𝑒 𝑆
+
+= (𝛾𝜆) = 0.72 ＝0.3732
+
+s2
+
+0.518400 0.029549
+
+0.10
+
+0.129549
+
+𝑒 𝑆
+
+= (𝛾𝜆) = 0.72 = 0.2687
+
+s1
+
+0.373248 0.021275
+
+0.05
+
+0.071275
+
+s0
+
+0.268739 0.015318
+
+0.00
+
+0.015318
+
+= 0.3
+
+TD Prediction의 장점
+• 환경에 대한 MDP를 알 필요가 없다.
+• 학습이 매 step마다 점진적으로 이루어진다.
+• MC Learning보다 더 빠르게 수렴한다.
+
+3가지 학습 방법 비교
+
+DP
+
+MC
+
+TD
+
+Model-free
+
+X
+
+O (Sample)
+
+O (Sample)
+
+Bootstrapping
+
+O
+
+X
+
+O
+
+Time-step
+
+End of episode
+
+Time-step
+
+Update
+
+Temporal Difference Control
+• Generalized Policy Iteration with Temporal Difference Method
+‒ TD Control 문제는 state-value function이 아닌 action-value function을 추정한다.
+‒ TD(0)인 경우, GPI는 random policy로 시작해서 한 step을 수행한 후 policy evaluation을 통해
+action-value를 구하고 이를 기반으로 policy improvement을 수행한다. 이 Improve된 policy로 다시
+새로운 episode에서 다시 Policy Iteration을 시작한다.
+(DP와 달리 full policy evaluation을 하지 않는다)
+𝑉 (𝑠) 를 사용하는 경우, MDP 모델을 알아야 𝜋 (𝑠)를 구할 수 있기 때문에
+강화학습에서는 Policy Improvement를 위해 𝑉 (𝑠) 대신 𝑄 (𝑠)를 구한다.
+
+Temporal Difference Control
+• Generalized Policy Iteration with Temporal Difference Method
+‒ TD Control 문제는 state-value function이 아닌 action-value function을 추정한다.
+‒ TD(0)인 경우, GPI는 random policy로 시작해서 한 step을 수행한 후 policy evaluation을 통해
+action-value를 구하고 이를 기반으로 policy improvement을 수행한다. 이 Improve된 policy로 다시
+새로운 episode에서 다시 Policy Iteration을 시작한다.
+(DP와 달리 full policy evaluation을 하지 않는다)
+𝑸(𝑺 𝒕 , 𝑨 𝒕 ) ← 𝑸(𝑺 𝒕 , 𝑨 𝒕 ) + 𝜶(𝑹 𝒕 𝟏 + 𝜸𝑸(𝑺 𝒕 𝟏 , 𝑨 𝒕 𝟏 )– 𝑸(𝑺 𝒕 , 𝑨 𝒕 ))
+
+State-action to state-action
+Q (s, a)
+
+TD Control: SARSA Algorithm
+• SARSA란 TD Method를 이용한 강화학습 algorithm이다.
+• MC와 달리 Policy Evaluation(Prediction)을 Terminal State까지 가서 하지 않고,
+Dynamic Programming과 같이 일정 time step마다 (TD(0)의 경우는 한 step 가서)
+Policy Evaluation (Prediction)한 후 바로 Policy Improvement (Control)를 하는 방식이다.
+• policy 가 주어졌을 때 현재 state 𝑡 에서 action 𝑡 를 취한 후, reward
+을 알아낸 다음, 주어진 policy로 다음 action
+을 취한다.
+
+과 다음 state
+
+• 이들 각각의 원소 이름을 따서 SARSA (State-Action-Reward-State- Action)로 이름 지어졌다.
+
+𝑸 (𝑺 𝒕 , 𝑨 𝒕 ) ← 𝑸 (𝑺 𝒕 , 𝑨 𝒕 ) + 𝜶 (𝑹 𝒕 𝟏 + 𝜸𝑸 (𝑺 𝒕 𝟏 , 𝑨 𝒕 𝟏 )– 𝑸 ( 𝑺 𝒕 , 𝑨 𝒕 ))
+
+TD Control: SARSA Algorithm
+• SARSA에서의 Policy Evaluation 단계에서는
+를 계산하고, 다음 state에서의
+는
+를 결정했던 Policy 를 그대로 이용하되 Exploration을 위해 -greedy를 방법을 사용한다
+Policy Evaluation
+(Prediction)
+
+Policy Improvement
+(Control)
+
+𝑸𝝅(𝑺𝒕 , 𝑨𝒕 ) ← 𝑸𝝅(𝑺𝒕 , 𝑨𝒕 ) + 𝜶[𝑹𝒕 𝟏 + 𝜸 𝑸𝝅(𝑺𝒕 𝟏 , 𝑨𝒕 𝟏 )– 𝑸𝝅(𝑺𝒕 , 𝑨𝒕 ) ]
+
+𝑝𝑟𝑜𝑏𝑎𝑏𝑖𝑙𝑖𝑡𝑦 1 − 𝜀 + 𝜀/ 𝒜
+𝑎 ~ argmax 𝑞 (𝑠, 𝑎)
+
+TD Target
+
+𝑝𝑟𝑜𝑏𝑎𝑏𝑖𝑙𝑖𝑡𝑦 𝜀/ 𝒜
+𝑎 ~ 𝑈𝑛𝑖𝑓𝑜𝑟𝑚(𝑎 )
+
+πk
+
+(ε-greedy/ε-soft)
+
+πk
+(ε-greedy/ε-soft)
+
+πk+1
+
+TD Control: SARSA Algorithm
+• SARSA에서의 Policy Evaluation 단계에서는
+를 계산하고, 다음 state에서의
+는
+를 결정했던 Policy 를 그대로 이용하되 Exploration을 위해 -greedy를 방법을 사용한다
+Policy Evaluation
+(Prediction)
+
+Policy Improvement
+(Control)
+
+𝑸𝝅(𝑺𝒕 , 𝑨𝒕 ) ← 𝑸𝝅(𝑺𝒕 , 𝑨𝒕 ) + 𝜶[𝑹𝒕 𝟏 + 𝜸 𝑸𝝅(𝑺𝒕 𝟏 , 𝑨𝒕 𝟏 )– 𝑸𝝅(𝑺𝒕 , 𝑨𝒕 ) ]
+
+𝑝𝑟𝑜𝑏𝑎𝑏𝑖𝑙𝑖𝑡𝑦 1 − 𝜀 + 𝜀/ 𝒜
+𝑎 ~ argmax 𝑞 (𝑠, 𝑎)
+
+TD Target
+
+𝑝𝑟𝑜𝑏𝑎𝑏𝑖𝑙𝑖𝑡𝑦 𝜀/ 𝒜
+𝑎 ~ 𝑈𝑛𝑖𝑓𝑜𝑟𝑚(𝑎 )
+
+πk
+
+(ε-greedy/ε-soft)
+
+πk
+(ε-greedy/ε-soft)
+
+πk+1
+
+TD Control: SARSA Algorithm
+s
+
+a1
+
+a2
+
+~ π with ε-greedy
+a3
+
+qπ(s,a3)
+
+𝑸𝝅(𝑺𝒕 , 𝑨𝒕 ) ← 𝑸𝝅(𝑺𝒕 , 𝑨𝒕 ) + 𝜶[𝑹𝒕 𝟏 + 𝜸 𝑸𝝅(𝑺𝒕 𝟏 , 𝑨𝒕 𝟏 )– 𝑸𝝅(𝑺𝒕 , 𝑨𝒕 ) ]
+s’3
+
+qπ(s, a3) ← qπ(s, a3) + α[r + γ qπ(s'2, a2) – qπ(s, a3)]
+
+r
+s’1
+
+s’2
+
+~ π with ε -greedy
+a3
+a2
+
+a1
+
+qπ(s'2, a2)
+
+On-Policy Learning:
+환경과의 상호작용을 하여 데이터를 수집하는 policy와
+학습하고자 하는 policy 모두 동일한 𝜀-greedy policy
+
+SARSA Algorithm
+
+On-Policy vs. Off-Policy Learning
+• On-Policy Learning: 현재의 policy에 따라 action을 선택하고, 그 결과를 바탕으로 policy를
+업데이트하는 학습 방법
+• 환경과의 상호작용에 사용된 policy (behavior policy)와 학습의 대상이 되는 policy (target policy)가 동일
+• 현재의 policy π에 따라 움직이면서 데이터를 얻고 이 policy를 평가하고 개선하는 방식
+• π1, π2, π3, …에 대해 학습이 반복될 때 학습이 진행되는 바로 그 시점에서의 policy만을 이용하여 학습
+데이터를 생성하기 때문에 학습이 끝난 뒤 데이터는 더 이상 쓸모가 없어지므로 폐기된다.
+
+• Off-Policy Learning: action을 선택하기 위해 사용되는 policy (Behavior policy)와 실제
+평가하고 개선하는 policy (Target policy)가 별도로 있는 학습 방법
+• 환경과의 상호작용에 사용된 policy (behavior policy)와 학습의 대상이 되는 policy (target policy)가 다름
+• behavior policy πβ 로 움직이면서 데이터를 얻고 이 데이터를 이용해 target policy π를 평가 개선하는 방식
+• behavior policy πβ 로 수집된 모든 데이터를 학습에 이용할 수 있으며, 데이터를 저장하기 위한 메모리를
+필요로 한다.
+
+Off-Policy Learning
+• Off-Policy Learning은 behavior policy를 이용하여 지속적인 exploration하고 그 결과로부터
+policy evaluation과 policy improvement를 통해 target policy를 개선시켜 나간다.
+
+Select actions from the behavior policy
+
+learn values for the target policy
+
+Target Policy vs. Behavior Policy
+• Q-Learning는 Off-Policy Learning 방식이며, 따라서 학습을 위한 target policy와 action을 선택
+하는 behavior policy가 따로 존재한다.
+
+Target policy:
+The policy that the agent uses to learn
+from the rewards received for its actions,
+i.e., to determine updated Q value
+
+Behavior policy:
+the policy that the agent uses to determine its
+action (behavior) in a given state,
+i.e., to collect data
+
+= argmax Q(s, a)
+a
+ε-greedy policy
+Uniform random policy가 다양한 action을 시도할 수 있어 exploration에 더 좋을 것처럼
+보이지만 실제 복잡한 환경에서는 주로 ε-greedy (ε-soft) policy를 사용
+
+Q-Learning
+• Q-Learning은 가장 많이 쓰이는 매우 중요한 Temporal Difference 기반 강화학습 algorithm이다.
+• Action value function의 Bellman Optimality Equation을 사용
+∗
+𝒔
+
+∗
+
+𝒂
+
+𝒓
+
+• Value Iteration과 마찬가지로 아래 식을 사용하여 Optimal action value function에 수렴시킴
+
+𝒔
+
+𝒂
+
+𝒓
+𝒂
+
+∗
+
+𝒕
+
+∗
+
+𝒕
+
+(sample mean)
+
+𝑸 𝑺𝒕 , 𝑨𝒕 ← 𝑸 𝑺𝒕 , 𝑨𝒕 + 𝜶 𝑹𝒕 𝟏 + 𝜸 𝐦𝐚𝐱 𝑸 𝑺𝒕 𝟏 , 𝒂 − 𝑸 𝑺𝒕 , 𝑨𝒕
+𝒂
+
+Q-Learning
+를 방문할 수 있
+• Q-Learning의 학습 데이터를 수집하는데 사용되는 behavior policy는 모든
+는 임의의 policy이면 되고, target policy는 action value function에 대한 argmax policy임
+𝑸 𝑺𝒕 , 𝑨𝒕 ← 𝑸 𝑺𝒕 , 𝑨𝒕 + 𝜶 𝑹𝒕 𝟏 + 𝜸 𝐦𝐚𝐱 𝑸 𝑺𝒕 𝟏 , 𝒂 − 𝑸 𝑺𝒕 , 𝑨𝒕
+𝒂
+
+Behavior Policy: 𝜀-greedy(𝜀-soft) policy
+
+Targe Policy: greedy policy
+
+𝑖𝑓 𝑎 = argmax 𝑄 (𝑠, 𝑎)
+
+𝑖𝑓 𝑎 = argmax 𝑄 (𝑠, 𝑎)
+
+𝜋
+
+𝑎 𝑠 = 1 − 𝜀 + 𝜀/ 𝒜
+
+𝑒𝑙𝑠𝑒
+𝜋
+
+𝜋
+
+𝑎𝑠 =1
+
+𝑒𝑙𝑠𝑒
+𝑎 𝑠 = 𝜀/ 𝒜
+
+𝜋
+
+𝑎𝑠 =0
+
+Q-Learning vs. SARSA
+Recall SARSA: On-policy
+s
+
+a1
+
+a2
+
+~ π with ε -greedy
+
+a3
+
+𝒒𝝅(𝒔, 𝒂𝟑) ← 𝒒𝝅(𝒔, 𝒂𝟑) + 𝜶[𝒓 + 𝜸 𝒒𝝅(𝒔′𝟐, 𝒂𝟐)– 𝒒𝝅(𝒔, 𝒂𝟑)]
+~
+
+qπ(s,a3)
+
+s’3
+
+Q-Learning: Off-policy
+
+r
+s’1
+
+s’2
+
+~ argmax q
+a3
+a2
+
+a1
+
+π
+
+qπ(s'1, a1)
+
+𝒒𝝅(𝒔, 𝒂𝟑) ← 𝒒𝝅(𝒔, 𝒂𝟑) + 𝜶[𝒓 + 𝜸 max 𝒒𝝅(𝒔′𝟐, 𝒂′)– 𝒒𝝅(𝒔, 𝒂𝟑)]
+𝒂
+
+~
+
+π* ≠ π
+
+SARSA는 𝜖-greedy policy (stochastic policy)로 행동을 선택하고
+그에 따른 𝑞(𝑠 , 𝑎 ) 값을 사용하지만
+Q-learning은 deterministic policy로 max값을 갖는 행동을 선택하고
+그에 따른 𝑞(𝑆 = 𝑠 , 𝐴 = 𝑎 ) 를 고려한다.
+
+Q-Learning 알고리즘
+
+Off-policy Learning
+On-policy Learning
+
+SARSA
+
+Target policy is same as behavior policy
+
+Off-policy Learning
+
+Q-Learning
+
+Target policy is different from behavior policy
+
+Expected SARSA
+• SARSA에서 환경으로부터 과 를 샘플링하고, 에서 e-greedy policy로부터 다음 action을
+샘플링하는 대신 expectation을 명시적으로 계산하는 알고리즘이 Expected SARSA이다.
+𝒒𝝅 𝒔, 𝒂 =
+
+𝒑 𝒔 , 𝒓 𝒔, 𝒂 [𝒓 + 𝜸
+𝒔 ,𝒓
+
+𝝅(𝒂 |𝒔 )𝒒𝝅 (𝒔 , 𝒂 )]
+𝒂
+
+SARSA
+𝑄(𝑆 , 𝐴 ) ← 𝑄 (𝑆 , 𝐴 ) + 𝛼[𝑅
+
++ 𝛾𝑸(𝑆
+
+,𝐴
+
+𝜋 𝑎 𝑆
+
+𝑄(𝑆
+
+)– 𝑄(𝑆 , 𝐴 )]
+
+,𝑎 )
+
+Expected SARSA
+Q (𝑆 , 𝐴 )← Q (𝑆 , 𝐴 )+ α [ R t+1 + γ
+
+𝝅 𝒂 𝑺𝒕 𝟏 𝑸(𝑺𝒕 𝟏 , 𝒂 ) − Q (𝑆 , 𝐴 )]
+𝒂
+
+Expected SARSA
+
+ε-greedy
+
+2.0을 70%로 나머지값을 30%로 계산
+충분한 episode가 수행된다면 결국은 1.4가 될 것이다.
+
+• Expected SARSA 업데이트 타깃은 SARSA보다 분산이 훨씬 낮지만 매 time step마다 expectation을
+계산해야 하기 때문에 action 수가 증가함에 따라 비용이 증가한다.
+
+Off-policy Expected SARSA
+• Expected SARSA에서 Behavior policy와 Target policy와 가 같다면 on-policy learning이지만
+Behavior policy를 -soft policy로, Target policy를 greedy policy와 같이 사용할 수 있기
+때문에 off-policy로도 사용될 수 있다.
+Expected SARSA
+
+Q ( S t , A t )← Q ( S t , A t )+ α [ R t+1 + γ
+
+𝝅 𝒂 𝑺𝒕 𝟏 𝑸(𝑺𝒕 𝟏 , 𝒂 ) − Q ( S t , A t )]
+𝒂
+
+이 policy가 반드시 behavior policy일 필요는 없다.
+𝜋 𝑎 𝑆
+
+1 𝑖𝑓 𝑎 = argmax 𝑄 𝑆
+
+𝝅 𝒂 𝑺𝒕 𝟏 𝑸 𝑺𝒕 𝟏 , 𝒂 =
+𝒂
+
+≠𝑏 𝑎 𝑆
+
+𝒂
+
+0 𝑒𝑙𝑠𝑒
+
+= max 𝑸(𝑺𝒕 𝟏 , 𝒂 )
+
+,𝑎
+
+𝑸 𝑺𝒕 𝟏 , 𝒂′
+Q-Learning
+
+[실습] Cliff Walking Environment
+• Q-learning이 SARSA 보다 항상 좋은가?
+
+[실습] Cliff Walking Environment
+
+Q-learning은 max Q를 구하기 때문에 절벽 바로 옆
+으로 이동한다는 것을 빠르게 학습한다.
+SARSA는 ε 만큼의 exploration을 하기 때문에 더
+길지만 더 안정적인 경로를 택하는 방법을 학습한다.
+
+Summary
+• TD Control은 Bellman equation에 기반한다.
+
+QUESTIONS
+
+ANSWERS
+
+

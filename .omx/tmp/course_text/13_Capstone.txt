@@ -1,0 +1,449 @@
+Capstone
+김현
+hyunkim@etri.re.kr
+
+Robot Manipulation
+
+Implementations
+Agent
+Policy
+policy
+update
+
+Learning
+Algorithm
+
+action
+
+state
+(observation)
+
+Environment (World)
+Robot
+robot
+state
+
+(controlled
+system)
+
+task
+state
+
+reward
+done
+
+goal
+state
+
+motor
+control
+robot
+state
+
+(environment
+dynamics)
+
+Task
+(goal, reward,
+done)
+
+Physics
+Engine
+
+object
+pose
+
+라이브러리 설치
+• 가상환경 설정
+• Conda, pyenv & virtualenv 등
+
+• OpenAI Stable Baselines3: https://github.com/DLR-RM/stable-baselines3
+$ pip install stable-baselines3[extra]
+
+• OpenAI Gym: https://github.com/openai/gym
+$ pip install gymnasium
+
+• Panda-gym: https://github.com/qgallouedec/panda-gym/
+$ cd ${workspace}
+$ git clone https://github.com/qgallouedec/panda-gym.git
+$ pip install –e panda-gym
+
+Panda 로봇 학습 환경
+• Panda-gym
+• Franka Emika Panda Robot을 대상으로 Pybullet 물리엔진과 OpenAI Gym (Gymnasium)
+인터페이스를 기반으로 만들어진 로봇 강화학습 환경
+import gym
+import panda_gym
+env = gym.make(“PandaReach-v2”, render=True)
+Observation, _ = env.reset()
+for _ in range(1000):
+action = env.action_space.sample()
+observation, reward, terminated, truncated, info = env.step(action)
+if terminated or truncated:
+observation, _ = env.reset()
+env.close()
+
+Franka Emika Panda robot
+
+Physics Engine: Pybullet
+• Python module for physics simulation and robotics based on the Bullet Physics SDK:
+Real-time collision detection and multi-physics simulation for VR, games, visual effects,
+robotics, machine learning etc.
+https://github.com/bulletphysics/bullet3
+
+OpenAI Gymnasium
+import gymnasium as gym
+
+gym.Env):
+
+class FooEnv(
+def
+
+__init__(self):
+# define observation space and action space
+# set initial state and seed
+
+def
+
+step(self, action):
+# get action and run on timestep of the env.
+# return next state, reward, done, info from (s, a)
+done: terminated, truncated
+
+def
+
+reset(self):
+# reset the env.
+# return state, info
+
+def
+
+render(self):
+# render the env.
+# return render frames
+
+def
+
+close(self):
+# do something for closing the env
+
+Robot Task
+Reach
+
+Push
+
+Slide
+
+Pick&Place
+
+Stack
+
+Flip
+
+Implementations
+Agent
+Policy
+policy
+update
+
+Learning
+Algorithm
+(SAC/HER)
+
+Environment
+
+action
+(panda-gym)
+
+state
+(observation)
+
+Robot
+robot
+state
+task
+state
+
+reward
+done
+
+goal
+state
+
+(Panda)
+
+motor
+control
+robot
+state
+
+Task
+(Reach,
+Pick&Place
+…)
+
+Physics
+Engine
+(pybullet)
+
+object
+pose
+
+Formalize the problem
+• Robot tasks: reach, push, pick and place, stack, flip… (episodic tasks)
+• Goal
+• Goal state 1: Robot gripper (end effector)가 Object에 위치한 상태 (reach)
+• Goal state 2: Object가 원하는 위치(goal position)로 옮겨진 상태 (push or pick_and_place)
+
+• Design MDP Components
+• State (Observation) space
+- Robot state
+- Object state
+• Action space
+• Reward
+• Episode end
+
+States & Observations
+• MDP에서의 미래는 History에 의해 결정됨
+𝑆 = 𝑓(𝐻 )
+𝐻
+
+= 𝑂 ,𝐴 ,𝑅 ,𝑂 ,𝐴 ,𝑅 ,𝑂 ,𝐴 ,𝑅 ,…,𝑂 ,𝐴 ,𝑅
+
+Agent
+
+,𝑂
+
+,𝐴
+
+,𝑅
+
+Environment
+
+- Observation ≠ State (Partially observable)
+• 강화학습에서는 Markov Property를 따르는 것으로 가정
+ℙ(𝑆
+
+𝑆 ,𝐴
+
+= ℙ(𝑆
+
+𝑆 ,𝐴 ,𝑆
+
+,𝐴
+
+,𝑆
+
+,𝐴
+
+, …,𝑆 ,𝐴
+
+- Fully observable assumption: Observation = State, i.e., 𝑂 = 𝑆
+- Environment Dynamics (Physics Engine, Simulator 등)이 담당
+
+,𝑂
+
+,…
+
+States & Observations in panda-gym
+• Robot State:
+The position and velocity of the end effector and
+finger on/off (1 DoF)
+• end_effector_position (3)
+• end_effector_velocity (3)
+• fingers_width (1)
+
+• Object State:
+The position, the orientation, the linear & rotational
+speed for each object
+• object_position (3)
+• object_rotation (3)
+• object_velocity (3)
+• object_angular_velocity (3)
+
+Actions
+• Agent의 행동으로 적절한 크기의 Decision Making Variables를 선택
+
+너무 많은 일을 에이전트에게 맡기지 않도록 설계
+- Joint positions, velocities and accelerations
+. No prior knowledge (RL이 동적 안정성, joint limit, collision, inertia까지 모두 학습해야 함)
+. Sample-inefficient + high difficulty
+- Target (Goal) pose + Motion Planner
+
+Joint 4
+Joint 3
+Joint 2
+
+. Prior knowledge (기구학/제약 처리(Planning, IK)는 중간 계층이 해결)
+. Sample-efficient + stable
+
+Joint 5
+Joint 6
+
+Joint 1
+end-effector position
+Joint 0
+
+Actions in panda-gym
+• Continuous Action Space
+- Cartesian-space control (Default)
+End-effector displacement & finger movement
+
+- Joint-space control
+The individual motion of each joint & finger movement
+
+States & Actions in panda-gym
+• panda-gym Pick and Place Task에서의 states와 actions
+
+Actions
+end_effector_position (3)
+• fingers_width (1)
+
+Robot states
+• end_effector_position (3)
+• end_effector_velocity (3)
+• fingers_width (1)
+Object states
+• object_position (3)
+• object_rotation (3)
+• object_velocity (3)
+• object_angular_velocity (3)
+
+각 에피소드마다 달성해야 할 목표(goal)가 명시되어 있음
+env.observation_space: Dict('observation': Box(...), 'achieved_goal': Box(...), 'desired_goal': Box(...))
+
+Rewards
+• Sparse rewards: Goal을 정확히 달성했을 때만 보상을 주고, 그 외에는 보상이 0인 방식
+• Dense rewards: 매 timestep마다 state나 action에 대해 지속적으로 보상을 주는 방식
+
+Rewards
+• Reward shaping의 예
+Goal : +1
+Avoid: -1
+Each move: ??
+
+Rewards in panda-gym
+• panda-gym에서의 reward calculation: HER (Hindsight Experience Replay) 사용
+- Dense reward: 물체의 위치 (또는 End Effector의 위치)와 목표 위치 간의 거리를 reward로 사용
+- Sparse reward: Reward shaping 없이 성공(1)/실패(0)를 reward로 사용
+
+Dense or Sparse Reward
+def compute_reward(self, achieved_goal, desired_goal):
+d = distance(achieved_goal, desired_goal)
+if self.reward_type == "sparse":
+return -np.array(d > self.distance_threshold)
+else:
+return -d
+
+Done in panda-gym
+• 에피소드가 종료되었는지를 나타내는 Boolean flag
+. Terminated: 환경의 종료 조건(예: 목표 달성, 충돌)이 만족되어 에피소드가 끝났음을 의미
+. Truncated: 환경에서 지정된 최대 스텝 수에 의해 중단되었음을 의미
+
+Episodic task
+Goal state: Object가 원하는 위치(goal position)로 옮겨진 상태
+def is_success(self, achieved_goal, desired_goal):
+d = distance(achieved_goal, desired_goal)
+return np.array(d < self.distance_threshold)
+
+Learning Algorithm
+• Model architecture and learning algorithm
+- On-policy Methods: 개념적으로 단순하고 직관적이며 탐색에 유리하지만, 데이터 효율성이 낮음
+(A2C, TRPO, PPO)
+- Off-policy Methods: 데이터 재사용으로 효율성이 높지만 알고리즘 구조와 구현이 복잡
+(DQN, DDPG, TD3, SAC)
+• Replay buffer
+- Hindsight Experience Replay
+- Prioritized replay buffer
+• Evaluation
+- success rates
+- sample efficiency, computation cost, task throughput, robustness …
+
+실습: import library
+import os
+import numpy as np
+import gymnasium as gym
+from stable_baselines3 import HerReplayBuffer, SAC
+from stable_baselines3.common.noise import NormalActionNoise
+import panda_gym
+
+실습: create an environment
+# PandaReach-v2
+# PandaPush-v2
+# PandaSlide-v2
+# PandaPickAndPlace-v2
+# PandaStack-v2
+# PandaFlip-v2
+env = gym.make('PandaReach-v2', render_mode='rgb_array')
+
+실습: set agent model
+model = SAC(
+policy="MultiInputPolicy", # policy model to use
+env=env,
+# environment to learn from
+buffer_size=1000000,
+# replay buffer size
+learning_starts=1000,
+# transitions before learning starts
+batch_size=256,
+# mini-batch size for each gradient update
+policy_kwargs= {
+# additional arguments to be passed to the policy
+'net_arch': [64, 64],
+'n_critics': 1,
+}
+learning_rate=0.001,
+# learning rate for Adam optimizer
+gamma=0.95,
+# discount factor
+tau=0.005,
+# the soft update coefficient (polyak update)
+replay_buffer_class=HerReplayBuffer,
+replay_buffer_kwargs=dict(
+n_sampled_goal=4,
+goal_selection_strategy="future",
+online_sampling=True,
+max_episode_length=env._max_episode_steps,
+)
+verbose=1,
+# the verbosity level: 0 no output, 1 info, 2 debug
+seed=None,
+# seed for the pseudo random generators
+)
+
+실습: train the model
+model.learn(total_timesteps=20000)
+model.save('panda_reach_sac')
+
+실습: run the model
+env = gym.make('PandaReach-v2', render_mode='human')
+# load the model
+model = SAC.load('panda_reach_sac', env=env)
+# run
+for i in range(20):
+obs, _ = env.reset()
+n_steps = 0
+while True:
+action, _state = model.predict(obs, deterministic=True)
+obs, reward, terminated, truncated, info = env.step(action)
+n_steps += 1
+if terminated or truncated:
+print('<Done> num of steps: {}'.format(n_steps))
+time.sleep(1.0)
+break
+
+PPO
+• Reach task (reward type = ‘dense’)
+https://github.com/simonbogh/rl_panda_gym_pybullet_example
+
+실습 과제
+• 작업환경 변경
+• 작업 변경
+• 로봇 변경
+• 알고리즘 변경
+
+QUESTIONS
+
+ANSWERS
+
+

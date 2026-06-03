@@ -1,0 +1,787 @@
+Policy Gradient
+김현
+hyunkim@etri.re.kr
+
+RECAP
+• 강화학습의 목적(Goal)은 “expected cumulative reward”를 최대화하는 optimal policy
+찾는 것이다.
+
+∗를
+
+• 지금까지는 어떤 state에서 취할 수 있는 action들의 Q-value를 찾는 value-based approach에
+대해 공부했다. value-based approach에서는 최종 목적인 optimal policy ∗ 는 Q-value의
+최대값을 취하는 방식으로 구했다.
+The link between Value and Policy
+∗
+
+∗
+
+Finding an optimal value function leads to having an optimal policy
+• Value를 찾지 말고 바로 optimal policy를 찾으면 안되나?
+
+Value-base and Policy-base RL
+
+Value-based vs. Policy-based Approach
+Value-based approach
+
+s
+
+w
+
+value parameterization
+
+𝒘∈ℝ
+
+Policy-based approach
+
+s
+(s, a, w)
+Q-values
+over actions
+
+θ
+
+policy parameterization
+
+𝜽∈ℝ
+
+π(a | s, θ)
+probability distribution
+over actions
+
+𝜋 𝑎 = argmax 𝑄(𝑠, 𝑎)
+- Actions의 values (Q-values)를 구하는 것
+- Value error minimization 문제
+- Small-size discrete action space
+
+- Actions의 확률분포를 구하는 것
+- Policy performance maximization 문제
+- Continuous action space 처리
+
+Continuous Action Space
+<value-based approach: DQN>
+J3=10⁰
+
+J4=-10⁰
+
+-90 ≥ Ji ≤ 90
+
+s
+
+(1⁰ 간격인 경우, 181개의 discrete values)
+
+w
+
+1814 actions
+
+θ
+
+J1= 30.0⁰
+J2=-20.0⁰
+J3= 10.0⁰
+J4=-10.0⁰
+
+action space: 1814 dimensions
+actions
+
+J2=-20⁰
+
+J1=30⁰
+
+action variables: J1, J2, J3, J4
+
+(각 joint마다 181개의 action을 갖는다)
+
+<policy-based approach>
+-90 ≥ Ji ≤ 90
+(continuous values)
+action space: 4 dimensions
+(각 joint의 값 또는 Gaussian Distributions)
+
+s
+
+Policy Gradient Methods
+• Policy-based approach는 expected total reward를 최대화하는 stochastic policy
+찾는 것이다.
+• Value-function 대신 policy를
+
+를
+
+라고 하는 파라메터(weights)를 이용해 parameterization 하고
+in DQN
+
+𝒕
+
+• 이 에 의해 만들어지는 경험, 즉 하나의 trajectory
+의 expectation을 Objective로 설정하고
+(w
+
+𝒕
+
+,…,
+𝒕
+
+𝒕
+
+)로부터 총 보상
+𝟐 in DQN
+
+• 이 objective를 최대화하는 파라메터(weights) 를 찾을 수 있으면 된다.
+를 찾기 위해 Gradient Descent 방법을 쓰기 때문에 Policy Gradient Method이라고 한다.
+𝒕 𝟏
+
+𝒕
+
+(
+
+𝒕) in DQN
+
+Policy Gradient Algorithm 개요
+• Policy Gradient 알고리즘은 policy 로부터 trajectory를 sampling한 후, total reward가 큰
+방향으로 를 찾아가는 과정이다.
+Define
+
+to parameterize the policy
+
+Trajectory:
+
+,…,
+
+Total reward:
+Objective function:
+Find the optimal * which maximize
+Policy gradient update:
+
+What to do
+• Parameterized policy
+• Softmax policy (discrete action space)
+• Gaussian policy (continuous action space)
+
+• Objective function
+• Discounted total reward
+• Average reward per timestep
+
+• Policy Gradient Theorem
+• Actor Critic
+
+Parameterize the policy
+• policy π(a|s)를 parameterized function으로 만든다는 것은 임의의 state s에서 여러 개의 actions
+중 하나를 선택하는 함수를 만든다는 것이며 이는 stochastic policy를 가정한다는 의미가 된다.
+(Discrete)
+• Value-based approach에서는
+
+,
+
+(Continuous)
+
+,
+
+로 구해지는 deterministic policy를 구했다.
+
+하지만 어떤 경우는 stochastic policy가 optimal policy인 경우가 있다.
+Perceptual aliasing:
+서로 다른 상태가 동일하거나 유사하게 관찰되거나 인식될 때 발생하는 문제
+
+Parameterize the policy
+• Policy parameterization
+- Parameters, 즉 weight vector를 나타내는 표기법은
+(value function의 weight vector는
+
+를 사용
+
+)
+
+- Parameterized policy는 timestep 에서 state 에 있고 parameter
+action 를 선택할 확률로 정의될 수 있음
+Stochastic policy
+( │ , )= {
+π(a | s, θ) ≥ 0, for all actions and states
+∑ π(a | s, θ) = 1, for all states
+* DPG (Deterministic Policy Gradient)와 같은 알고리즘은 Deterministic policy를 이용)
+
+가 주어지면, 에서
+
+Parameterize the policy
+• 주어진 상태 에서 action 에 대한 확률분포를 정의하는 함수이다.
+• discrete action space에서는 Softmax policy, continuous action space에서는 Gaussian policy를 사용
+• Softmax policy에서 신경망의 출력은 상태 s에서 각 가능한 action a에 대한 점수(logits)이며, 이 점수를 Softmax
+함수를 통해 정규화하여 확률분포로 변환
+
+Softmax Policy
+
+Gaussian Policy
+
+(discrete action space)
+
+(continuous action space)
+
+𝑒 ( , , 𝜽)
+𝜋 𝑎|𝑠, 𝜽 =̇
+∑ ∈𝒜 𝑒 ( , , 𝜽)
+action preference 함수
+
+ℎ(𝑠, 𝑎, 𝜽)
+
+𝜋 𝑎|𝑠, 𝜽 =̇
+
+1
+𝜎(𝑠, 𝜽) 2𝜋
+
+𝑒𝑥𝑝 −
+
+Gaussian 함수
+
+𝜽 =̇
+
+𝑎 − 𝜇 𝑠, 𝜽
+2𝜎(𝑠, 𝜽)
+𝜽
+𝜽
+
+Linear function approximation
+< 𝐱 𝑠, 𝑎 , 𝜽 >
+
+Linear function approximation
+𝜇 𝑠, 𝜽 =̇ 𝜽 𝐱(𝑠) 𝜎(𝑠, 𝜽) =̇ exp(𝜽 𝐱(𝑠))
+
+Neural network
+
+Neural network
+
+Softmax vs. ε-greedy
+
+h(s, a, θ)
+
+𝑞 (s, a, w)
+
+Softmax Policy (Discrete action space)
+States
+
+𝑠 = [𝑥, 𝑥̇ , 𝜃, 𝜃̇]
+
+𝑆 = [𝑥𝑡, 𝑥̇ 𝑡, 𝜃𝑡, 𝜃̇𝑡 ]
+
+θ
+
+ℎ(𝑠, 𝑎, 𝜽)
+
+ℎ(𝑎0|𝑠)
+
+ℎ(𝑎1|𝑠)
+Softmax
+
+𝑒 ( , , 𝜽)
+𝑒 ( ,| ) + 𝑒 (
+
+𝑒 ( , , 𝜽)
+𝑒 ( ,| ) + 𝑒 (
+
+,| )
+
+Sampling
+
+Actions
+
+𝑎 = [a 0 (left), a 1 (right)]
+
+a 1 (right)
+
+,| )
+
+probability distribution
+over actions
+
+Gaussian Policy Function
+• Softmax Policy인 경우 action이 미리 정해져 있어야 하는 discrete action space를 전제로 하기
+때문에 continuous action space인 경우는 적용이 어렵다.
+• Continuous action space인 경우는 상태 에서 행동 가 선택될 확률밀도(probability density)를
+계산하는 Gaussian Policy를 사용한다. (행동 가 Gaussian 분포를 따른다고 가정)
+Gaussian Probability Density Function
+
+μ: 분포의 평균 (mean)
+σ2: 분산 (variance)
+데이터가 평균으로부터 얼마나 퍼져 있는지 측정
+
+σ: 분포의 표준편차 (standard deviation)
+데이터가 평균으로부터 얼마나 떨어져 있는지를 결정
+
+Gaussian Policy Function
+• Gaussian Policy는 Gaussian 분포를 이용하여 optimal policy를 구한다.
+Gaussian Distribution
+
+𝑎~𝒩(𝑎; 𝜇 𝑠 , 𝜎 𝑠 )
+
+Gaussian Policy
+
+linear parameterization (평균과 표준편차를 state에 대한 선형결합으로 표현)
+𝜇(𝑠, 𝜽) =̇ 𝜽 𝐱(𝑠)
+
+𝜎(𝑠, 𝜽) =̇ exp(𝜽 𝐱 𝑠 )
+
+𝜽=
+
+𝜽𝝁
+𝜽𝝈
+
+neural network (평균과 표준편차를 state에 대한 신경망으로 표현)
+
+Reparameterization trick
+𝑎~𝜇 𝑠 + 𝜎 𝑠
+
+𝜀, 𝜀~𝒩(0,1))
+
+Gaussian Policy (Continuous action space)
+States
+
+𝑠 = [𝑞0, 𝑞1, 𝑞2, … ]
+
+𝑆 = [𝑞0, 𝑞1, 𝑞2, … ]
+
+𝑓(𝑠, 𝜽) → (𝜇 𝑠, 𝜽 , log 𝜎(𝑠, 𝜽))
+
+J3
+
+J4
+
+J2
+
+θ
+
+𝜎 = exp(log 𝜎)
+
+𝜇𝜽
+
+𝜎𝜽
+
+𝜇𝜽
+
+𝜎𝜽
+
+𝜇𝜽
+
+𝜎𝜽
+
+𝜇𝜽
+
+𝜎𝜽
+
+J1
+
+Actions
+
+𝑎 = [j1, j2, j2, 𝑔]
+
+log 𝜎 ∈ ℝ
+
+𝜇∈ℝ
+
+𝒩(𝜇𝜽 , (𝜎𝜽 ) ))
+
+𝒩(𝜇𝜽 , (𝜎𝜽 ) ))
+
+𝒩(𝜇𝜽 , (𝜎𝜽 ) ))
+
+𝒩(𝜇𝜽 , (𝜎𝜽 ) ))
+
+j1
+
+j2
+
+j3
+
+j3
+
+𝜋(𝑎 |𝑠 )
+
+𝜇(𝑠𝑡)
+
+..
+
+Softmax Policy vs. Gaussian Policy
+
+Softmax policies define a probability distribution
+over a discrete action space.
+
+Gaussian policies define a probability
+distribution over a continuous action space.
+𝜎 를 고정된 값으로 설정하거나 학습 가능한
+스칼라 파라미터로 설정하기도 함 (PPO)
+
+Policy Gradient
+• Policy Gradient 알고리즘은 Objective J(θ)의 local
+maximum을 찾는 과정이다.
++ α θ J(θ)
+θ' = θ +
+
+α: 학습률 (learning rate)
+
+The objectives for policy gradient
+• Policy Gradient Theorem
+Trajectory from 𝜋 : 𝜏 = 𝑠 , 𝑎 , 𝑟 , 𝑠 , 𝑎 ,…, 𝑠
+
+, where 𝑝 𝜏; 𝜃 = 𝜋 (𝜏): trajectory 𝜏가 나올 확률 (𝜋 에 의해 결정)
+
+θ ← θ + α θ J(θ)
+
+to maximize J(θ)
+??
+
+[참고] Policy Gradient Theorem
+
+𝑟 𝜏 : 하나의 trajectory 𝜏 (또는 한 에피소드)로부터 얻는 보상의 합
+(예) Discounted return r 𝜏 = 𝑟
+
++ 𝛾𝑟
+
++𝛾 𝑟
+
+…
+
+𝑝 𝜏; 𝜃 : 이 trajectory 𝜏 (또는 에피소드)가 나올 확률
+𝑝 𝜏; 𝜃 = 𝑝(𝑠 ) 𝑝(𝑎 |𝑠 ) 𝑝(𝑠 |𝑠 , 𝑎 ) 𝑝(𝑎 |𝑠 , 𝑎 , 𝑠 ) 𝑝(𝑠 |𝑠 , 𝑎 , 𝑠 , 𝑎 )…
+= 𝑝(𝑠 ) 𝑝(𝑎 |𝑠 ) 𝑝(𝑠 |𝑠 , 𝑎 ) 𝑝(𝑎 |𝑠 ) 𝑝(𝑠 |𝑠 , 𝑎 )…
+= 𝑝(𝑠 ) 𝜋 𝑎 |𝑠
+𝑝 𝜏; 𝜃 = 𝑝(𝑠 )
+
+𝑝(𝑠 |𝑠 , 𝑎 ) 𝜋 (𝑎 |𝑠 ) 𝑝(𝑠 |𝑠 , 𝑎 )…
+
+𝜋 𝑎 |𝑠 𝑝(𝑠
+
+|𝑠 , 𝑎 )
+
+: policy 𝜋𝜃가 만들어내는 trajectory 분포
+
+[참고] Policy Gradient Theorem
+
+]
+
+[참고] Policy Gradient Theorem
+]
+𝜋 가 주어질 때 𝜏 가 나올 확률
+
+Environment dynamic
+𝑝(𝑠 |𝑠 , 𝑎 ) is independent on 𝜃
+
+[참고] Policy Gradient Theorem
+
+]
+
+Policy Gradient Theorem
+∇ 𝐽 𝜃 =∇ 𝔼
+
+• Total reward
+
+𝑟 𝜏
+
+=𝔼
+
+𝑟 𝜏
+
+∇ log 𝜋 𝑎 |𝑠
+
+of the trajectory can be replaced in different ways
+𝑟 𝜏 =
+
+𝑅
+
+𝑟 𝜏 =
+
+𝛾 𝑅
+
+𝑟 𝜏 =
+
+(𝑅 − 𝑟 𝜋 )
+
+특정 𝑠에서 𝑎를 선택할 log likelihood
+특정 (𝑠, 𝑎)가 받게 될 expected return (𝑟 𝜏 )
+
+Policy Gradient
+• Policy Gradient 알고리즘은 Objective J(θ)의 local
+maximum을 찾는 과정이다.
++ α θ J(θ)
+θ' = θ +
+
+α: 학습률 (learning rate)
+
+Monte-Carlo Policy Gradient (REINFORCE)
+• Monte-Carlo Policy Gradient (REINFORCE) 알고리즘은 Monte-Carlo 방법을 이용해서 구한
+estimated return으로 policy parameter θ 를 업데이트한다.
+Policy Gradient Theorem
+=
+st 에서 action at가 선택될 log likelihood의 Gradient
+parameterized policy로부터 값을 구한다.
+(St, At)에서 episode를 끝내고 받게 될 expected return
+
+()
+
+()
+
+()
+
+M: 샘플된 에피소드(trajectory)의 수
+
+Monte-Carlo Policy Gradient (REINFORCE)
+()
+
+()
+
+()
+
+정책 𝜋 의 log likelihood에 대한 파라미터 𝜃의 Gradient
+()
+()
+정책 𝜋 가 𝑠 에서 𝑎 를 선택할 확률이 𝜃에 따라 얼마나 변화하는지
+Gradient가 크면 업데이트의 변화량도 커진다.
+
+𝐺
+
+()
+
+: trajectory i 의 timestep t 에서의 총 보상 (return)
+()
+
+()
+
+정책 𝜋 가 𝑠 에서 𝑎 를 선택했을 때 그 action이 얼마나 좋은지 평가
+값이 클수록 해당 actin이 보상을 많이 가져왔다는 뜻이기 때문에
+해당 action의 확률을 증가시키기 위한 강한 업데이트를 유도
+
+𝑀 : 정책 𝜋 에 따라 샘플링된 trajectory 수
+
+REINFORCE Algorithm
+Initialize learning rate α
+Initialize weights θ of a policy network πθ
+for episode = 0, . . . , MAX_EPISODE do
+Sample a trajectory τ = s0, a0, r0, . . . , sT, aT, rT
+Set J(θ) = 0
+for t = 0, . . . , T do
+𝐺 𝜏 =
+
+𝛾
+
+𝑟
+
+∇ 𝐽 𝜃 = 𝐺 𝜏 ∇ log𝜋 𝑎 𝑠
+
+end for
+θ=θ+α
+end for
+
+J(θ)
+
+REINFORCE Algorithm
+Initialize learning rate α
+Initialize weights θ of a policy network πθ
+Policy network (Deep neural network)
+for episode = 0, . . . , MAX_EPISODE do
+Softmax Policy
+Sample a trajectory τ = s0, a0, r0, . . . , sT, aT, rT
+class SoftmaxPolicyNetwork(nn.Module):
+Set J(θ) = 0
+def __init__(self, input_dim, output_dim, hidden_dim):
+super(PolicyNetwork, self).__init__()
+for t = 0, . . . , T do
+𝐺 𝜏 =
+
+𝛾
+
+𝑟
+
+∇ 𝐽 𝜃 = 𝐺 𝜏 ∇ log𝜋 𝑎 𝑠
+
+end for
+θ=θ+α
+end for
+
+J(θ)
+
+# Define the network layers
+self.fc1 = nn.Linear(input_dim, hidden_dim)
+self.fc2 = nn.Linear(hidden_dim, output_dim)
+
+def forward(self, state):
+x = F.relu(self.fc1(state))
+x = self.fc2(x)
+action_probs = F.softmax(x, dim=-1)
+return action_probs
+...
+policy_net = SoftmaxPolicyNetwork(input_dim, output_dim, hidden_dim)
+action_probs = policy_net.forward(state)
+
+REINFORCE Algorithm
+Initialize learning rate α
+Initialize weights θ of a policy network πθ
+Policy network (Deep neural network)
+for episode = 0, . . . , MAX_EPISODE do
+Gaussian Policy
+Sample a trajectory τ = s0, a0, r0, . . . , sT, aT, rT
+class GaussianPolicyNetwork(nn.Module):
+Set J(θ) = 0
+def __init__(self, input_dim, output_dim, hidden_dim):
+super(GaussianPolicyNetwork, self).__init__()
+for t = 0, . . . , T do
+self.fc1_mu = nn.Linear(input_dim, hidden_dim)
+𝐺 𝜏 =
+
+𝛾
+
+𝑟
+
+∇ 𝐽 𝜃 = 𝐺 𝜏 ∇ log𝜋 𝑎 𝑠
+
+end for
+θ=θ+α
+end for
+
+J(θ)
+
+self.fc2_mu = nn.Linear(hidden_dim, output_dim)
+self.fc1_log_std = nn.Linear(input_dim, hidden_dim)
+self.fc2_log_std = nn.Linear(hidden_dim, output_dim)
+
+def forward(self, state):
+x_mu = F.relu(self.fc1_mu(state))
+mean = self.fc2_mu(x_mu)
+x_log_std = F.relu(self.fc1_log_std(state))
+log_std = self.fc2_log_std(x_log_std)
+return mean, log_std
+...
+policy_net = GaussianPolicyNetwork(input_dim, output_dim, hidden_dim)
+action = policy_net.sample_action(state)
+
+REINFORCE Algorithm
+Initialize learning rate α
+Initialize weights θ of a policy network πθ
+for episode = 0, . . . , MAX_EPISODE do
+Sample a trajectory τ = s0, a0, r0, . . . , sT, aT, rT
+Set J(θ) = 0
+for t = 0, . . . , T do
+𝐺 𝜏 =
+
+𝛾
+
+𝑟
+
+∇ 𝐽 𝜃 = 𝐺 𝜏 ∇ log𝜋 𝑎 𝑠
+
+end for
+θ=θ+α
+end for
+
+J(θ)
+
+Monte-Carlo Learning
+
+∇ 𝐽 𝜃 ≈ 𝔼 [𝐺 ∇ 𝑙𝑜𝑔𝜋 𝑎 𝑠 ]
+
+REINFORCE Algorithm
+Initialize learning rate α
+Initialize weights θ of a policy network πθ
+for episode = 0, . . . , MAX_EPISODE do
+Sample a trajectory τ = s0, a0, r0, . . . , sT, aT, rT
+Set J(θ) = 0
+for t = 0, . . . , T do
+𝐺 𝜏 =
+
+𝛾
+
+𝑟
+
+∇ 𝐽 𝜃 = 𝐺 𝜏 ∇ log𝜋 𝑎 𝑠
+
+end for
+θ=θ+α
+end for
+
+J(θ)
+
+Training
+loss.backward()
+optimizer.step()
+
+REINFORCE with baseline
+• 학습을 위한 variance를 줄이기 위한 방법 중의 하나로 baseline
+(이 baseline
+
+𝔼
+
+는 상태
+
+𝑏 𝑠 ∇ log𝜋 𝑎 𝑠
+
+• 일반적으로
+
+에만 의존하며 행동
+
+=0
+
+를 action과는 무관한 state-value
+
+𝔼 𝐺 |𝑆 = 𝑠
+
+에는 무관한 값)
+
+를 사용
+
+를 도입
+
+[참고] REINFORCE with baseline
+𝔼
+
+𝑏 𝑠 ∇ log𝜋 𝑎 𝑠
+
+=
+
+𝜋 𝑎 |𝑠 𝑏 𝑠 ∇ log 𝜋 𝑎 |𝑠 𝑑𝜏
+
+=
+
+𝑏 𝑠 ∇𝜋 𝑎 |𝑠 𝑑𝜏
+
+=
+
+𝑏 𝑠
+
+∇𝜋 𝑎 |𝑠 𝑑𝜏
+
+=
+
+𝑏 𝑠 ∇
+
+𝜋 𝑎 |𝑠 𝑑𝜏
+
+=
+
+𝑏 𝑠 ∇1 = 0
+
+∇ log𝜋 𝑎 𝑠
+
+=
+
+∇ 𝜋 𝑎 𝑠
+𝜋 𝑎 𝑠
+
+Policy-based Approach의 장단점
+• Policy는 Value function 보다 단순하다.
+환경의 복잡한 dynamics function을 근사화하는 Value-based approach와는 달리 Policy-based approach는 그
+결과에 따른 action selection만을 함수로 근사화하기 때문에 환경의 복잡성과 무관하게 학습 구조가 단순하다.
+
+• High-dimensional 또는 Continuous action space 문제에 효율적이다.
+value-based approach에서는 action이 많은 경우 매 timestep 마다 모든 actions에 대한 argmax Q(s,a)를 찾아야
+하고, 연속적인 action인 경우 argmax Q(s, a)를 구하는 것 자체가 또 다른 최적화 문제가 된다. 하지만 policy-based
+approach는 policy π(a|s, θ)를 직접 학습하기 때문에 이런 문제를 해결하기가 더 효율적이다.
+
+• Exploration 문제를 쉽게 해결할 수 있다.
+Value-based approach에서는 q value를 구한 후 deterministic policy를 구하기 때문에 exploration 문제가 있고, 이를
+해결하기 위해 ε-greedy와 같은 정책을 이용하였다. 하지만 policy-based approach는 stochastic policy를 학습하기
+때문에 exploration 문제가 자연적으로 해결될 수 있다.
+
+• 학습 시 몇가지 단점들이 있다.
+Policy-based approach는 기본적으로 MC sampling을 통해 gradient를 추정하기 때문에 gradient의 분산이 높아 학습
+속도를 느리게 하거나 안정성을 저하시킬 수 있으며, value-based methods에 비해 더 많은 샘플이 필요로 한다.
+
+QUESTIONS
+
+ANSWERS
+
+

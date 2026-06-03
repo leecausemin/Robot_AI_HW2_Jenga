@@ -1,0 +1,868 @@
+Course Overview
+
+강의 개요
+김현
+hyunkim@etri.re.kr
+
+Internet
+
+AI
+
+WWW
+
+1970s
+
+1980s
+
+1990s
+
+2000s
+
+2020s
+
+Contents
+• Introduction: 로봇이 무엇인가?
+• Robot Motion Modeling: 로봇이 수학적으로 어떻게 모델링되는가?
+• Robot Motion Planning & Control : 로봇을 어떻게 움직이나?
+. Manual Teaching & Direct Programming
+. Human-in-the-loop Control (Teleoperation)
+. Model-based Planning & Control
+. Learning-based Planning & Control
+. Robot Foundation Model
+• Advanced AI Robots: 로봇 AI는 어디까지 발전하고 있는가?
+
+Intelligent Robot
+(Sense) 외부 환경을 인식 (Perception)하고
+(Think) 스스로 상황을 판단 계획 (Cognition)하여
+(Act) 자율적으로 동작 (Mobility)하는
+현실 세계에서 몸을 가지고 움직이는
+
+물리시스템 (Physical system)
+
+Types of Robots
+Morphology
+
+Wheeled Robot
+
+Operating Environment
+
+Legged Robot
+Professional Service Robot
+
+Manipulator
+Humanoid Robot
+
+Mobile Manipulator
+
+Industrial Robot
+
+Personal Service Robot
+
+Types of Industrial Robots (Mechanical Structure)
+어떤 관절을 어떻게 배치했는지 (회전/직선, 직렬/병렬)에 따라 구분
+Articulated robot: 여러 개의 회전관절이 직렬로 연결된 구조 (R-R-R)
+
+Cartesian robot:서로 직교하는 X, Y, Z 축의 3개 선형관절로 구성 (P-P-P)
+
+Box
+
+Spherical
+
+SCARA robot: 2개의 수평회전관절과 1개의 수직선형관절로 구성 (R-R-P)
+
+Cylindrical
+SCARA: Selective Compliance Assembly Robot Arm
+
+Delta robot: 여러 개의 링크가 하나의 끝단(eef)을 병렬로 지지하는 폐쇄형 구조
+
+Dome
+
+Robot Mobility
+• Navigation (Locomotion) and Manipulation
+
+Robot Navigation
+• 로봇이 자기 위치를 파악하며, 원하는 목적지까지 스스로 이동할 수 있도록 하는 기술
+Grid map
+
+Feature map Topology map Visual map
+
+로봇용 지도 작성
+Mapping
+
+Localization
+
+로봇 위치인식
+
+Path Planning
+
+Obstacle Avoidance
+Motion Control
+
+Robot Manipulation
+• 로봇이 암과 그리퍼를 이용하여 물체를 조작하는 기술
+Robot Arm
+
+Robotic Manipulator
+Manipulator
+Robotic
+
+Arm manipulation
+
+Robot Gripper
+
+Dexterous manipulation
+(In-hand manipulation)
+
+Robot Control Pipeline
+SENSE
+Perception
+(Observation)
+
+Object/Environment Recognition (What is happening?)
+
+state
+
+Task Planning (What to do?)
+THINK
+goal
+
+Cognition
+(Planning)
+
+Motion Planning (How to move?)
+
+plan
+
+ACT
+Mobility
+(Execution)
+
+Robot Control (How to execute?)
+
+Approaches to Robot Control
+• Manual Teaching & Direct Programming
+사람이 로봇의 움직임을 직접 가르치거나 프로그래밍하는 방법
+
+• Human-in-the-loop Control (Teleoperation)
+사람이 실시간 입력으로 원격 조정하는 방법
+
+• Model-based Planning & Control
+로봇과 환경의 물리 법칙(Kinematics, Dynamics)을 수학적 모델로 만들어 경로를 자동 생성하고 제어하는 방법
+
+• Learning-based Planning & Control
+데이터를 기반으로 로봇이 스스로 최적의 행동 정책을 학습(RL, Imitation Learning)하는 방법
+* 실제 로봇 시스템에서는 여러 방식이 결합되어 사용될 수 있음
+
+Manual Teaching & Direct Programming
+
+Manual Teaching & Direct Programming
+• Online Programming
+－ Lead-through Teaching
+로봇을 손으로 잡고 움직이며 trajectory 시연
+
+－ Teach Pendant Programming (Online Programming)
+로봇을 직접 조작하여 waypoint 기록 (teach & playback)
+• Offline Robot Programming
+
+실제 로봇 없이 CAD/시뮬레이션 환경에서 motion trajectory와 작업 sequence를 사전 설계하고
+vendor-specific robot code로 실행
+
+Human-in-the-loop Control (Teleoperation)
+
+Human-in-the-loop Control (Teleoperation)
+• Human input interface (사람의 조작 방식)
+- Joystick/Gamepad, HMD/VR Controller, (Vision or Sensor based) Motion Capture, Haptic Device 등
+
+• Mapping (사람의 입력/의도를 로봇의 실행 명령으로 변환)
+- Scaling, Frame Transform, Inverse Kinematics, Redundancy Resolution 등
+
+• Control (사람의 상위명령을 feedback 기반으로 로봇이 실행)
+- Low-level Servo, Impedance/Admittance Control, Operational-space control, Trajectory smoothing 등
+
+• Safety & Constraints (로봇 행동의 실시간 안전 제어)
+- Joint Limit, Collision Avoidance, Workspace Constraints, Emergency Stop, Force/Torque Threshold
+
+• Perception & Feedback (행동의 결과를 사람에게 전달)
+- Vision, Haptic Feedback, Audio Cue 등
+
+• Communication (네트워크/지연/동기화 처리)
+- Latency/jitter buffering, Time synchronization, Prediction / dead-reckoning (지연 보상) 등
+
+Model-based Planning & Control
+Atlas 2021
+
+Robot Models
+• Geometric Model
+로봇의 외형(shape)과 collision shape를 정의하며, planning과 simulation에서 사용되는 기하학적 모델
+
+• Kinematics Model
+Link–Joint 구조와 좌표계 관계를 정의하며, joint space (q)와 task space (x)의 관계를 표현하는 모델
+
+• Dynamics Model
+Mass, inertia, gravity, friction 등을 포함하여 force/torque 기반 제어와 물리 시뮬레이션을 위한 모델
+
+Forward Kinematics
+
+rigid-body dynamics
+
+URDF
+
+Inverse Kinematics
+
+Model-based Planning & Control
+• Robot의 물리적 특성을 수학적 방정식 (Model)로 정의하고, 이에 기반하여 미래의 상태를 예측하여 최적의
+행동 경로를 계산하고 제어하는 방식
+𝑀 𝑞 𝑞̈ + 𝑏 𝑞, 𝑞̇ + 𝑔 𝑞 = 𝜏 + 𝐽 (𝑞) 𝐹
+𝑀 𝑞 𝑞̈ : Inertia (관성)
+𝑏 𝑞, 𝑞̇ : Coriolis/Centrifugal (회전 시 발생하는 힘)
+𝑔 𝑞 : Gravity (중력)
+𝜏: Actuator torque (관절에 가해지는 토크)
+𝐽 (𝑞) 𝐹 : Contact Force (외부 환경과의 접촉에 따른 힘)
+
+• Offline Planning (Trajectory Optimization)
+특정 목표(Goal)를 달성하기 위해 미래에 수행할 일련의 동작이나 경로를 생성하는 과정
+• Online Control (Model Predictive Control)
+Planning에서 생성된 계획을 실제 로봇 하드웨어가 정확하게 따라가도록 만드는 과정
+
+Limitation of Model-based Approaches
+
+Learning-based Planning & Control
+Unitree G1 & H1
+
+Learning-based Planning & Control
+New Atlas, 2024
+
+1
+
+Learning-based Planning & Control
+• 시뮬레이션 기반 강화학습 (Reinforcement Learning)
+ 가상환경에서 수많은 시행착오를 통해 안전하게 학습
+ 보상함수의 설계가 어려우며, 시뮬레이션과 현실세계의 간극 (Sim2Real)이 큼
+• 원격 조종 기반 모방학습 (Imitation Learning)
+• 복잡한 작업 수행이 가능하며, 빠르고 쉬운 초기 모델 개발에 유용
+• 고품질의 Demonstration 데이터를 필요로 하며, 작업자에 따라 모델의 품질이 크게 달라짐
+• 로봇 파운데이션 모델 (Robot Foundation Model)
+• Robot AI의 최신 동향으로 LLM의 성공 방정식을 따름
+• 다양한 task로의 generalization 가능하여 multi-task / multi-robot / multi-modal 학습 가능
+• 데이터 수집이 매우 어렵고, 학습비용 역시 매우 큼
+
+Reinforcement Learning
+• 학습 데이터셋 없이 시행착오를 통해 보상을 최대화하는 행동을 스스로 찾아나가는 학습 방식
+• 보상함수의 설계가 어려우며, 시뮬레이션과 현실세계의 간극 (Sim2Real)이 큼
+Function Approximation of MDP model
+
+Environment
+
+Agent
+
+∗
+𝜽
+
+𝝉~𝝅𝜽
+
+Algorithms of Reinforcement Learning
+RL Foundations (MDP, Bellman Equation, Dynamic Programming)
+Value-based
+Q-Learning
+
+A2C
+
+(PhD thesis, 1989)
+
+Advantage Actor
+Critic
+
+DQN
+
+(NIPS, 1999)
+
+Deep Q-Network
+
+(NIPS, 2013)
+
+Policy-based
+
+Actor Critic
+
+DDPG
+
+TRPO
+
+Deep Deterministic
+Policy Gradient
+
+Trust Region Policy
+Optimization
+
+(ICLR, 2015)
+
+(ICML, 2015)
+
+TD3
+
+PPO
+
+Twin Delayed
+DDPG
+
+Proximal Policy
+Optimization
+
+(arXiv, 2017)
+
+(ICML, 2018)
+
+SAC
+Soft Actor Critic
+
+REINFORCE
+Monte Carlo Policy Gradient
+
+(NIPS, 1999)
+
+Imitation Learning
+• 전문가(인간 등)의 행동을 관찰하고 그대로 따라 하며 배우는 방식
+• 고품질의 Demonstration 데이터를 필요로 하며, 작업자에 따라 모델의 품질이 크게 달라짐
+
+Environment
+
+Agent
+
+Behavior Cloning
+
+∗
+𝜽
+
+𝒔,𝒂 ~𝓓
+
+𝜽
+
+𝟐
+
+Data Collection for Imitation Learning
+Kinesthetic
+
+Teleoperation / Motion Capture
+
+Web video
+
+Simulation
+
+Algorithms of Imitation Learning
+Behavior Cloning
+
+Discriminative AI
+
+(NIPS, 1998)
+
+DaGGER
+
+Supervised Learning
+
+Inverse RL
+
+Reinforcement Learning
+
+(ICML, 2000)
+
+(AISTATS, 2011)
+
+GAIL
+(NIPS, 2016)
+
+Multi-modal IL
+(NIPS, 2017)
+
+ACT
+(RSS, 2023)
+
+Diffusion Policy
+(RSS, 2023)
+
+Generative Adversarial Network
+Generative AI
+
+Variational Autoencoder
+Generative AI
+
+Diffusion Model (Transformer)
+Generative AI
+
+Robot Simulation Tools
+• MuJoCo (Google DeepMind): https://github.com/google-deepmind/mujoco
+- 강력한 동역학 엔진
+- 물리 정밀도 높음
+
+• Gazebo (Open Robotics): https://github.com/gazebosim
+- ODE, Bullet, DART 등 다양한 동역학 엔진 연동
+- ROS와의 통합성 높음
+
+• PyBullet (Bullet): https://github.com/bulletphysics/bullet3
+- Bullet 엔진의 Python 바인딩
+- ROS와 통합 가능
+
+• IssacSim (NVIDIA): https://github.com/isaac-sim/IsaacSim
+- 고정밀 시뮬레이션 및 GPU 병렬학습
+- 그래픽 품질 높고 ROS와 연결 가능
+
+• Genesis (비공개): https://genesis-embodied-ai.github.io/
+- 맞춤형 AI기반 물리엔진
+- 대규모 AI 학습: 딥러닝 및 AI 강화 기능 제공
+
+MuJoCo
+• https://github.com/google-deepmind/mujoco
+
+Gazebo
+• https://github.com/gazebosim
+
+PyBullet
+• https://github.com/bulletphysics/bullet3
+Python module for physics simulation and robotics based on the Bullet Physics SDK:
+Real-time collision detection and multi-physics simulation for VR, games, visual effects,
+robotics, machine learning etc.
+
+IssacSim
+• https://github.com/isaac-sim/IsaacSim
+
+Genesis
+• https://genesis-embodied-ai.github.io/
+
+The Changing Paradigms of AI
+• Generative AI
+기존 데이터 (텍스트, 이미지, 오디오, 코드 등) 를
+학습하여 패턴과 구조를 이해하고 이를 기반으로
+새로운 데이터를 생성할 수 있는 AI
+
+Physical AI: The next step – AI systems
+gaining embodiment to operate and interact
+in the physical world.
+
+• Agentic AI
+스스로 목표를 설정하고, 계획을 수립하며,
+환경과의 상호작용을 통해 그 목표를 달성할 수
+있는 AI
+
+• Physical AI
+물리법칙이 지배하는 현실 세계를 이해하고 이에
+따라 물리적 행동을 자율적으로 수행할 수 있는 AI
+(지능이 몸체를 갖는 형태로 구현)
+NVIDIA Jensen Huang Keynote at CES 2025
+
+Discriminative AI vs. Generative AI
+• Discriminative AI
+- 개인지 고양이인지를 구별
+- 입력과 정답(label)을 주고 학습
+- 조건부 분포 𝑃(𝑦 ∣ 𝑥)를 학습
+𝑥가 클래스 𝑦에 속할 가능성(Likelihood)을 계산
+
+What’s learned: Decision boundary
+
+• Generative AI
+- 개, 고양이를 학습해서 새로운 개, 고양이를 생성
+- 정답(label)없이 자기지도학습 (self-supervised learning)
+- 데이터 자체에 대한 확률분포 𝑃(𝑥) 또는 𝑃(𝑥
+∣𝑥 )
+를 학습 (입력 데이터 𝑥에 숨겨진 패턴을 추상화)
+- 이를 이용한 새로운 데이터 생성
+
+What’s learned: Probability distribution of the data
+
+2
+
+Generative AI
+• 고차원 데이터의 복잡한 확률분포를 구조적으로 단순한 확률분포로 학습하고 이렇게 학습된 확률모델로부터
+다시 고차원 데이터를 생성하는 방식
+- 고차원의 표현 공간이 존재하고
+
+(가능한 모든 상태 표현 공간)
+
+- 이 고차원 공간 상에 데이터 샘플 (X~ 𝑝data(𝑥)) 들이 존재하고
+(이 샘플들은 미지의 복잡한 확률분포 𝑝data(𝑥)로부터 생성되었다고 가정)
+- 이 데이터는 전체 공간 내 구조적으로 제한된 영역 (manifold)에 집중되어 있다
+(확률질량(probability mass)이 집중된 저차원적 구조 위에 존재)
+- 이 저차원적 구조 상의 복잡한 분포를 단순한 분포로 만들어 데이터 공간으로 다시 매핑할 수 있는 모델을
+학습 후 (미지의 복잡한 확률분포 𝑝data(𝑥)를 단순한 확률분포로 바꿀 수 있는 표현을 학습)
+- 이로부터 고차원 공간 상에 데이터 샘플을 생성
+(단순한 확률분포에서 샘플을 뽑고,이를 통해 고차원 공간의 데이터 manifold 위의 새로운 데이터를 생성)
+
+또는
+
+for Diffusion
+
+Self-Supervised Learning
+• 레이블 없는 데이터로 학습하는 기법
+Autoregressive generation
+저
+
+푸른
+
+초원
+
+위에
+
+그림같은
+
+Large
+Language
+Model
+
+Masked generation
+저
+
+푸른
+
+위에
+
+그림같은
+
+Large
+Language
+Model
+
+초원
+
+Masked Autoencoder
+
+Self-Supervised Learning
+• 레이블 없는 데이터로 학습하는 기법
+- Self-prediction: 입력 데이터의 일부를 예측 (데이터 자체의 정보 복원에 초점)
+• Autoregressive generation
+• Masked generation
+• Innate relation prediction
+
+- Contrastive Learning: 유사한 데이터는 가깝게, 다른 데이터는 멀어지도록 학습
+• Inter-sample classification
+• Feature clustering
+• Non-contrastive methods with
+joint embedding architecture
+
+Different Types of Generative Models
+• Generative AI는 정답을 맞히는 것(Classification)이 아니라, 데이터 이면에 숨겨진 확률 분포 𝑃(𝑥)를
+학습하여 새로운 샘플을 만들어내는 다양한 방법론으로 진화
+
+Generative Adversarial Network (GAN)
+Adversarial Training
+
+Autoregressive models
+generate next tokens step by step
+
+Variational Autoencoder (VAE)
+Maximize variational lower bound
+
+Forward diffusion
+Inverse diffusion
+
+Diffusion models
+Flow-based (Normalizing Flow) models
+Invertible transform of distributions
+
+Gradually add Gaussian noise and then reverse
+
+Foundation Model
+• Generative AI가 엄청난 규모의 데이터와 컴퓨팅 파워를 만나면서 Foundation Model이 등장
+• Foundation Model이란 대규모 데이터로 학습된 범용적인 생성모델 (General-purpose Generative Model)로서,
+다양한 downstream task를 추가 학습 없이 또는 최소한의 적응(Adaptation)으로 수행할 수 있는 모델
+The typical approach to AI
+Task-Specific Models
+Tasks
+Image
+
+Classification
+model
+
+Text
+
+Image
+
+Segmentation
+model
+
+Image
+
+Image
+
+Captioning model
+
+Text
+
+Image
+Text
+
+Visual Q&A
+model
+
+Text
+
+Text
+
+Sentiment model
+
+Text
+
+Text
+
+Summarization
+model
+
+Text
+
+Current approach to AI
+Foundation Models
+Massive Large
+Dataset
+Prompting
+
+Foundation
+Model
+
+Fine
+Tuned
+Model
+
+Tasks
+
+Task-Specific Models
+Giant self-supervised
+pretrained model
+
+데이터규모가 엄청남
+
+확률분포의 범위가 압도적
+
+학습된 분포는 다양한 Task로…전이 가능
+
+2
+
+2012 DARPA
+(c.f. 2020 ASHIMO)
+
+중국
+
+아마존물류창고
+
+자동차 부품
+제조사 Magna
+
+중국
+
+이스라엘
+
+BMW 제조 공장
+
+중국
+
+Tesla 자동차공장
+
+메르세데스 헝가리공장
+
+독일
+
+노르웨이
+
+Pioneering Robots with RFM
+Stanford Univ.
+Mobile Aloha
+
+Figure AI
+Figure 03
+
+Boston Dynamics
+Atlas
+
+Tesla
+Optimus Gen3
+
+3
+
+Physical Intelligence 𝝅𝟎.𝟔
+
+Helix, Figure, 2025
+
+Tesla, Optimus Gen 3, 2026
+
+강의 개요
+ 강의 내용
+• Classical Robotics Basic: 로봇은 어떻게 모델링되고, 움직이며, 제어되는가?
+로봇 시스템을 ROS2 기반으로 직접 구현할 수 있는 실무 역량 확보
+• Learning-based Robot Control: 기계학습을 통해 로봇 행동을 제어할 수 있는가?
+Reinforcement Learning과 Imitation Learning을 로봇 제어 문제에 적용하는 방법 이해
+• Robot Foundation Model: 다양한 작업을 수행하는 로봇을 범용적으로 학습시킬 수 있는가?
+최근 Robot Foundation Model의 구조, 한계 및 활용 가능성 이해
+
+ 선수학습내용
+ 파이썬 프로그래밍, 선형대수, 확률 통계, Deep Learning
+
+강의계획
+Unit
+
+1
+
+2
+
+3
+
+Topic
+
+Robotics Basics
+
+Learning-based Robot Control
+
+Imitation Learning
+(Robot Foundation Models)
+
+Contents
+1
+
+Course Overview
+
+2
+
+ROS2 설치 및 로봇 프로그래밍 기초
+
+3
+
+ROS2 기초
+- 메시지 통신 (Topic, Service, Action and Parameter)
+- 기본 프로그래밍 및 디버깅 도구
+
+4
+5
+
+로봇 좌표변환 및 Kinematics
+
+6
+
+로봇 모델링 (URDF)
+
+7
+
+로봇 동작계획 및 제어 (ROS2 Control)
+
+8
+
+중간고사
+
+9
+
+강화학습 기초
+
+10
+
+심층강화학습
+
+11
+
+심층강화학습 알고리즘 (DDPG, TD3, PPO, SAC, HER)
+
+12
+
+심층강화학습을 이용한 모션 제어 실습
+
+13
+
+RL Challenges & Advanced approaches
+
+14
+
+모방학습 (Behavior Cloning, DAgger, IRL, GAIL) 및 로봇파운데이션 모델
+
+15
+
+기말고사
+
+실습자료
+https://github.com/hyunkim0820/cnu_ros2
+
+https://github.com/hyunkim0820/cnu_rl
+
+개인용 액세스 토큰(Personal Access Token, PAT) 생성
+GitHub 웹사이트에 로그인 후, Settings > Developer settings > Personal access tokens로 이동
+Generate new token (classic)을 클릭해 새 토큰 생성
+
+실습환경
+• Ubuntu 22.04
+Windows 11 WSL2
+Windows 터미널
+
+• Python
+pyenv local 3.10.x (3.8.x)
+
+• Virtual environment
+pyenv virtualenv
+
+• Visual Studio Code
+Extensions: C/C++, CMake, CMake Tools, Python, ROS, URDF, Colcon Tasks, XML Tools, YAML
+
+Installation: ROS2
+• Install ROS2
+https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html
+• Install rosdep
+$ sudo apt install python3-rosdep
+$ sudo rosdep init
+$ rosdep update
+$ sudo apt update
+$ sudo apt dist-upgrade
+
+• Install Colcon the ROS 2 build system with mixin:
+$ sudo apt install python3-colcon-common-extensions
+$ sudo apt install python3-colcon-mixin
+$ colcon mixin add default
+https://raw.githubusercontent.com/colcon/colcon-mixinrepository/master/index.yaml
+$ colcon mixin update default
+
+Installation: ROS2
+• Install Gazebo
+$ sudo apt-get update
+$ sudo apt install ros-humble-gazebo-ros-pkgs
+$ gazebo /usr/share/gazebo-11/worlds/seesaw.world
+
+• Install ros2_control and controllers
+$ sudo apt install ros-humble-ros2-control
+$ sudo apt install ros-humble-ros2-controllers
+$ sudo apt install ros-humble-gripper-controllers
+$ sudo apt install ros-humble-gazebo-ros2-control
+
+• Install MoveIt2
+$ sudo apt install ros-humble-moveit
+
+• 기타
+$ sudo apt install ros-humble-joint-state-publisher-gui
+
+Installation: Virtual Environment
+• pyenv 설치
+$ sudo apt install git curl
+$ curl -L https://raw.githubusercontent.com/yyuu/pyenv-installer/master/bin/pyenv-installer | bash
+
+-------------------------------------------------------------------------------export PATH="/home/{user_name}/.pyenv/bin:$PATH"
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)“
+--------------------------------------------------------------------------------
+
+• 관련 package 설치
+$ sudo apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
+libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
+xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
+
+• python 설치
+$ pyenv install 3.10.12
+$ pyenv local 3.10.12
+
+Installation: RL Library
+• virtualenv 설정
+$ pyenv virtualenv 3.10.12 {env_name}
+$ pyenv activate {env_name}
+({env_name}) $ python -V
+
+• OpenAI Stable Baselines3
+• Code: https://github.com/DLR-RM/stable-baselines3
+• Docs: https://stable-baselines3.readthedocs.io/en/master/
+$ pip install stable-baselines3[extra]
+
+• OpenAI Gym (Gynasium): https://www.gymlibrary.dev/index.html
+$ pip install gymnasium
+
+QUESTIONS
+
+ANSWERS
+
+

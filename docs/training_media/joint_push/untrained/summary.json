@@ -1,0 +1,624 @@
+{
+  "policy": "untrained",
+  "seed": 300,
+  "gif": "docs/training_media/joint_push/untrained/rollout.gif",
+  "events": [
+    {
+      "step": 1,
+      "reward": -0.003987725320620916,
+      "target_displacement": 0.0,
+      "neighbor_motion": 4.3278128032397944e-06,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 2,
+      "reward": -0.006551153061068117,
+      "target_displacement": 0.0,
+      "neighbor_motion": 1.0794613444886636e-05,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 3,
+      "reward": 0.3959961288586214,
+      "target_displacement": 0.009487748146057129,
+      "neighbor_motion": 0.0030311597511172295,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 4,
+      "reward": 0.3506813549566438,
+      "target_displacement": 0.013943195343017578,
+      "neighbor_motion": 0.00654955068603158,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 5,
+      "reward": 0.3432884486442947,
+      "target_displacement": 0.014026761054992676,
+      "neighbor_motion": 0.006700961850583553,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 6,
+      "reward": 0.3456019507530795,
+      "target_displacement": 0.014391303062438965,
+      "neighbor_motion": 0.0070631797425448895,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 7,
+      "reward": -0.008445360020593248,
+      "target_displacement": 0.014375150203704834,
+      "neighbor_motion": 0.007044445723295212,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 8,
+      "reward": 0.35271892396918225,
+      "target_displacement": 0.01718956232070923,
+      "neighbor_motion": 0.008881709538400173,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 9,
+      "reward": 0.3491628776372429,
+      "target_displacement": 0.018724918365478516,
+      "neighbor_motion": 0.009971614927053452,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 10,
+      "reward": 0.34623537500761536,
+      "target_displacement": 0.01873171329498291,
+      "neighbor_motion": 0.009977126494050026,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 11,
+      "reward": 0.36136500823334233,
+      "target_displacement": 0.02272355556488037,
+      "neighbor_motion": 0.011428650468587875,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 12,
+      "reward": -0.006290024115899932,
+      "target_displacement": 0.02272200584411621,
+      "neighbor_motion": 0.011427382007241249,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 13,
+      "reward": -0.008104024436111908,
+      "target_displacement": 0.022719264030456543,
+      "neighbor_motion": 0.011425687000155449,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 14,
+      "reward": 0.3643831574924836,
+      "target_displacement": 0.025288701057434082,
+      "neighbor_motion": 0.011475604958832264,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 15,
+      "reward": 0.35102897933322547,
+      "target_displacement": 0.02601069211959839,
+      "neighbor_motion": 0.01173077430576086,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 16,
+      "reward": -0.004289981166587378,
+      "target_displacement": 0.02599102258682251,
+      "neighbor_motion": 0.011705516837537289,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 17,
+      "reward": -0.0070488234829084746,
+      "target_displacement": 0.02599024772644043,
+      "neighbor_motion": 0.011706458404660225,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 18,
+      "reward": 0.3607375839809589,
+      "target_displacement": 0.029112935066223145,
+      "neighbor_motion": 0.012860926799476147,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 19,
+      "reward": 0.34769522854267654,
+      "target_displacement": 0.029326140880584717,
+      "neighbor_motion": 0.013057645410299301,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 20,
+      "reward": -0.005504889655526179,
+      "target_displacement": 0.029303133487701416,
+      "neighbor_motion": 0.013033639639616013,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 21,
+      "reward": 0.3471875354970746,
+      "target_displacement": 0.029881060123443604,
+      "neighbor_motion": 0.013556579127907753,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 22,
+      "reward": -0.008964039489382325,
+      "target_displacement": 0.029833853244781494,
+      "neighbor_motion": 0.013498678803443909,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 23,
+      "reward": 0.35164591040939663,
+      "target_displacement": 0.0315014123916626,
+      "neighbor_motion": 0.01420811377465725,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 24,
+      "reward": 0.4012343296937689,
+      "target_displacement": 0.04371589422225952,
+      "neighbor_motion": 0.019050007686018944,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 25,
+      "reward": 0.34345025299533555,
+      "target_displacement": 0.04845696687698364,
+      "neighbor_motion": 0.023580361157655716,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 26,
+      "reward": 0.34678795336258694,
+      "target_displacement": 0.05078023672103882,
+      "neighbor_motion": 0.02545304223895073,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 27,
+      "reward": -0.009708532954600968,
+      "target_displacement": 0.051213204860687256,
+      "neighbor_motion": 0.025853455066680908,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 28,
+      "reward": 0.3459539651192657,
+      "target_displacement": 0.05146431922912598,
+      "neighbor_motion": 0.026079218834638596,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 29,
+      "reward": -0.007937627435413413,
+      "target_displacement": 0.05136841535568237,
+      "neighbor_motion": 0.025948118418455124,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 30,
+      "reward": -0.007423425075650707,
+      "target_displacement": 0.051289916038513184,
+      "neighbor_motion": 0.02585836872458458,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 31,
+      "reward": -0.00935312055974881,
+      "target_displacement": 0.05124408006668091,
+      "neighbor_motion": 0.025822360068559647,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 32,
+      "reward": -0.008641445165560736,
+      "target_displacement": 0.05121272802352905,
+      "neighbor_motion": 0.025804631412029266,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 33,
+      "reward": -0.007867043850124851,
+      "target_displacement": 0.05121535062789917,
+      "neighbor_motion": 0.02582743391394615,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 34,
+      "reward": 0.34463622816075207,
+      "target_displacement": 0.051280081272125244,
+      "neighbor_motion": 0.025892900303006172,
+      "contact": true,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 35,
+      "reward": -0.01394646270144146,
+      "target_displacement": 0.05121487379074097,
+      "neighbor_motion": 0.02583225816488266,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 36,
+      "reward": -0.009359911762161879,
+      "target_displacement": 0.05118262767791748,
+      "neighbor_motion": 0.025808049365878105,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 37,
+      "reward": -0.008523460361321056,
+      "target_displacement": 0.05116230249404907,
+      "neighbor_motion": 0.025786705315113068,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 38,
+      "reward": -0.013069981771243576,
+      "target_displacement": 0.05115717649459839,
+      "neighbor_motion": 0.025780007243156433,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 39,
+      "reward": -0.008911218342551312,
+      "target_displacement": 0.05115962028503418,
+      "neighbor_motion": 0.025779448449611664,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 40,
+      "reward": -0.011252207387014374,
+      "target_displacement": 0.05114889144897461,
+      "neighbor_motion": 0.025766706094145775,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 41,
+      "reward": -0.008857471930187585,
+      "target_displacement": 0.05114477872848511,
+      "neighbor_motion": 0.02576550282537937,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 42,
+      "reward": -0.009492521634114813,
+      "target_displacement": 0.05112898349761963,
+      "neighbor_motion": 0.02574632130563259,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 43,
+      "reward": -0.008173768703455866,
+      "target_displacement": 0.051117002964019775,
+      "neighbor_motion": 0.025733843445777893,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 44,
+      "reward": -0.012257863724070788,
+      "target_displacement": 0.05111658573150635,
+      "neighbor_motion": 0.02573425881564617,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 45,
+      "reward": -0.012134575175074564,
+      "target_displacement": 0.05111956596374512,
+      "neighbor_motion": 0.02573883906006813,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 46,
+      "reward": -0.008785960164185215,
+      "target_displacement": 0.05112862586975098,
+      "neighbor_motion": 0.025751687586307526,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 47,
+      "reward": -0.012304481528291897,
+      "target_displacement": 0.05112886428833008,
+      "neighbor_motion": 0.02575262263417244,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 48,
+      "reward": -0.01112853259102025,
+      "target_displacement": 0.051135122776031494,
+      "neighbor_motion": 0.02575858309864998,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 49,
+      "reward": -0.01009598967099002,
+      "target_displacement": 0.05111426115036011,
+      "neighbor_motion": 0.025727443397045135,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 50,
+      "reward": -0.010056421941812966,
+      "target_displacement": 0.051108360290527344,
+      "neighbor_motion": 0.025716930627822876,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 51,
+      "reward": -0.011065640862021948,
+      "target_displacement": 0.051142990589141846,
+      "neighbor_motion": 0.025759393349289894,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 52,
+      "reward": -0.010922423145844289,
+      "target_displacement": 0.05115586519241333,
+      "neighbor_motion": 0.025776764377951622,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 53,
+      "reward": -0.0125168207175012,
+      "target_displacement": 0.05114716291427612,
+      "neighbor_motion": 0.025767428800463676,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 54,
+      "reward": -0.008016976617137952,
+      "target_displacement": 0.0511317253112793,
+      "neighbor_motion": 0.025747673586010933,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 55,
+      "reward": -0.006533382098309757,
+      "target_displacement": 0.05112367868423462,
+      "neighbor_motion": 0.025737090036273003,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 56,
+      "reward": -0.014000370235596919,
+      "target_displacement": 0.05112564563751221,
+      "neighbor_motion": 0.02573893778026104,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 57,
+      "reward": -0.011842674502763608,
+      "target_displacement": 0.05112975835800171,
+      "neighbor_motion": 0.02574404515326023,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 58,
+      "reward": -0.010497858546743634,
+      "target_displacement": 0.05114340782165527,
+      "neighbor_motion": 0.025760415941476822,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 59,
+      "reward": -0.011109919564355902,
+      "target_displacement": 0.051149964332580566,
+      "neighbor_motion": 0.025765985250473022,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    },
+    {
+      "step": 60,
+      "reward": -0.00920712408153066,
+      "target_displacement": 0.05114775896072388,
+      "neighbor_motion": 0.025757301598787308,
+      "contact": false,
+      "extracted": false,
+      "collapsed": false,
+      "completed": false
+    }
+  ],
+  "final_info": {
+    "task": "single_block_joint_push",
+    "physics": "pybullet",
+    "robot": "franka_panda",
+    "control": "7d_joint_delta_position",
+    "target_block": "(4, 0)",
+    "target_displacement": 0.05114775896072388,
+    "neighbor_motion": 0.025757301598787308,
+    "stability_score": 0.9173340982349678,
+    "tip_face_distance": 0.08873144537210464,
+    "contact": false,
+    "step_count": 60,
+    "extracted": false,
+    "collapsed": false,
+    "completed": false,
+    "target_friction": 1.337395456400367
+  }
+}

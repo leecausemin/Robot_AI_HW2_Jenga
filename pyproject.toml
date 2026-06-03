@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jenga-rl"
+version = "0.1.0"
+description = "Gymnasium-style Jenga tower reinforcement learning environment and baselines."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "gymnasium>=0.29",
+  "pybullet>=3.2",
+]
+
+[project.optional-dependencies]
+train = [
+  "stable-baselines3[extra]>=2.3",
+  "sb3-contrib>=2.3",
+  "imageio>=2.31",
+  "pandas>=2.0",
+  "matplotlib>=3.7",
+]
+dev = [
+  "pytest>=7.0",
+  "ruff>=0.4",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "scripts", "tests"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

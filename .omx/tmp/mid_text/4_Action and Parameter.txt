@@ -1,0 +1,593 @@
+ROS2
+Action and Parameter
+김현
+hyunkim@etri.re.kr
+
+What to do
+• Action
+- Command Line Interface for Action
+- Action Server & Client Programming in Python
+• Parameter
+- Command Line Interface for Parameter
+- Parameter Programming in Python
+
+Action
+• Action은 수행 시간이 긴 tasks (long running task)를 처리하기 위한 ROS2 communication 유형이다.
+• Action은 Service와 유사하게 기본적으로는 Server-Client 모델이지만 다음 2가지가 다르다.
+- Preemptable: 즉, Action이 수행되는 동안 실행 취소(cancel)이 가능하다.
+- Feedback: Action이 수행되는 동안 server는 client에게 feedback을 보낼 수 있다.
+• Action은 크게 3개의 구성요소를 갖는다. a goal, feedback, and a result
+- Action은 Goal과 Result를 처리하기 위해 Service를 이용하고, Feedback을 처리하기 위해 Topic을 사용한다.
+
+Action
+• Action Client는 Action Server에게 Goal을 보내고, Action Server는 이에 대한 응답을 반환한다.
+• Action Client는 Action Server에게 Result를 요청한다.
+• Action server는 Action을 수행하며 이 과정 중에
+Action Client에게 Feedback을 보낸다.
+• Action이 완료되면, Action Server는
+Action Client에게 Result를 반환한다.
+
+Action Goal States
+• Action Server는 Client로부터 요청된 각 Goal에 대해 실행부터 종료까지의 상태를 State Machine으로 유지 관리한다.
+
+서버가 goal을 받아들여 실제 작업을
+수행하고 있는 상태
+
+goal이 정상적으로 완료되어,
+기대한 결과를 도출한 상태
+
+client로부터 취소 요청에 의해,
+서버가 goal의 취소를 진행 중인 상태
+
+goal 실행 중 예기치 않은 오류나
+문제로 인해 강제 종료된 상태
+
+Goal이 접수되었으나, 아직
+실행이 시작되지 않은 초기 상태
+
+from action_msgs.msg import GoalStatus
+result = result_future.result()
+status = result.status
+
+goal이 취소 요청에 따라 중단되어,
+더 이상 실행되지 않는 상태
+
+Action 관련 Commands
+• Turtlesim 로봇으로 시작하자
+$ ros2 run turtlesim turtlesim_node
+$ ros2 node list
+/turtlesim
+$ ros2 action –h
+options:
+-h, --help
+Commands:
+info
+list
+send_goal
+
+show this help message and exit
+
+Print information about an action
+Output a list of action names
+Send an action goal
+
+Action 관련 Commands
+$ ros2 action list
+/turtle1/rotate_absolute
+$ ros2 action info /turtle1/rotate_absolute
+Action: /turtle1/rotate_absolute
+Action clients: 0
+Action servers: 1
+/turtlesim
+$ ros2 action info /turtle1/rotate_absolute -t
+Action: /turtle1/rotate_absolute
+Action clients: 0
+Action servers: 1
+/turtlesim [turtlesim/action/RotateAbsolute]
+• Action Interface: <pkg_name>/action/<interface_name>
+
+Action 관련 Commands
+$ ros2 interface show turtlesim/action/RotateAbsolute
+# The desired heading in radians:목표로 하는 absolute angle값 (라디안 단위)
+float32 theta
+--# The angular displacement in radians to the starting position: 실제로 회전한 각도의 변화량(delta)
+float32 delta
+--# The remaining rotation in radians
+float32 remaining
+• Action Interface format
+# goal
+--# result
+--# feedback
+
+Action 관련 Commands
+$ ros2 action send_goal <action_name> <action_interface> "{'name': value}" --feedback
+$ ros2 action send_goal /turtle1/rotate_absolute turtlesim/action/RotateAbsolute
+"{'theta':-1.57}" --feedback
+Sending goal:
+theta: -1.57
+Goal accepted with ID: d3c7833eddfe405cb4454e7bf95ebf20
+Feedback:
+remaining: -3.122000217437744
+Feedback:
+remaining: -3.1059999465942383
+...
+Result:
+delta: 1.5520000457763672
+Goal finished with status: SUCCEEDED
+
+Program Action Server with Python
+• Tutlesim 로봇을 몇 초간 좌측으로 회전하는 Action Server를 만들어보자.
+- Goal 수신
+. Action client로부터 Goal은 goal_handle.request로 받고: goal_handle.request.secs: client가 요청한 시간
+. Action server가 client의 요청에 따라 수행할 일을 처리할 callback function 등록: execute_callback(goal_handle)
+- Goal 실행 (callback function)
+. goal_handle.request.secs로 client가 요청한 시간 (seconds)을 읽고
+. 그 시간 만큼 /turtle1/cmd_vel Topic에 Twist type message를 publish (linear.x=0.3, angular.z=0.3)
+- Feedback 송신
+. goal_handle.publish_feedback(feedback)으로 feedback을 Action Client에 전송
+- Result 송신: 실행 완료
+. goal_handle.succeed()로 성공 처리
+. 로봇 정지 및 result.status 반환
+
+Program Action Server with Python
+• 서버에 필요한 Custom Action Interface를 다음과 같이 만든다.
+# goal
+message_type goal_name
+--# result
+message_type result_name
+--message_type feedback
+‘Move.action’이라는 custom interface를 작성
+int32 secs
+--string status
+--string feedback
+
+# 좌회전을 수행할 시간(초) 요청
+# 회전을 완료한 후 결과를 문자로 전달
+# 회전 진행 중 상태를 문자로 전달
+
+Program Action Server with Python
+• Create Action Interface
+
+Program Action Server with Python
+• CMakeList.txt 수정
+# generate IDL ===================================================
+rosidl_generate_interfaces(${PROJECT_NAME}
+"msg/TargetCoordinates.msg"
+"srv/Move.srv"
+"action/Move.action"
+DEPENDENCIES geometry_msgs std_msgs
+)
+# =================================================================
+• Build and Check
+$ cd ~/${workspace}
+$ colcon build –-packages-select custom_interfaces
+$ source install/setup.bash
+$ ros2 interface show custom_interfaces/action/Move
+
+Program Action Server with Python
+• Write Action Server Codes
+$ cd ~/${workspace}/src/turtlesim_controller/turtlesim_controller
+$ touch move_action_server.py
+move_action_server.py
+self._action_server = ActionServer(
+node=self,
+action_name="move_action_server",
+action_type=Move,
+execute_callback=self.execute_callback
+)
+self.cmd = Twist()
+self.cmd_vel_publisher = self.create_publisher(
+topic="/turtle1/cmd_vel",
+msg_type=Twist,
+qos_profile=10
+)
+self.feedback = Move.Feedback()
+self.result = Move.Result()
+
+Program Action Server with Python
+move_action_server.py
+def execute_callback(self, goal_handle):
+# Create feedback message (self.feedback=Move.feedback())
+self.feedback.feedback = "Moving around left left left..."
+# Main logic for this Action Server
+for i in range(1, goal_handle.request.secs):
+self.get_logger().info('Feedback ({}): {} '.format(i, self.feedback.feedback))
+# Set the desired velocity values and publish this data
+self.cmd.linear.x = 0.3
+self.cmd.angular.z = 0.3
+self.cmd_vel_publisher.publish(self.cmd)
+# Publish the feedback message
+goal_handle.publish_feedback(self.feedback)
+# Sleep 1 second
+time.sleep(1)
+...
+
+Program Action Server with Python
+move_action_server.py
+def execute_callback(self, goal_handle):
+...
+# When the previous loop finishes (time is over), set the goal handle as succeeded
+goal_handle.succeed()
+# Stop the robot
+self.cmd.linear.x = 0.0
+self.cmd.angular.z = 0.0
+self.cmd_vel_publisher.publish(self.cmd)
+# Create the result messages
+self.result.status = "Robot moved during {} seconds".format(goal_handle.request.secs)
+self.get_logger().info('Result: {}'.format(self.result.status))
+return self.result
+
+Program Action Server with Python
+• package.xml 수정
+<depend>geometry_msgs</depend>
+<depend>turtlesim</depend>
+• setup.py 수정
+entry_points={
+'console_scripts’: [
+"move_action_server=turtlesim_controller.move_action_server:main",
+],
+},
+
+Program Action Server with Python
+• Write Launch File
+$ cd ~/${workspace}/src/turtlesim_controller/launch
+$ touch move_action_server.launch.py
+from launch import LaunchDescription
+from launch_ros.actions import Node
+def generate_launch_description():
+return LaunchDescription([
+Node(
+package='turtlesim_controller',
+executable='move_action_server',
+output='screen'),
+])
+• Build and Execute
+
+Program Action Server with Python
+• Execute Action Client
+$ ros2 action send_goal /move_action_server custom_interfaces/action/Move
+"{'secs':20}" --feedback
+Waiting for an action server to become available...
+Sending goal:
+secs: 20
+Goal accepted with ID: a89ca5dc7e264e3781701be58d0289c2
+Feedback:
+feedback: Moving to the left left left...
+...
+Result:
+status: Finished action server. Robot moved during 5 seconds
+Goal finished with status: SUCCEEDED
+
+Program Action Client with Python
+• 사용자로부터 회전 지속 시간(seconds)을 입력 받아 Action Server에 실행을 요청하는 Action Client를 만들어보자.
+- 사용자의 입력을 Goal로 변환
+- Goal 전송 (비동기 요청)
+. Action server에 goal을 요청하고 서버로부터 오는 feedback을 받아서 처리할 feedback callback function을 등록:
+send_goal_async(goal, feedback_callback)
+. 서버로부터 수락/거절에 대한 결과를 받아서 할 일을 goal callback function으로 등록: add_done_callback(callback)
+- Goal 수락/거절 판단
+. Action server로부터 반환된 결과가 goal을 수락했는지 거절했는지를 먼저 체크: if not goal_handle.accepted:
+. 수락 시 서버의 결과를 받아옴: get_result_async() 호출
+. 결과를 받고 해야 할 일을 result callback function으로 등록: add_done_callback(self.result_callback)
+- 실행 중 Feedback 수신
+. 서버로부터 받은 feedback을 받아서 해야 할 일을 feedback_callback 함수 내에서 수행
+- Result 수신: 실행 완료
+. 서버 결과를 받아서 처리할 일을 result_callback 함수 내에서 수행 (Result를 처리한 후 프로그램 종료)
+
+Program Action Client with Python
+• Write Action Client Codes
+$ cd ~/${workspace}/src/turtlesim_controller/turtlesim_controller
+$ touch move_action_client.py
+move_action_client.py
+self._action_client = ActionClient(
+node=self,
+action_type=Move,
+action_name="move_action_server",
+)
+# Wait for the Action Server to be up and running
+while not self._action_client.wait_for_server(timeout_sec=1.0):
+# if it is not available, a message is displayed
+self.get_logger().info('move_action_server not available, waiting again...')
+self.goal = Move.Goal()
+
+Program Action Client with Python
+move_action_client.py
+def send_goal(self, seconds):
+self.goal.secs = seconds
+# Send the goal to the Action Server using the send_goal_async method
+goal_future = self._action_client.send_goal_async(
+goal=self.goal,
+feedback_callback=self.feedback_callback
+)
+# Future goal handle to be completed when the Action Server has processed the goal.
+goal_future.add_done_callback(callback=self.goal_callback)
+# Triggered whenever feedback is received from the Action Server
+def feedback_callback(self, feedback_msg):
+...
+# Triggered when the goal has been processed.
+def goal_callback(self, future):
+...
+
+Program Action Client with Python
+• package.xml 및 setup.py 수정
+• Build and execute
+$ ros2 run turtlesim_controller move_action_client
+[INFO] [1709007313.929576144] [move_action_client]: Goal accepted
+[INFO] [1709007313.930053458] [move_action_client]: Received feedback: Moving to the
+left left left...
+...
+[INFO] [1709007317.930898703] [move_action_client]: Result: Finished action server.
+Robot moved during 5 seconds
+
+Comparison of Topic, Service & Action
+Topic
+
+Service
+
+Action
+
+연속성
+
+연속
+
+일회성
+
+복합(Topic + Service)
+
+방향성
+
+단방향
+
+양방향
+
+양방향
+
+다자간 연결
+
+N:N
+
+1:N
+
+1:N
+
+노드 역할
+
+publisher/subscriber
+
+server/client
+
+server/client
+
+동작 트리거
+
+publisher
+
+client
+
+client
+
+인터페이스
+
+msg
+
+srv
+
+data
+
+request
+--response
+
+action
+goal
+--result
+--feedback
+
+CLI 명령어
+
+Ros2 topic
+Ros2 interface
+
+Ros2 service
+Ros2 interface
+
+Ros2 action
+Ros2 interface
+
+사용예
+
+센서데이터
+로봇상태
+로봇좌표
+
+LED제어
+모터 토크 ON/OFF
+IK계산
+
+목적지 이동
+물체 파지
+복합태스크
+
+인터페이스 형식
+
+ROS2 Parameters
+• ROS2 Parameter는 Node가 실행될 때, 서로 다른 상황에서 서로 다른 동작을 하도록 Node를 구성하는 방식이다.
+
+Command line에서 Node를 실행시킬 때
+parameters를 설정
+
+Launch 파일을 사용하여 각
+Node에 대해 parameter를 설정
+
+Node 실행 시 YAML 파일을 통해 전달된
+매개변수 값을 읽어서 동작을 결정
+
+ROS2 Parameters
+• 각 Node는 자신의 parameter server를 가지고 있고, 다른 Node들을 그 Node의 parameter에 대해 client로서 외부에서
+읽고(get), 원하는 값으로 쓰기(set)가 가능
+
+다른 Node의 parameter를
+Get/Set 하기 위한 인터페이스
+
+자신의 parameter를 저장/관리
+다른 Node의 Get/Set요청을 처리
+
+ROS2 Parameter
+• parameter는 Node를 구성하는 매개변수이다. (Node는 사전에 설정된 parameters로 시작하고, Node가 죽을 때
+parameters 역시 사라진다)
+$ ros2 run turtlesim turtlesim_node
+$ ros2 node list
+/turtlesim
+$ ros2 param –h
+...
+Commands:
+delete
+Delete parameter
+describe Show descriptive information about declared parameters
+dump
+Show all of the parameters of a node in a YAML file format
+get
+Get parameter
+list
+Output a list of available parameters
+load
+Load parameter file for a node
+set
+Set parameter
+
+Parameter 관련 Commands
+$ ros2 param list
+/turtlesim:
+background_b
+background_g
+background_r
+qos_overrides./parameter_events.publisher.depth
+qos_overrides./parameter_events.publisher.durability
+qos_overrides./parameter_events.publisher.history
+qos_overrides./parameter_events.publisher.reliability
+use_sim_time
+$ ros2 param get <node_name> <parameter>
+$ ros2 param get /turtlesim background_b
+Integer value is: 255
+
+Parameter 관련 Commands
+$ ros2 param describe <node_name> <parameter_name>
+$ ros2 param describe /turtlesim background_b
+Parameter name: background_b
+Type: integer
+Description: Blue channel of the background color
+Constraints:
+Min value: 0
+Max value: 255
+Step: 1
+$ ros2 param get <node_name> <parameter_name>
+$ ros2 param get /turtlesim background_b
+Integer value is: 255
+$ ros2 param set <node_name> <parameter_name> <value>
+$ ros2 param set /turtlesim background_b 0
+Set parameter successful
+
+Parameter 관련 Commands
+$ ros2 param dump <node_name> > <file_path>
+$ ros2 param dump /turtlesim > turtlesim.yaml
+$ ls –la
+$ cat turtlesim.yaml
+/turtlesim:
+ros__parameters:
+background_b: 0
+background_g: 86
+background_r: 69
+qos_overrides:
+/parameter_events:
+publisher:
+depth: 1000
+durability: volatile
+history: keep_last
+reliability: reliable
+use_sim_time: false
+
+Parameter 관련 Commands
+$ ros2 run turtlesim turtlesim_node
+$ ros2 param load /turtlesim turtlesim.yaml
+Set parameter background_b successful
+Set parameter background_g successful
+Set parameter background_r successful
+Set parameter qos_overrides./parameter_events.publisher.depth failed: parameter
+'qos_overrides./parameter_events.publisher.depth' cannot be set because it is read-only
+Set parameter qos_overrides./parameter_events.publisher.durability failed: parameter
+'qos_overrides./parameter_events.publisher.durability' cannot be set because it is read-only
+Set parameter qos_overrides./parameter_events.publisher.history failed: parameter
+'qos_overrides./parameter_events.publisher.history' cannot be set because it is read-only
+Set parameter qos_overrides./parameter_events.publisher.reliability failed: parameter
+'qos_overrides./parameter_events.publisher.reliability' cannot be set because it is read-only
+
+Set parameter use_sim_time successful
+
+Program Parameter with Python
+• Create a package
+$ cd ~/${workspace}/src
+$ ros2 pkg create parameter_test –-build-type ament_python --dependencies rclpy
+$ cd parameter_test
+$ code .
+• Write codes for parameter_setter Node (parameter_setter.py)
+
+Program Parameter with Python
+• parameter_setter.py
+# Declare and initialize parameters with default values
+self.declare_parameter("camera_device_port", "/dev/ttyACM0")
+self.declare_parameter("simulation_mode", False)
+self.declare_parameter("battery_percentage_warning", 15.0)
+# Retrieve the current values of the parameters
+self.camera_device_port_ = self.get_parameter("camera_device_port").value
+self.simulation_mode_ = self.get_parameter("simulation_mode").value
+self.battery_percentage_warning_ = self.get_parameter("battery_percentage_warning").value
+# Register a callback function that will be called when the parameters is changed.
+self.add_on_set_parameters_callback(self.parameter_callback)
+
+Program Parameter with Python
+• Change setup.py
+entry_points={
+'console_scripts': [
+"parameter_setter=parameter_test.parameter_setter:main",
+],
+},
+
+• Build and Execute
+$ ros2 run parameter_test parameter_setter
+[INFO] [1709168416.313131090] [parameter_setter]: parameter_setter is loaded...
+
+Program Parameter with Python
+• Window 1: node 실행
+$ ros2 run parameter_test parameter_setter
+[INFO] [1709168416.313131090] [parameter_setter]: parameter_setter is loaded...
+
+• Window 2: parameter 변경
+$ ros2 param list
+/parameter_setter:
+battery_percentage_warning
+camera_device_port
+simulation_mode
+use_sim_time
+$ ros2 param set /parameter_setter battery_percentage_warning 200.0
+Setting parameter failed
+
+• Window 1
+$ ros2 run parameter_test parameter_setter
+[INFO] [1709168416.313131090] [parameter_setter]: parameter_setter is loaded...
+[WARN] [1709168574.361503102] [parameter_setter]: fail to change parameter value. should be
+between 0:100
+
+Parameter Setting
+• command line에서 arguments를 설정하여 node를 실행해보기
+$ ros2 run <pkg_name> <node_name> --ros-args -p <parameter_name>:=value
+$ ros2 run parameter_test parameter_setter --ros-args -p battery_percentage_warning:=20.0
+$ ros2 param get /parameter_setter battery_percentage_warning
+Double value is: 20.0
+• YAML 파일을 불러서 node 실행
+$ ros2 run parameter_test parameter_setter --ros-args --params-file
+src/parameter_test/config/params.yaml
+
+QUESTIONS
+
+ANSWERS
+
+

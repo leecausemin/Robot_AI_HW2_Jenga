@@ -1,0 +1,19 @@
+{
+  "algo": "ppo",
+  "env": "SingleBlockJointPushEnv",
+  "timesteps_requested": 5000,
+  "timesteps_done": 5120,
+  "elapsed_sec": 398.20782804489136,
+  "model_path": "runs/joint_push_ppo_fast/model.zip",
+  "best_model_path": "runs/joint_push_ppo_fast/best_model.zip",
+  "levels": 6,
+  "max_episode_steps": 80,
+  "mean_return": -0.7372273944403086,
+  "completion_rate": 0.0,
+  "collapse_rate": 0.0,
+  "extraction_rate": 0.0,
+  "avg_steps": 80.0,
+  "avg_target_displacement": 5.615949630737305e-05,
+  "avg_neighbor_motion": 0.00693809164367849,
+  "avg_contact_steps": 0.0
+}
