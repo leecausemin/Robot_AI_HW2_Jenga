@@ -73,9 +73,6 @@ docs/training_media/two_robot_gripper_far_b_exposed_tip/stills/robot_b_closeup.p
 src/jenga_rl/envs/config.py          # Jenga tower config base
 src/jenga_rl/envs/panda_jenga_env.py # PyBullet/Panda/Jenga base environment
 src/jenga_rl/envs/gripper_env.py     # latest main two-robot RL environment
-src/jenga_rl/envs/joint_push_env.py  # single-target joint push environment
-src/jenga_rl/envs/probe_stack_env.py # active probing stack environment
-src/jenga_rl/envs/stack_env.py       # full Jenga turn stack environment
 scripts/train_gripper.py             # PPO training for main gripper env
 scripts/record_gripper.py            # GIF/still rollout recording
 tests/test_gripper_env.py            # smoke/regression test
@@ -85,5 +82,4 @@ tests/test_gripper_env.py            # smoke/regression test
 
 - GitHub에는 root `README.md`만 Markdown 문서로 남깁니다.
 - `.omx/`, `.claude/`, 기타 로컬 agent/runtime 상태는 git에서 제외합니다.
-- 긴 파일명은 `gripper`, `joint_push`, `probe_stack`, `stack` prefix로 정리했습니다.
-```
+- 실험 히스토리용 `joint_push`, `probe_stack`, `stack` entrypoint는 제거했고 최종 gripper task만 유지합니다.
