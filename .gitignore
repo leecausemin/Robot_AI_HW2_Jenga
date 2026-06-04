@@ -8,3 +8,6 @@ runs/*/tb/
 
 .omx/
 .claude/
+
+*.md
+!/README.md
