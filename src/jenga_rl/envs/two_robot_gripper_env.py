@@ -14,7 +14,6 @@ from __future__ import annotations
 from dataclasses import replace
 from typing import Any
 
-import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
 
@@ -65,8 +64,8 @@ class TwoRobotJengaGripperEnv(JengaPandaEnv):
         self._pusher_tool_half_length = 0.060
         self._pusher_tip_clearance = 0.006
         self._pusher_expose_distance = 0.055
-        self._gripper_reach = 0.24
-        self._gripper_palm_offset = 0.13
+        self._gripper_reach = 0.38
+        self._gripper_palm_offset = 0.28
         self._gripper_jaw_offset = 0.045
         self._pusher_approach_displacement = 0.0
         self._pusher_approach_neighbor_disturbance = 0.0
@@ -197,7 +196,7 @@ class TwoRobotJengaGripperEnv(JengaPandaEnv):
         # the Jenga stack.
         self._robot_id = p.loadURDF(
             "franka_panda/panda.urdf",
-            [self.config.tower_x, 0.72, 0.0],
+            [self.config.tower_x, 0.96, 0.0],
             p.getQuaternionFromEuler([0, 0, 0]),
             useFixedBase=True,
             physicsClientId=self._client_id,
@@ -230,7 +229,7 @@ class TwoRobotJengaGripperEnv(JengaPandaEnv):
         )
         self._move_robot_ee(
             self._robot_id,
-            np.asarray([self.config.tower_x, 0.62, 0.50], dtype=np.float32),
+            np.asarray([self.config.tower_x, 0.82, 0.54], dtype=np.float32),
             steps=1,
             snap=True,
         )
@@ -417,15 +416,16 @@ class TwoRobotJengaGripperEnv(JengaPandaEnv):
     def _place_gripper_at_exposed_block(self) -> None:
         assert self._target_body is not None and self._robot_id is not None
         direction = self._target_push_direction()
-        pos = self._block_position(self._target_body)
+        grasp_site = self._target_grasp_site()
         z_offset = np.asarray([0.0, 0.0, -0.035], dtype=np.float32)
         # Keep Robot B's body outside the tower: first snap high on the outside
         # side, descend while still clear, then let only the slim gripper jaws
         # enter the target-block envelope.  Because _sync_custom_gripper uses
         # contact_center = ee - direction * self._gripper_reach + z_offset, this
-        # EE target places the red gripper contact point on the exposed target
-        # block while the Panda wrist remains outside the tower.
-        ee_target = pos + direction * self._gripper_reach - z_offset
+        # EE target places the red gripper contact point on the exposed outside
+        # end of the target block, not at the block center.  This prevents the
+        # gripper from visually passing through the Jenga tower.
+        ee_target = grasp_site + direction * self._gripper_reach - z_offset
         ee_pre = ee_target + direction * 0.20
         safe_hover = ee_pre + np.asarray([0.0, 0.0, 0.32], dtype=np.float32)
         safe_lower = ee_pre + np.asarray([0.0, 0.0, 0.13], dtype=np.float32)
@@ -454,8 +454,8 @@ class TwoRobotJengaGripperEnv(JengaPandaEnv):
                 physicsClientId=self._client_id,
             )
         for _ in range(self.sim_steps_per_action):
-            pos = self._block_position(self._target_body)
             p.stepSimulation(physicsClientId=self._client_id)
+            self._enforce_gripper_outside_limit()
             self._sync_tool()
             self._maybe_capture()
 
@@ -514,6 +514,39 @@ class TwoRobotJengaGripperEnv(JengaPandaEnv):
         self._grasp_constraint_id = None
         self._last_grasped = False
 
+    def _enforce_gripper_outside_limit(self) -> None:
+        if self._robot_id is None or self._target_body is None or self._is_grasped():
+            return
+        direction = self._target_push_direction()
+        penetration = float(np.dot(self._target_grasp_site() - self._gripper_center(), direction))
+        if penetration <= 0.004:
+            return
+        ee, _, _ = self._ee_state()
+        # Hard visual/logic constraint: before grasping, Robot B may approach
+        # the exposed outside end but may not drive the gripper through the
+        # target block or into the tower.
+        corrected = ee + direction * (penetration + 0.006)
+        joints = p.calculateInverseKinematics(
+            self._robot_id,
+            self.PANDA_EE_LINK,
+            corrected.tolist(),
+            maxNumIterations=80,
+            residualThreshold=1e-4,
+            physicsClientId=self._client_id,
+        )
+        for joint, value in zip(self.PANDA_ARM_JOINTS, joints[:7], strict=True):
+            p.resetJointState(self._robot_id, joint, float(value), physicsClientId=self._client_id)
+            p.setJointMotorControl2(
+                self._robot_id,
+                joint,
+                p.POSITION_CONTROL,
+                targetPosition=float(value),
+                force=90,
+                positionGain=0.08,
+                velocityGain=0.8,
+                physicsClientId=self._client_id,
+            )
+
     def _move_robot_ee(self, robot_id: int, target_pos: np.ndarray, *, steps: int, snap: bool = False) -> None:
         joints = p.calculateInverseKinematics(robot_id, self.PANDA_EE_LINK, target_pos.tolist(), maxNumIterations=180, residualThreshold=1e-4, physicsClientId=self._client_id)
         if snap:
@@ -526,6 +559,8 @@ class TwoRobotJengaGripperEnv(JengaPandaEnv):
             for joint, value in zip(self.PANDA_ARM_JOINTS, joints[:7], strict=True):
                 p.setJointMotorControl2(robot_id, joint, p.POSITION_CONTROL, targetPosition=float(value), force=90, positionGain=0.08, velocityGain=0.8, physicsClientId=self._client_id)
             p.stepSimulation(physicsClientId=self._client_id)
+            if robot_id == self._robot_id:
+                self._enforce_gripper_outside_limit()
             self._sync_tool()
             self._maybe_capture()
 
@@ -562,6 +597,16 @@ class TwoRobotJengaGripperEnv(JengaPandaEnv):
     def _is_grasped(self) -> bool:
         return self._grasp_constraint_id is not None
 
+    def _target_grasp_site(self) -> np.ndarray:
+        if self._target_body is None:
+            return np.zeros(3, dtype=np.float32)
+        # Robot A first exposes the block in +direction.  Robot B should grasp
+        # only that exposed outside end, not the block center buried inside the
+        # tower.  A small inward margin keeps the fixed grasp stable while the
+        # visible jaws remain outside the stack face.
+        direction = self._target_push_direction()
+        return self._block_position(self._target_body) + direction * (0.5 * self.config.block_length - 0.025)
+
     def _gripper_center(self) -> np.ndarray:
         ee, _, _ = self._ee_state()
         return ee - self._target_push_direction() * self._gripper_reach + np.asarray([0.0, 0.0, -0.035], dtype=np.float32)
@@ -569,7 +614,12 @@ class TwoRobotJengaGripperEnv(JengaPandaEnv):
     def _gripper_target_distance(self) -> float:
         if self._target_body is None:
             return 1.0
-        return float(np.linalg.norm(self._gripper_center() - self._block_position(self._target_body)))
+        return float(np.linalg.norm(self._gripper_center() - self._target_grasp_site()))
+
+    def _gripper_inside_penetration(self) -> float:
+        if self._target_body is None or self._is_grasped():
+            return 0.0
+        return float(max(0.0, np.dot(self._target_grasp_site() - self._gripper_center(), self._target_push_direction())))
 
     def _neighbor_motion(self) -> float:
         motions = []
@@ -603,7 +653,6 @@ class TwoRobotJengaGripperEnv(JengaPandaEnv):
             if key == self._target_block:
                 continue
             pos, quat = p.getBasePositionAndOrientation(body, physicsClientId=self._client_id)
-            nominal = self._nominal_block_position(*key)
             roll, pitch, _ = p.getEulerFromQuaternion(quat)
             if key[0] > 0 and pos[2] < 0.065:
                 return True
@@ -635,7 +684,7 @@ class TwoRobotJengaGripperEnv(JengaPandaEnv):
             *dq,
             *ee,
             *target,
-            *(target - self._gripper_center()),
+            *(self._target_grasp_site() - self._gripper_center()),
             *direction,
             self._target_displacement(),
             self._target_height(),
@@ -659,6 +708,8 @@ class TwoRobotJengaGripperEnv(JengaPandaEnv):
             "target_block": self._target_block,
             "target_displacement": self._target_displacement(),
             "target_height": self._target_height(),
+            "gripper_target_distance": self._gripper_target_distance(),
+            "gripper_inside_penetration": self._gripper_inside_penetration(),
             "floor_dropped": self._is_target_on_floor(),
             "grasped": self._is_grasped(),
             "ever_grasped": self._ever_grasped,

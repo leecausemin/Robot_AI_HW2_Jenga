@@ -1,5 +1,5 @@
-"""Jenga reinforcement-learning package."""
+"""Two-robot Jenga reinforcement-learning package."""
 
-from jenga_rl.envs import JengaBulletEnv, JengaPandaEnv, JengaPandaProbeStackEnv, JengaPandaStackEnv, JengaTowerEnv
+from jenga_rl.envs import PandaJengaConfig, TwoRobotJengaGripperEnv
 
-__all__ = ["JengaBulletEnv", "JengaPandaEnv", "JengaPandaProbeStackEnv", "JengaPandaStackEnv", "JengaTowerEnv"]
+__all__ = ["PandaJengaConfig", "TwoRobotJengaGripperEnv"]

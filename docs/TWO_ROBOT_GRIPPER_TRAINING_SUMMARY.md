@@ -205,3 +205,64 @@ pusher_approach_neighbor_disturbance≈0.00002 m
 ```text
 docs/training_media/two_robot_gripper_final_camera/ppo/rollout_seed_237.gif
 ```
+
+## Robot B gripper-only constraint update
+
+추가 피드백: Robot B의 Panda 몸체/손목이 젠가 타워를 건드리는 것처럼 보여서, 집게만 target block에 접근하도록 구조를 수정했다.
+
+수정 내용:
+
+- Robot B base를 tower 뒤쪽 대칭 위치(`tower_x, +0.72`)로 이동했다.
+- Robot B 접근 경로를 `safe hover -> outside lower -> outside pre-grasp -> target grasp`로 변경했다.
+- custom gripper offset을 뒤집었다. 이제 Panda wrist는 tower 바깥에 남고, 긴 빨간 gripper jaw만 target block 쪽으로 들어간다.
+- gripper palm도 target에서 바깥쪽으로 렌더링해서, 검은 palm/흰 wrist가 block을 누르는 것처럼 보이지 않게 했다.
+- Panda link collision은 계속 비활성화되어 있고, task contact는 custom gripper primitive + fixed grasp constraint로만 처리된다.
+
+검증 결과(seed 237):
+
+```text
+completed=True
+collapsed=False
+floor_dropped=True
+pusher_approach_displacement=0.0 m
+pusher_approach_neighbor_disturbance≈0.00002 m
+pusher_target_displacement≈0.057 m
+non_target_gripper_contacts=0
+step_count=71
+```
+
+새 발표용 GIF:
+
+```text
+docs/training_media/two_robot_gripper_gripper_only_b/ppo/rollout_seed_237.gif
+```
+
+## Robot B distance + exposed-tip grasp update
+
+추가 피드백: Robot B가 tower와 너무 가까워 보이고, gripper가 block/tower를 통과하는 것처럼 보였다.
+
+수정 내용:
+
+- Robot B base를 `+y 0.72`에서 `+y 0.96`으로 더 뒤로 이동했다.
+- custom gripper reach를 늘려서 Panda wrist/body는 바깥에 두고, 긴 빨간 jaw만 block 쪽으로 접근하게 했다.
+- grasp 기준점을 target block center가 아니라 **Robot A가 밀어서 노출한 바깥쪽 끝부분**으로 변경했다.
+- PPO observation의 relative target도 block center가 아니라 exposed-tip grasp site 기준으로 변경했다.
+- grasp 전에는 gripper contact point가 exposed-tip보다 tower 안쪽으로 들어가지 못하도록 outside-limit constraint를 추가했다.
+
+검증 결과(seed 237):
+
+```text
+completed=True
+collapsed=False
+floor_dropped=True
+gripper_inside_penetration=0.0
+non_target_gripper_contacts=0
+neighbor_motion≈0.027 m
+step_count=14
+```
+
+새 발표용 GIF:
+
+```text
+docs/training_media/two_robot_gripper_far_b_exposed_tip/ppo/rollout_seed_237.gif
+```

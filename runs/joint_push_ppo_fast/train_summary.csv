@@ -1,2 +1,0 @@
-algo,env,timesteps_requested,timesteps_done,elapsed_sec,model_path,best_model_path,levels,max_episode_steps,mean_return,completion_rate,collapse_rate,extraction_rate,avg_steps,avg_target_displacement,avg_neighbor_motion,avg_contact_steps
-ppo,SingleBlockJointPushEnv,5000,5120,398.20782804489136,runs/joint_push_ppo_fast/model.zip,runs/joint_push_ppo_fast/best_model.zip,6,80,-0.7372273944403086,0.0,0.0,0.0,80.0,5.615949630737305e-05,0.00693809164367849,0.0

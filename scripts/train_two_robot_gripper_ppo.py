@@ -143,7 +143,8 @@ def main() -> None:
     (args.out / "train_summary.json").write_text(json.dumps(summary, indent=2))
     with (args.out / "train_summary.csv").open("w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=list(summary))
-        writer.writeheader(); writer.writerow(summary)
+        writer.writeheader()
+        writer.writerow(summary)
     env.close()
     print(json.dumps(summary, indent=2))
 
