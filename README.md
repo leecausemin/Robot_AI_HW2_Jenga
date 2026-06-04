@@ -10,6 +10,26 @@ PyBullet 기반 3D Jenga 강화학습 프로젝트입니다. 최신 메인 환�
 - **Observation**: Robot B joint state, end-effector, target block, exposed grasp site, pull direction, stability metrics 등 36D
 - **Action**: Robot B 7D joint residual + 1D gripper close command
 
+## Before / After
+
+### Before: untrained policy
+
+학습 전 policy는 gripper가 target block에 안정적으로 정렬하지 못하고, 블록을 제대로 잡거나 추출하지 못합니다.
+
+![Before: untrained rollout](docs/training_media/two_robot_gripper_far_b_exposed_tip/untrained/rollout_seed_217.gif)
+
+### After: PPO policy
+
+PPO policy는 Robot A가 노출한 target block 끝부분으로 Robot B gripper를 이동시키고, 블록을 잡아 tower 밖으로 끌어냅니다.
+
+![After: PPO rollout](docs/training_media/two_robot_gripper_far_b_exposed_tip/ppo/rollout_seed_237.gif)
+
+## Simulation stills
+
+| Untrained start | Untrained failure | Robot B gripper close-up |
+| --- | --- | --- |
+| ![Untrained start](docs/training_media/two_robot_gripper_far_b_exposed_tip/stills/robot_b_untrained_start.png) | ![Untrained mid/failure](docs/training_media/two_robot_gripper_far_b_exposed_tip/stills/untrained_seed217_bad_mid.png) | ![Robot B close-up](docs/training_media/two_robot_gripper_far_b_exposed_tip/stills/robot_b_closeup.png) |
+
 ## 설치
 
 ```bash
@@ -24,7 +44,17 @@ pip install -e .[train,dev]
 PYTHONPATH=src /home/yumin/jenga/.venv/bin/python -m pytest -q
 ```
 
-## 학습
+## 실제 시뮬레이션 실행 커맨드
+
+아래 커맨드는 repo root에서 실행합니다.
+
+### 1. 환경 smoke test
+
+```bash
+PYTHONPATH=src /home/yumin/jenga/.venv/bin/python -m pytest -q
+```
+
+### 2. PPO 학습 실행
 
 ```bash
 PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/train_gripper.py \
@@ -34,9 +64,20 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/train_gripper.py \
   --max-episode-steps 90
 ```
 
-## GIF 기록
+### 3. 학습 전 untrained rollout GIF 생성
 
-### PPO 성공 rollout
+```bash
+PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_gripper.py \
+  --policy untrained \
+  --seed 217 \
+  --out-dir docs/training_media/two_robot_gripper_far_b_exposed_tip \
+  --levels 6 \
+  --max-episode-steps 90
+```
+
+### 4. 학습된 PPO rollout GIF 생성
+
+이미 있는 checkpoint를 사용할 때:
 
 ```bash
 PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_gripper.py \
@@ -48,23 +89,26 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_gripper.py \
   --max-episode-steps 90
 ```
 
-### Untrained 실패 rollout
+방금 새로 학습한 모델을 사용할 때:
 
 ```bash
 PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_gripper.py \
-  --policy untrained \
-  --seed 217 \
+  --policy ppo \
+  --model runs/two_robot_gripper_ppo/model.zip \
+  --seed 237 \
   --out-dir docs/training_media/two_robot_gripper_far_b_exposed_tip \
   --levels 6 \
   --max-episode-steps 90
 ```
 
-## 발표용 결과물
+## 발표용 결과물 경로
 
 ```text
 docs/training_media/two_robot_gripper_far_b_exposed_tip/ppo/rollout_seed_237.gif
 docs/training_media/two_robot_gripper_far_b_exposed_tip/untrained/rollout_seed_217.gif
 docs/training_media/two_robot_gripper_far_b_exposed_tip/stills/robot_b_closeup.png
+docs/training_media/two_robot_gripper_far_b_exposed_tip/stills/robot_b_untrained_start.png
+docs/training_media/two_robot_gripper_far_b_exposed_tip/stills/untrained_seed217_bad_mid.png
 ```
 
 ## 코드 구조
