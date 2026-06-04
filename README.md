@@ -32,34 +32,33 @@ PPO policy는 Robot A가 노출한 target block 끝부분으로 Robot B gripper�
 
 ## 설치
 
+repo를 처음 받은 사람 기준입니다. repo root에서 실행하세요.
+
 ```bash
+git clone https://github.com/leecausemin/Robot_AI_HW2_Jenga.git
+cd Robot_AI_HW2_Jenga
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -e .[train,dev]
+pip install --upgrade pip
+pip install -e '.[train,dev]'
 ```
 
-현재 작업 환경에서는 기존 venv를 사용할 수 있습니다.
+설치 확인:
 
 ```bash
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python -m pytest -q
+python -m pytest -q
 ```
 
 ## 실제 시뮬레이션 실행 커맨드
 
-아래 커맨드는 repo root에서 실행합니다.
+아래 커맨드는 위 설치 과정에서 `.venv`를 activate한 뒤 repo root에서 실행합니다.
 
-### 1. 환경 smoke test
-
-```bash
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python -m pytest -q
-```
-
-### 2. 학습한 PPO 모델로 PyBullet 시뮬레이션 실행
+### 1. 학습한 PPO 모델로 PyBullet 시뮬레이션 실행
 
 GUI 창에서 실제 simulation을 바로 보고 싶을 때 사용합니다. GIF를 만들지 않고, 학습된 policy가 환경 안에서 step-by-step으로 실행됩니다.
 
 ```bash
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/sim_gripper.py \
+python scripts/sim_gripper.py \
   --policy ppo \
   --model runs/two_robot_gripper_precise_pusher_ft3k/model.zip \
   --seed 237 \
@@ -69,7 +68,7 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/sim_gripper.py \
 새로 학습한 모델을 실행하려면 `--model`만 바꾸면 됩니다.
 
 ```bash
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/sim_gripper.py \
+python scripts/sim_gripper.py \
   --policy ppo \
   --model runs/two_robot_gripper_ppo/model.zip \
   --seed 237 \
@@ -79,7 +78,7 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/sim_gripper.py \
 GUI가 없는 환경에서는 `ansi` mode로 step 로그만 확인할 수 있습니다.
 
 ```bash
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/sim_gripper.py \
+python scripts/sim_gripper.py \
   --policy ppo \
   --model runs/two_robot_gripper_precise_pusher_ft3k/model.zip \
   --seed 237 \
@@ -87,22 +86,22 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/sim_gripper.py \
   --sleep 0
 ```
 
-### 3. PPO 학습 실행
+### 2. PPO 학습 실행
 
 ```bash
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/train_gripper.py \
+python scripts/train_gripper.py \
   --timesteps 8000 \
   --out runs/two_robot_gripper_ppo \
   --levels 6 \
   --max-episode-steps 90
 ```
 
-### 4. 발표용 GIF가 필요할 때만 기록
+### 3. 발표용 GIF가 필요할 때만 기록
 
 학습 전 untrained rollout:
 
 ```bash
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_gripper.py \
+python scripts/record_gripper.py \
   --policy untrained \
   --seed 217 \
   --out-dir docs/training_media/two_robot_gripper_far_b_exposed_tip \
@@ -113,7 +112,7 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_gripper.py \
 학습된 PPO rollout:
 
 ```bash
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_gripper.py \
+python scripts/record_gripper.py \
   --policy ppo \
   --model runs/two_robot_gripper_precise_pusher_ft3k/model.zip \
   --seed 237 \
