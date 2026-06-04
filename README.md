@@ -32,8 +32,6 @@ PPO policy는 Robot A가 노출한 target block 끝부분으로 Robot B gripper�
 
 ## 설치
 
-repo를 처음 받은 사람 기준입니다. repo root에서 실행하세요.
-
 ```bash
 git clone https://github.com/leecausemin/Robot_AI_HW2_Jenga.git
 cd Robot_AI_HW2_Jenga
