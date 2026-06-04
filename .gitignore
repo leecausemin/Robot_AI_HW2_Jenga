@@ -5,3 +5,6 @@ __pycache__/
 *.egg-info/
 runs/*.zip
 runs/*/tb/
+
+.omx/
+.claude/
