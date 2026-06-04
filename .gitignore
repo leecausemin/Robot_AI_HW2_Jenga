@@ -1,7 +1,52 @@
+# Python virtual environments
 .venv/
+venv/
+env/
+
+# Python caches and bytecode
 __pycache__/
 *.py[cod]
+*$py.class
 .pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Build / packaging artifacts
+build/
+dist/
 *.egg-info/
-runs/*.zip
-runs/*/tb/
+*.egg
+
+# Local editor / OS files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Local secrets / machine-specific settings
+.env
+.env.*
+.claude/settings.local.json
+
+# OMX/session-local state
+.omx/logs/
+.omx/state/
+.omx/metrics.json
+
+# Training outputs: keep source code and docs, ignore heavy generated checkpoints/logs by default
+runs/**/*.zip
+runs/**/tb/
+runs/**/events.out.tfevents.*
+
+# Raw rendered frame dumps are reproducible and very large.
+# Keep presentation GIFs, selected stills, and summary JSON files tracked if needed.
+docs/training_media/**/frames/
+
+# Temporary scratch files
+/tmp/
+tmp/
+*.tmp
