@@ -54,7 +54,40 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python -m pytest -q
 PYTHONPATH=src /home/yumin/jenga/.venv/bin/python -m pytest -q
 ```
 
-### 2. PPO 학습 실행
+### 2. 학습한 PPO 모델로 PyBullet 시뮬레이션 실행
+
+GUI 창에서 실제 simulation을 바로 보고 싶을 때 사용합니다. GIF를 만들지 않고, 학습된 policy가 환경 안에서 step-by-step으로 실행됩니다.
+
+```bash
+PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/sim_gripper.py \
+  --policy ppo \
+  --model runs/two_robot_gripper_precise_pusher_ft3k/model.zip \
+  --seed 237 \
+  --render-mode human
+```
+
+새로 학습한 모델을 실행하려면 `--model`만 바꾸면 됩니다.
+
+```bash
+PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/sim_gripper.py \
+  --policy ppo \
+  --model runs/two_robot_gripper_ppo/model.zip \
+  --seed 237 \
+  --render-mode human
+```
+
+GUI가 없는 환경에서는 `ansi` mode로 step 로그만 확인할 수 있습니다.
+
+```bash
+PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/sim_gripper.py \
+  --policy ppo \
+  --model runs/two_robot_gripper_precise_pusher_ft3k/model.zip \
+  --seed 237 \
+  --render-mode ansi \
+  --sleep 0
+```
+
+### 3. PPO 학습 실행
 
 ```bash
 PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/train_gripper.py \
@@ -64,7 +97,9 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/train_gripper.py \
   --max-episode-steps 90
 ```
 
-### 3. 학습 전 untrained rollout GIF 생성
+### 4. 발표용 GIF가 필요할 때만 기록
+
+학습 전 untrained rollout:
 
 ```bash
 PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_gripper.py \
@@ -75,9 +110,7 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_gripper.py \
   --max-episode-steps 90
 ```
 
-### 4. 학습된 PPO rollout GIF 생성
-
-이미 있는 checkpoint를 사용할 때:
+학습된 PPO rollout:
 
 ```bash
 PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_gripper.py \
@@ -89,41 +122,14 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_gripper.py \
   --max-episode-steps 90
 ```
 
-방금 새로 학습한 모델을 사용할 때:
-
-```bash
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_gripper.py \
-  --policy ppo \
-  --model runs/two_robot_gripper_ppo/model.zip \
-  --seed 237 \
-  --out-dir docs/training_media/two_robot_gripper_far_b_exposed_tip \
-  --levels 6 \
-  --max-episode-steps 90
-```
-
-## 발표용 결과물 경로
-
-```text
-docs/training_media/two_robot_gripper_far_b_exposed_tip/ppo/rollout_seed_237.gif
-docs/training_media/two_robot_gripper_far_b_exposed_tip/untrained/rollout_seed_217.gif
-docs/training_media/two_robot_gripper_far_b_exposed_tip/stills/robot_b_closeup.png
-docs/training_media/two_robot_gripper_far_b_exposed_tip/stills/robot_b_untrained_start.png
-docs/training_media/two_robot_gripper_far_b_exposed_tip/stills/untrained_seed217_bad_mid.png
-```
-
 ## 코드 구조
 
 ```text
 src/jenga_rl/envs/config.py          # Jenga tower config base
 src/jenga_rl/envs/panda_jenga_env.py # PyBullet/Panda/Jenga base environment
 src/jenga_rl/envs/gripper_env.py     # latest main two-robot RL environment
+scripts/sim_gripper.py               # run trained policy in the PyBullet simulation
 scripts/train_gripper.py             # PPO training for main gripper env
 scripts/record_gripper.py            # GIF/still rollout recording
 tests/test_gripper_env.py            # smoke/regression test
 ```
-
-## 파일 관리 정책
-
-- GitHub에는 root `README.md`만 Markdown 문서로 남깁니다.
-- `.omx/`, `.claude/`, 기타 로컬 agent/runtime 상태는 git에서 제외합니다.
-- 실험 히스토리용 `joint_push`, `probe_stack`, `stack` entrypoint는 제거했고 최종 gripper task만 유지합니다.
