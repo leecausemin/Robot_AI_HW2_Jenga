@@ -30,12 +30,14 @@ Thumbs.db
 # Local secrets / machine-specific settings
 .env
 .env.*
-.claude/settings.local.json
 
-# OMX/session-local state
-.omx/logs/
-.omx/state/
-.omx/metrics.json
+# Local agent/runtime state
+.omx/
+.claude/
+
+# Keep only the repository-root README in version control.
+*.md
+!/README.md
 
 # Training outputs: keep source code and docs, ignore heavy generated checkpoints/logs by default
 runs/**/*.zip

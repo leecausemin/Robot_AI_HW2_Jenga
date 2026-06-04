@@ -5,7 +5,7 @@ import numpy as np
 from jenga_rl.envs import TwoRobotJengaGripperEnv
 
 
-def test_two_robot_gripper_env_smoke() -> None:
+def test_gripper_env_smoke() -> None:
     env = TwoRobotJengaGripperEnv(render_mode="rgb_array", max_episode_steps=4)
     obs, info = env.reset(seed=7)
     assert env.observation_space.contains(obs)

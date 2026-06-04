@@ -5,11 +5,10 @@ PyBullet 기반 3D Jenga 강화학습 프로젝트입니다. 최신 메인 환�
 - **Robot A**: scripted pusher. target block을 살짝 밀어 노출합니다.
 - **Robot B**: PPO agent. custom Jenga gripper로 노출된 끝부분을 잡고 블록을 바닥으로 떨어뜨립니다.
 - **Main env**: `TwoRobotJengaGripperEnv`
+- **Main file**: `src/jenga_rl/envs/gripper_env.py`
 - **Algorithm**: Stable-Baselines3 PPO (`MlpPolicy`)
 - **Observation**: Robot B joint state, end-effector, target block, exposed grasp site, pull direction, stability metrics 등 36D
 - **Action**: Robot B 7D joint residual + 1D gripper close command
-
-자세한 발표용 설명은 [`PROJECT.md`](PROJECT.md)를 보세요.
 
 ## 설치
 
@@ -28,7 +27,7 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python -m pytest -q
 ## 학습
 
 ```bash
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/train_two_robot_gripper_ppo.py \
+PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/train_gripper.py \
   --timesteps 8000 \
   --out runs/two_robot_gripper_ppo \
   --levels 6 \
@@ -40,7 +39,7 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/train_two_robot_grippe
 ### PPO 성공 rollout
 
 ```bash
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_two_robot_gripper_rollout.py \
+PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_gripper.py \
   --policy ppo \
   --model runs/two_robot_gripper_precise_pusher_ft3k/model.zip \
   --seed 237 \
@@ -52,7 +51,7 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_two_robot_gripp
 ### Untrained 실패 rollout
 
 ```bash
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_two_robot_gripper_rollout.py \
+PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_gripper.py \
   --policy untrained \
   --seed 217 \
   --out-dir docs/training_media/two_robot_gripper_far_b_exposed_tip \
@@ -71,11 +70,20 @@ docs/training_media/two_robot_gripper_far_b_exposed_tip/stills/robot_b_closeup.p
 ## 코드 구조
 
 ```text
-src/jenga_rl/envs/config.py                    # Jenga tower config base
-src/jenga_rl/envs/panda_jenga_env.py           # PyBullet/Panda/Jenga base environment
-src/jenga_rl/envs/two_robot_gripper_env.py     # latest main RL environment
-scripts/train_two_robot_gripper_ppo.py         # PPO training
-scripts/record_two_robot_gripper_rollout.py    # GIF/still rollout recording
-tests/test_two_robot_gripper_env.py            # smoke/regression test
-PROJECT.md                                     # presentation-ready project explanation
+src/jenga_rl/envs/config.py          # Jenga tower config base
+src/jenga_rl/envs/panda_jenga_env.py # PyBullet/Panda/Jenga base environment
+src/jenga_rl/envs/gripper_env.py     # latest main two-robot RL environment
+src/jenga_rl/envs/joint_push_env.py  # single-target joint push environment
+src/jenga_rl/envs/probe_stack_env.py # active probing stack environment
+src/jenga_rl/envs/stack_env.py       # full Jenga turn stack environment
+scripts/train_gripper.py             # PPO training for main gripper env
+scripts/record_gripper.py            # GIF/still rollout recording
+tests/test_gripper_env.py            # smoke/regression test
+```
+
+## 파일 관리 정책
+
+- GitHub에는 root `README.md`만 Markdown 문서로 남깁니다.
+- `.omx/`, `.claude/`, 기타 로컬 agent/runtime 상태는 git에서 제외합니다.
+- 긴 파일명은 `gripper`, `joint_push`, `probe_stack`, `stack` prefix로 정리했습니다.
 ```
