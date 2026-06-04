@@ -18,7 +18,6 @@ from __future__ import annotations
 from dataclasses import replace
 from typing import Any
 
-import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
 

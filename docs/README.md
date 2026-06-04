@@ -6,13 +6,13 @@
 
 1. `PROJECT_PLAN.md`
    - 전체 과제 목표, 환경, 알고리즘, 검증 계획
-2. `STACK_ENVIRONMENT.md`
+2. `STACK_ENV.md`
    - top placement 환경 `JengaPandaStackEnv` 설명
-3. `PROBE_STACK_ENVIRONMENT.md`
+3. `PROBE_STACK_ENV.md`
    - 최종 독창성 강화 환경 `JengaPandaProbeStackEnv` 설명
 4. `ALGORITHM_PLAN.md`
    - PPO를 먼저 학습하고, 추가 실험으로 Maskable PPO를 제시하는 계획
-5. `ACTIVE_PROBING_PLAN.md`
+5. `PROBING_PLAN.md`
    - 독창성 9점 이상을 목표로 하는 active probing/risk-aware 확장 계획
 6. `COURSE_ALIGNMENT.md`
    - 수업 PPT 내용과 프로젝트의 연결
@@ -21,7 +21,7 @@
 
 ## 참고/이전 설계 문서
 
-- `TASK_UPGRADE_PLAN.md`: block-selection task에서 full Jenga turn task로 확장한 이유와 설계 과정
+- `UPGRADE_PLAN.md`: block-selection task에서 full Jenga turn task로 확장한 이유와 설계 과정
 
 ## 렌더링 이미지
 

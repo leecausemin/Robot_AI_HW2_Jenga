@@ -19,7 +19,7 @@
 메인 환경은 `JengaPandaProbeStackEnv` 하나로 정리했다.
 
 ```text
-파일: src/jenga_rl/envs/panda_probe_stack_env.py
+파일: src/jenga_rl/envs/probe_stack_env.py
 기반: Gymnasium + PyBullet
 렌더링/로봇: Franka Panda robot arm + blue Jenga probe tool
 타워: PyBullet rigid-body Jenga blocks, 10층
@@ -111,7 +111,7 @@ collapse: 큰 penalty
 이번 최종 실험은 다음 조건으로 수행했다.
 
 ```bash
-PYTHONPATH=src .venv/bin/python scripts/train_probe_stack_agents.py \
+PYTHONPATH=src .venv/bin/python scripts/train_probe_stack.py \
   --algo maskable_ppo \
   --timesteps 20000 \
   --seed 11 \

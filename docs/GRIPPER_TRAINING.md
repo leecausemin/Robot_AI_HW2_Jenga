@@ -13,7 +13,7 @@
 
 메인 환경은 `TwoRobotJengaGripperEnv`이다.
 
-- 파일: `src/jenga_rl/envs/two_robot_gripper_env.py`
+- 파일: `src/jenga_rl/envs/gripper_env.py`
 - Gym ID: `TwoRobotJengaGripper-v0`
 - 물리 엔진: PyBullet
 - Tower: 6층 젠가 타워
@@ -48,7 +48,7 @@ Robot B 관절 상태, end-effector 위치, 목표 블록 위치, gripper-target
 
 PPO를 사용했다.
 
-- Script: `scripts/train_two_robot_gripper_ppo.py`
+- Script: `scripts/train_gripper.py`
 - Model: `runs/two_robot_gripper_ppo_5k/best_model.zip`
 - Timesteps: 5,120 steps
 - 학습 시간: 약 450초

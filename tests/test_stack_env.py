@@ -6,7 +6,7 @@ from jenga_rl.envs import JengaPandaStackEnv
 from jenga_rl.envs.panda_jenga_env import PandaJengaConfig
 
 
-def test_panda_stack_env_runs_full_turn_and_renders() -> None:
+def test_stack_env_runs_full_turn_and_renders() -> None:
     env = JengaPandaStackEnv(config=PandaJengaConfig(end_effector="panda_gripper"), render_mode="rgb_array")
     obs, info = env.reset(seed=21)
     assert env.observation_space.contains(obs)

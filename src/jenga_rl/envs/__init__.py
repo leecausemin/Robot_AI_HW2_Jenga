@@ -4,10 +4,10 @@ from gymnasium.envs.registration import register
 
 from jenga_rl.envs.jenga_env import JengaTowerEnv
 from jenga_rl.envs.panda_jenga_env import JengaPandaEnv
-from jenga_rl.envs.panda_stack_env import JengaPandaStackEnv
-from jenga_rl.envs.panda_probe_stack_env import JengaPandaProbeStackEnv
-from jenga_rl.envs.single_block_joint_push_env import SingleBlockJointPushEnv
-from jenga_rl.envs.two_robot_gripper_env import TwoRobotJengaGripperEnv
+from jenga_rl.envs.stack_env import JengaPandaStackEnv
+from jenga_rl.envs.probe_stack_env import JengaPandaProbeStackEnv
+from jenga_rl.envs.joint_push_env import SingleBlockJointPushEnv
+from jenga_rl.envs.gripper_env import TwoRobotJengaGripperEnv
 from jenga_rl.envs.bullet_env import JengaBulletEnv
 
 ENV_ID = "JengaTower-v0"
@@ -36,22 +36,22 @@ try:
     )
     register(
         id=STACK_ENV_ID,
-        entry_point="jenga_rl.envs.panda_stack_env:JengaPandaStackEnv",
+        entry_point="jenga_rl.envs.stack_env:JengaPandaStackEnv",
         max_episode_steps=8,
     )
     register(
         id=PROBE_STACK_ENV_ID,
-        entry_point="jenga_rl.envs.panda_probe_stack_env:JengaPandaProbeStackEnv",
+        entry_point="jenga_rl.envs.probe_stack_env:JengaPandaProbeStackEnv",
         max_episode_steps=12,
     )
     register(
         id=JOINT_PUSH_ENV_ID,
-        entry_point="jenga_rl.envs.single_block_joint_push_env:SingleBlockJointPushEnv",
+        entry_point="jenga_rl.envs.joint_push_env:SingleBlockJointPushEnv",
         max_episode_steps=80,
     )
     register(
         id=TWO_ROBOT_GRIPPER_ENV_ID,
-        entry_point="jenga_rl.envs.two_robot_gripper_env:TwoRobotJengaGripperEnv",
+        entry_point="jenga_rl.envs.gripper_env:TwoRobotJengaGripperEnv",
         max_episode_steps=90,
     )
 except Exception:

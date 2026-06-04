@@ -91,7 +91,7 @@
 
 ```bash
 cd /home/yumin/jenga_joint_push
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/train_joint_push_ppo.py \
+PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/train_joint_push.py \
   --timesteps 10000 \
   --seed 43 \
   --out runs/joint_push_ppo_fast_v3 \
@@ -104,7 +104,7 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/train_joint_push_ppo.p
 렌더링/GIF:
 
 ```bash
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_joint_push_rollout.py \
+PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_joint_push.py \
   --policy ppo \
   --model runs/joint_push_ppo_fast_v3/best_model.zip \
   --seed 300 \
@@ -113,7 +113,7 @@ PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_joint_push_roll
   --max-episode-steps 60 \
   --record-every 3
 
-PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_joint_push_rollout.py \
+PYTHONPATH=src /home/yumin/jenga/.venv/bin/python scripts/record_joint_push.py \
   --policy untrained \
   --seed 300 \
   --out-dir docs/training_media/joint_push \

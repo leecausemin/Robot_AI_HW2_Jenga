@@ -49,7 +49,7 @@ This makes the problem trainable within a course project while still showing a r
 ## Final training run
 
 ```bash
-PYTHONPATH=src .venv/bin/python scripts/train_probe_stack_agents.py \
+PYTHONPATH=src .venv/bin/python scripts/train_probe_stack.py \
   --algo maskable_ppo \
   --timesteps 20000 \
   --seed 11 \

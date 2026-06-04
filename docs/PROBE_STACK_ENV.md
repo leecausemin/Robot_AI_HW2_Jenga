@@ -16,12 +16,12 @@ There is no fake top placement in the T3 version. Top placement would require gr
 ## Files
 
 ```text
-src/jenga_rl/envs/panda_probe_stack_env.py   # main T3 environment
+src/jenga_rl/envs/probe_stack_env.py   # main T3 environment
 src/jenga_rl/envs/panda_jenga_env.py         # Panda + tower + rendering base
-scripts/train_probe_stack_agents.py          # PPO / Maskable PPO training
-scripts/evaluate_probe_stack_agents.py       # random / greedy / model evaluation
-scripts/record_probe_stack_rollout.py        # GIF/frame recording
-tests/test_panda_probe_stack_env.py          # T3 regression tests
+scripts/train_probe_stack.py          # PPO / Maskable PPO training
+scripts/eval_probe_stack.py       # random / greedy / model evaluation
+scripts/record_probe_stack.py        # GIF/frame recording
+tests/test_probe_stack_env.py          # T3 regression tests
 ```
 
 ## Environment stack
@@ -123,7 +123,7 @@ docs/training_media/t3_full_robot_probe20k/untrained_final.png
 Train 20k:
 
 ```bash
-PYTHONPATH=src .venv/bin/python scripts/train_probe_stack_agents.py \
+PYTHONPATH=src .venv/bin/python scripts/train_probe_stack.py \
   --algo maskable_ppo \
   --timesteps 20000 \
   --seed 11 \
@@ -136,7 +136,7 @@ PYTHONPATH=src .venv/bin/python scripts/train_probe_stack_agents.py \
 Evaluate:
 
 ```bash
-PYTHONPATH=src .venv/bin/python scripts/evaluate_probe_stack_agents.py \
+PYTHONPATH=src .venv/bin/python scripts/eval_probe_stack.py \
   --episodes 20 \
   --seed 700 \
   --levels 10 \
@@ -150,7 +150,7 @@ PYTHONPATH=src .venv/bin/python scripts/evaluate_probe_stack_agents.py \
 Record full robot GIF:
 
 ```bash
-PYTHONPATH=src .venv/bin/python scripts/record_probe_stack_rollout.py \
+PYTHONPATH=src .venv/bin/python scripts/record_probe_stack.py \
   --policy maskable_ppo \
   --model runs/t3_maskable_probe20k/maskable_ppo/model.zip \
   --seed 701 \

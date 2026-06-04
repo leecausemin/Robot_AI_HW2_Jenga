@@ -67,7 +67,7 @@ The previous task only asked the agent to pick a block. This upgraded task requi
 
 ```bash
 source .venv/bin/activate
-PYTHONPATH=src python scripts/demo_panda_stack.py --steps 1 --out docs/jenga_panda_stack_after_turn.png
+PYTHONPATH=src python scripts/demo_stack.py --steps 1 --out docs/jenga_panda_stack_after_turn.png
 ```
 
 Expected demo info:

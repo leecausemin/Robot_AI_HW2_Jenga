@@ -38,7 +38,7 @@ PPO
 메인 환경은 다음 파일에 구현되어 있다.
 
 ```text
-src/jenga_rl/envs/panda_stack_env.py
+src/jenga_rl/envs/stack_env.py
 ```
 
 환경 이름:
@@ -144,7 +144,7 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 pytest -q
 
 ```bash
 source .venv/bin/activate
-PYTHONPATH=src python scripts/demo_panda_stack.py --steps 1 --out docs/jenga_panda_stack_after_turn.png
+PYTHONPATH=src python scripts/demo_stack.py --steps 1 --out docs/jenga_panda_stack_after_turn.png
 ```
 
 기대 결과:
@@ -167,7 +167,7 @@ completed=True
 
 ## 9. Active Probing 확장 계획
 
-독창성을 높이기 위한 active probing 단계는 `JengaPandaProbeStackEnv`로 구현했고, 설계 배경은 `docs/ACTIVE_PROBING_PLAN.md`에 정리했다. 핵심은 사람이 Jenga를 할 때처럼 로봇이 먼저 블록을 살짝 probe하고, 그 결과로 looseness/risk를 추정한 뒤 안전한 블록을 추출하는 것이다.
+독창성을 높이기 위한 active probing 단계는 `JengaPandaProbeStackEnv`로 구현했고, 설계 배경은 `docs/PROBING_PLAN.md`에 정리했다. 핵심은 사람이 Jenga를 할 때처럼 로봇이 먼저 블록을 살짝 probe하고, 그 결과로 looseness/risk를 추정한 뒤 안전한 블록을 추출하는 것이다.
 
 ```text
 probe -> infer risk -> extract -> top placement

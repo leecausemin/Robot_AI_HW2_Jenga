@@ -14,7 +14,7 @@ from jenga_rl.envs import JengaPandaProbeStackEnv
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--out", type=Path, default=Path("docs/jenga_panda_probe_stack_after_turn.png"))
+    parser.add_argument("--out", type=Path, default=Path("docs/probe_stack_turn.png"))
     return parser.parse_args()
 
 

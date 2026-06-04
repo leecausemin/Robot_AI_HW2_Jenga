@@ -85,22 +85,22 @@ python scripts/render_3d.py --steps 4 --out docs/jenga_tower_3d.png
 
 ## 다음 확장
 
-현재 task가 단순한 문제를 해결하기 위한 확장안은 `docs/TASK_UPGRADE_PLAN.md`에 정리했습니다. 핵심 방향은 block selection에서 끝내지 않고, Panda robot이 block extraction과 top placement까지 수행하는 manipulation task로 확장하는 것입니다.
+현재 task가 단순한 문제를 해결하기 위한 확장안은 `docs/UPGRADE_PLAN.md`에 정리했습니다. 핵심 방향은 block selection에서 끝내지 않고, Panda robot이 block extraction과 top placement까지 수행하는 manipulation task로 확장하는 것입니다.
 
 ## Main upgraded environment: JengaPandaStackEnv
 
-The main environment is now `JengaPandaStackEnv`, which performs a full Jenga turn: select a legal non-top block, extract it with the Panda robot, carry it, and place it on the top layer. See `docs/STACK_ENVIRONMENT.md`.
+The main environment is now `JengaPandaStackEnv`, which performs a full Jenga turn: select a legal non-top block, extract it with the Panda robot, carry it, and place it on the top layer. See `docs/STACK_ENV.md`.
 
 ```bash
 source .venv/bin/activate
-PYTHONPATH=src python scripts/demo_panda_stack.py --steps 1 --out docs/jenga_panda_stack_after_turn.png
+PYTHONPATH=src python scripts/demo_stack.py --steps 1 --out docs/jenga_panda_stack_after_turn.png
 ```
 
 ## Originality upgrade: JengaPandaProbeStackEnv
 
-The originality-focused environment is `JengaPandaProbeStackEnv`: the robot first probes a candidate block, observes looseness/risk signals, then extracts the selected block and places it on top. See `docs/PROBE_STACK_ENVIRONMENT.md`.
+The originality-focused environment is `JengaPandaProbeStackEnv`: the robot first probes a candidate block, observes looseness/risk signals, then extracts the selected block and places it on top. See `docs/PROBE_STACK_ENV.md`.
 
 ```bash
 source .venv/bin/activate
-PYTHONPATH=src python scripts/demo_panda_probe_stack.py --out docs/jenga_panda_probe_stack_after_turn.png
+PYTHONPATH=src python scripts/demo_probe_stack.py --out docs/probe_stack_turn.png
 ```

@@ -9,8 +9,6 @@ import json
 from pathlib import Path
 from time import time
 
-import numpy as np
-
 from jenga_rl.envs import JengaPandaProbeStackEnv
 from jenga_rl.envs.panda_jenga_env import PandaJengaConfig
 

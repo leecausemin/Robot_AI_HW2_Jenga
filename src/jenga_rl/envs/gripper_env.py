@@ -14,7 +14,6 @@ from __future__ import annotations
 from dataclasses import replace
 from typing import Any
 
-import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
 
@@ -454,7 +453,6 @@ class TwoRobotJengaGripperEnv(JengaPandaEnv):
                 physicsClientId=self._client_id,
             )
         for _ in range(self.sim_steps_per_action):
-            pos = self._block_position(self._target_body)
             p.stepSimulation(physicsClientId=self._client_id)
             self._sync_tool()
             self._maybe_capture()
@@ -603,7 +601,6 @@ class TwoRobotJengaGripperEnv(JengaPandaEnv):
             if key == self._target_block:
                 continue
             pos, quat = p.getBasePositionAndOrientation(body, physicsClientId=self._client_id)
-            nominal = self._nominal_block_position(*key)
             roll, pitch, _ = p.getEulerFromQuaternion(quat)
             if key[0] > 0 and pos[2] < 0.065:
                 return True
