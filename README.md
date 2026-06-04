@@ -73,8 +73,6 @@ python scripts/sim_gripper.py \
   --render-mode human
 ```
 
-GUI가 없는 환경에서는 `ansi` mode로 step 로그만 확인할 수 있습니다.
-
 ```bash
 python scripts/sim_gripper.py \
   --policy ppo \
@@ -90,31 +88,6 @@ python scripts/sim_gripper.py \
 python scripts/train_gripper.py \
   --timesteps 8000 \
   --out runs/two_robot_gripper_ppo \
-  --levels 6 \
-  --max-episode-steps 90
-```
-
-### 3. 발표용 GIF가 필요할 때만 기록
-
-학습 전 untrained rollout:
-
-```bash
-python scripts/record_gripper.py \
-  --policy untrained \
-  --seed 217 \
-  --out-dir docs/training_media/two_robot_gripper_far_b_exposed_tip \
-  --levels 6 \
-  --max-episode-steps 90
-```
-
-학습된 PPO rollout:
-
-```bash
-python scripts/record_gripper.py \
-  --policy ppo \
-  --model runs/two_robot_gripper_precise_pusher_ft3k/model.zip \
-  --seed 237 \
-  --out-dir docs/training_media/two_robot_gripper_far_b_exposed_tip \
   --levels 6 \
   --max-episode-steps 90
 ```
